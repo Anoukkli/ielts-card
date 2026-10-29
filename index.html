@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="theme-color" content="#0f1115">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="雅思复习">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>雅思复习</title>
+<style>
+  :root{
+    --bg:#0f1115; --card:#171a21; --card2:#1e222b; --line:#2a2f3a;
+    --fg:#eef1f6; --dim:#9aa4b2; --accent:#4f8cff; --good:#34c759;
+    --meh:#ff9f0a; --bad:#ff453a; --radius:20px;
+  }
+  @media (prefers-color-scheme: light){
+    :root{ --bg:#f2f4f8; --card:#ffffff; --card2:#eef1f6; --line:#dfe4ec;
+           --fg:#171a21; --dim:#6b7480; }
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro SC","PingFang SC","Segoe UI",Roboto,sans-serif;
+    min-height:100dvh; display:flex; flex-direction:column;
+    padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    user-select:none; overscroll-behavior:none;
+  }
+  header{padding:18px 20px 8px; display:flex; align-items:center; justify-content:space-between;}
+  header h1{font-size:17px; font-weight:600; margin:0; letter-spacing:.02em;}
+  header .streak{font-size:13px; color:var(--dim);}
+  header .streak b{color:var(--meh); font-size:15px;}
+  main{flex:1; display:flex; flex-direction:column; padding:8px 20px calc(20px + env(safe-area-inset-bottom));}
+
+  /* ---------- home ---------- */
+  .ring-wrap{display:flex; flex-direction:column; align-items:center; margin:10px 0 22px;}
+  .ring{position:relative; width:190px; height:190px;}
+  .ring svg{transform:rotate(-90deg);}
+  .ring .num{position:absolute; inset:0; display:flex; flex-direction:column;
+    align-items:center; justify-content:center;}
+  .ring .num strong{font-size:40px; font-weight:700; letter-spacing:-.02em;}
+  .ring .num span{font-size:12px; color:var(--dim); margin-top:2px;}
+  .ring path{transition:stroke-dashoffset .5s ease;}
+
+  .actions{display:flex; flex-direction:column; gap:12px; margin-top:6px;}
+  .btn{
+    border:0; border-radius:16px; padding:17px 18px; font-size:16px; font-weight:600;
+    background:var(--card); color:var(--fg); display:flex; align-items:center;
+    justify-content:space-between; transition:transform .08s ease, background .15s;
+    font-family:inherit;
+  }
+  .btn:active{transform:scale(.98);}
+  .btn.primary{background:var(--accent); color:#fff;}
+  .btn small{font-weight:500; opacity:.65; font-size:13px;}
+  .btn:disabled{opacity:.45;}
+
+  .foot{margin-top:auto; padding-top:18px; display:flex; justify-content:space-between;
+        font-size:12px; color:var(--dim);}
+  .foot a{color:var(--dim); text-decoration:none;}
+
+  /* ---------- card ---------- */
+  .stage{flex:1; display:flex; flex-direction:column;}
+  .topbar{display:flex; align-items:center; gap:12px; margin-bottom:10px;}
+  .topbar .bar{flex:1; height:5px; background:var(--line); border-radius:3px; overflow:hidden;}
+  .topbar .bar i{display:block; height:100%; width:0; background:var(--accent);
+                 border-radius:3px; transition:width .3s ease;}
+  .topbar .count{font-size:12px; color:var(--dim); font-variant-numeric:tabular-nums;}
+  .close{background:none;border:0;color:var(--dim);font-size:22px;padding:0 4px;line-height:1;}
+
+  .scene{flex:1; perspective:1400px; display:flex; align-items:stretch; padding:6px 0 14px;}
+  .card{
+    position:relative; width:100%; min-height:330px; transform-style:preserve-3d;
+    transition:transform .45s cubic-bezier(.2,.8,.3,1); cursor:pointer;
+  }
+  .card.flipped{transform:rotateY(180deg);}
+  .face{
+    position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden;
+    background:var(--card); border-radius:var(--radius); border:1px solid var(--line);
+    padding:26px 22px; display:flex; flex-direction:column; overflow:auto;
+  }
+  .face.back{transform:rotateY(180deg);}
+
+  .word{font-size:36px; font-weight:700; letter-spacing:-.02em; line-height:1.2; word-break:break-word;}
+  .word.small{font-size:26px;}
+  .sub{color:var(--dim); font-size:13px; margin-top:10px;}
+  .speak{
+    margin-top:auto; align-self:flex-start; border:1px solid var(--line);
+    background:var(--card2); color:var(--fg); border-radius:999px; padding:9px 16px;
+    font-size:14px; display:flex; align-items:center; gap:7px; font-family:inherit;
+  }
+  .hint{color:var(--dim); font-size:12px; text-align:center; margin-top:auto;}
+
+  .meaning{font-size:20px; font-weight:600; line-height:1.4;}
+  .block{margin-top:16px;}
+  .block .k{font-size:11px; color:var(--dim); letter-spacing:.08em; margin-bottom:5px;}
+  .ex{font-size:15px; line-height:1.65; color:var(--fg);}
+  .ex b{color:var(--accent); font-weight:700;}
+  .excn{font-size:13px; color:var(--dim); line-height:1.6; margin-top:4px;}
+  .col{font-size:14px; line-height:1.6;}
+  .src{font-size:11px; color:var(--dim); margin-top:auto; padding-top:14px;}
+
+  .grades{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;}
+  .grade{border:0; border-radius:14px; padding:15px 8px; font-size:14px; font-weight:600;
+         color:#fff; font-family:inherit; transition:transform .08s;}
+  .grade:active{transform:scale(.97);}
+  .grade.bad{background:var(--bad);} .grade.meh{background:var(--meh);} .grade.good{background:var(--good);}
+  .grade small{display:block; font-weight:400; font-size:10px; opacity:.8; margin-top:3px;}
+
+  /* ---------- error card ---------- */
+  .qid{font-size:12px; color:var(--dim); letter-spacing:.06em;}
+  .stem{font-size:19px; line-height:1.55; font-weight:600; margin-top:8px; white-space:pre-wrap;}
+  .ansline{display:flex; gap:18px; margin-top:18px; font-size:15px; flex-wrap:wrap;}
+  .ansline div span{color:var(--dim); font-size:12px; display:block; margin-bottom:3px;}
+  .mine{color:var(--bad); font-weight:600;} .right{color:var(--good); font-weight:600;}
+
+  /* ---------- done ---------- */
+  .done{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; text-align:center;}
+  .done .big{font-size:64px; line-height:1;}
+  .done h2{font-size:22px; margin:12px 0 0;}
+  .done p{color:var(--dim); font-size:14px; margin:4px 0;}
+  .stats{display:flex; gap:26px; margin:22px 0 6px;}
+  .stats div{text-align:center;}
+  .stats b{display:block; font-size:22px;}
+  .stats span{font-size:11px; color:var(--dim);}
+  .toast{position:fixed; left:50%; bottom:34px; transform:translateX(-50%) translateY(20px);
+    background:#000c; color:#fff; padding:10px 18px; border-radius:999px; font-size:13px;
+    opacity:0; transition:.25s; pointer-events:none;}
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+<header>
+  <h1 id="title">雅思复习</h1>
+  <div class="streak" id="streak"></div>
+</header>
+<main id="app"></main>
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+   雅思复习 PWA —— 数据来自 deck.json，进度存在本机
+   ========================================================= */
+const KEY_SRS = 'ielts.srs.v2';
+const KEY_CFG = 'ielts.cfg.v2';
+const KEY_STAT = 'ielts.stat.v2';
+const INTERVALS = [1, 2, 4, 7, 15, 30, 60];
+const DEFAULTS = { quota: 20 };
+
+let DECK = { vocab: [], errors: [] };
+let SRS = {};      // id -> {s,d,r,w,ls}
+let CFG = {...DEFAULTS};
+let STAT = { streak: 0, lastDay: '', total: 0, doneDay: '', doneCount: 0 };
+
+const app = document.getElementById('app');
+const $ = (id) => document.getElementById(id);
+
+/* ---------------- storage ---------------- */
+function loadAll(){
+  try{ SRS = JSON.parse(localStorage.getItem(KEY_SRS) || '{}'); }catch(e){ SRS = {}; }
+  try{ CFG = {...DEFAULTS, ...JSON.parse(localStorage.getItem(KEY_CFG) || '{}')}; }catch(e){ CFG = {...DEFAULTS}; }
+  try{ STAT = {streak:0,lastDay:'',total:0,doneDay:'',doneCount:0, ...JSON.parse(localStorage.getItem(KEY_STAT) || '{}')}; }catch(e){}
+}
+function saveSRS(){ localStorage.setItem(KEY_SRS, JSON.stringify(SRS)); }
+function saveCfg(){ localStorage.setItem(KEY_CFG, JSON.stringify(CFG)); }
+function saveStat(){ localStorage.setItem(KEY_STAT, JSON.stringify(STAT)); }
+
+/* ---------------- date helpers ---------------- */
+function dayStr(d = new Date()){
+  const t = new Date(d.getTime() - d.getTimezoneOffset()*60000);
+  return t.toISOString().slice(0,10);
+}
+function addDays(d, n){ const x = new Date(d); x.setDate(x.getDate()+n); return x; }
+
+/* ---------------- queue ---------------- */
+function isDue(card){
+  const st = SRS[card.id];
+  if(!st) return false;
+  return st.d <= dayStr();
+}
+function unseen(){
+  return DECK.vocab.filter(c => !SRS[c.id]);
+}
+function dueVocab(){
+  return DECK.vocab.filter(isDue).sort((a,b)=> SRS[a.id].d.localeCompare(SRS[b.id].d));
+}
+function dueErrors(){
+  return DECK.errors.filter(isDue);
+}
+function doneToday(){
+  return STAT.doneDay === dayStr() ? (STAT.doneCount || 0) : 0;
+}
+function remainingQuota(){
+  return Math.max(0, CFG.quota - doneToday());
+}
+function todayQueue(){
+  const left = remainingQuota();
+  if(left <= 0) return [];
+  const due = dueVocab();
+  const fresh = shuffle(unseen()).slice(0, Math.max(0, left - due.length));
+  return due.slice(0, left).concat(fresh).slice(0, left);
+}
+function shuffle(a){
+  const x = a.slice();
+  for(let i=x.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [x[i],x[j]]=[x[j],x[i]]; }
+  return x;
+}
+
+/* ---------------- srs ---------------- */
+function ensure(card){
+  if(!SRS[card.id]) SRS[card.id] = { s:0, d:dayStr(), r:0, w:0, ls:'' };
+  return SRS[card.id];
+}
+function gradeCard(card, result){
+  const st = ensure(card);
+  if(result === 'good'){ st.s = Math.min(st.s + 1, INTERVALS.length - 1); st.r++; }
+  else if(result === 'meh'){ st.w++; }
+  else { st.s = Math.max(0, st.s - 2); st.w++; }
+  const gap = result === 'bad' ? 1 : INTERVALS[Math.min(st.s, INTERVALS.length - 1)];
+  st.d = dayStr(addDays(new Date(), gap));
+  st.ls = dayStr();
+  saveSRS();
+}
+function gradeError(card, ok){
+  const st = ensure(card);
+  if(ok){ st.s = Math.min(st.s + 1, INTERVALS.length - 1); st.r++; st.d = dayStr(addDays(new Date(), INTERVALS[Math.min(st.s, 5)])); }
+  else { st.s = 0; st.w++; st.d = dayStr(addDays(new Date(), 2)); }
+  st.ls = dayStr();
+  saveSRS();
+}
+
+/* ---------------- stats ---------------- */
+function bumpSession(){
+  const today = dayStr();
+  if(STAT.lastDay === today) return;
+  const yesterday = dayStr(addDays(new Date(), -1));
+  STAT.streak = (STAT.lastDay === yesterday) ? STAT.streak + 1 : 1;
+  STAT.lastDay = today;
+  saveStat();
+}
+function renderStreak(){
+  const el = $('streak');
+  if(!el) return;
+  const today = dayStr();
+  const done = STAT.lastDay === today;
+  el.innerHTML = STAT.streak > 0
+    ? `<b>🔥 ${STAT.streak}</b> 天${done ? ' · 今日已打卡' : ''}`
+    : '还没开始';
+}
+
+/* ---------------- views ---------------- */
+function home(){
+  const q = todayQueue();
+  const left = remainingQuota();
+  const errs = dueErrors();
+  const seen = Object.keys(SRS).length;
+  const total = DECK.vocab.length;
+  const pct = total ? Math.min(100, Math.round(seen / total * 100)) : 0;
+  const C = 2 * Math.PI * 82;
+
+  app.innerHTML = `
+    <div class="ring-wrap">
+      <div class="ring">
+        <svg width="190" height="190" viewBox="0 0 190 190">
+          <circle cx="95" cy="95" r="82" fill="none" stroke="var(--line)" stroke-width="12"/>
+          <circle cx="95" cy="95" r="82" fill="none" stroke="var(--accent)" stroke-width="12"
+                  stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C - C*pct/100}"/>
+        </svg>
+        <div class="num"><strong>${q.length}</strong><span>${left ? '今日待背' : '今日已完成'}</span></div>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn primary" id="startVocab" ${q.length? '' : 'disabled'}>
+        <span>开始背单词</span><small>${q.length} 张 · 约 ${Math.ceil(q.length*0.3)} 分钟</small>
+      </button>
+      <button class="btn" id="startErr" ${errs.length? '' : 'disabled'}>
+        <span>刷错题</span><small>${errs.length} 道待二刷</small>
+      </button>
+      <button class="btn" id="openSettings">
+        <span>设置</span><small>每日 ${CFG.quota} 张</small>
+      </button>
+    </div>
+    <div class="foot">
+      <span>今日 ${doneToday()}/${CFG.quota} · 已学 ${seen}/${total}</span>
+      <a href="#" id="refresh">刷新</a>
+    </div>`;
+
+  $('startVocab').onclick = () => startSession(q, 'vocab');
+  $('startErr').onclick = () => startSession(errs.map(e => ({...e, __err:true})), 'error');
+  $('openSettings').onclick = settings;
+  $('refresh').onclick = (e) => { e.preventDefault(); location.reload(); };
+  renderStreak();
+}
+
+function settings(){
+  app.innerHTML = `
+    <div class="stage">
+      <div class="topbar"><button class="close" id="back">‹</button><div style="flex:1"></div></div>
+      <h2 style="font-size:19px;margin:6px 0 18px">设置</h2>
+      <div class="block"><div class="k">每日配额（张）</div>
+        <div style="display:flex;gap:10px;margin-top:8px">
+          ${[10,20,30,50].map(n=>`<button class="btn" style="flex:1;justify-content:center;padding:13px;
+            ${n===CFG.quota?'background:var(--accent);color:#fff':''}" data-q="${n}">${n}</button>`).join('')}
+        </div>
+      </div>
+      <div class="block"><div class="k">进度</div>
+        <div style="font-size:14px;line-height:1.9;color:var(--dim)">
+          已学 ${Object.keys(SRS).length} / ${DECK.vocab.length} 个词<br>
+          连续 ${STAT.streak} 天 · 累计复习 ${STAT.total || 0} 次
+        </div>
+      </div>
+      <div class="block" style="margin-top:26px">
+        <button class="btn" id="export" style="width:100%">导出进度 JSON</button>
+        <button class="btn" id="reset" style="width:100%;margin-top:10px;color:var(--bad)">清空本机进度</button>
+      </div>
+    </div>`;
+  $('back').onclick = home;
+  document.querySelectorAll('[data-q]').forEach(b => b.onclick = () => {
+    CFG.quota = +b.dataset.q; saveCfg(); settings();
+  });
+  $('export').onclick = () => {
+    const blob = new Blob([JSON.stringify({srs:SRS, stat:STAT, exported: dayStr()}, null, 1)],
+      {type:'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = `ielts-progress-${dayStr()}.json`; a.click();
+  };
+  $('reset').onclick = () => {
+    if(confirm('清空本机所有复习进度？不可恢复。')){
+      localStorage.removeItem(KEY_SRS); localStorage.removeItem(KEY_STAT);
+      SRS = {}; STAT = {streak:0,lastDay:'',total:0}; saveStat(); home();
+    }
+  };
+}
+
+/* ---------------- session ---------------- */
+let SESSION = null;
+
+function startSession(items, kind){
+  if(!items.length) return;
+  SESSION = { items, kind, i:0, right:0, wrong:0 };
+  renderCard();
+}
+
+function progressBar(){
+  const p = SESSION.i / SESSION.items.length * 100;
+  return `<div class="topbar">
+    <button class="close" id="quit">✕</button>
+    <div class="bar"><i style="width:${p}%"></i></div>
+    <div class="count">${SESSION.i+1}/${SESSION.items.length}</div>
+  </div>`;
+}
+
+function renderCard(){
+  const item = SESSION.items[SESSION.i];
+  if(!item){ return finish(); }
+  item.__err ? renderError(item) : renderVocab(item);
+}
+
+/* -------- 单词卡 -------- */
+function renderVocab(card){
+  app.innerHTML = `
+    ${progressBar()}
+    <div class="scene">
+      <div class="card" id="card">
+        <div class="face">
+          <div class="word ${card.w.length>18?'small':''}">${esc(card.w)}</div>
+          ${card.phon ? `<div class="sub">${esc(card.phon)}</div>` : ''}
+          <button class="speak" id="speak">🔊 发音</button>
+          <div class="hint">点卡片看释义</div>
+        </div>
+        <div class="face back">
+          <div class="meaning">${esc(card.m || '（无释义）')}</div>
+          ${card.ex ? `<div class="block"><div class="k">原文</div>
+            <div class="ex">${bold(card.ex, card.w)}</div>
+            ${card.exCn ? `<div class="excn">${esc(card.exCn)}</div>` : ''}</div>` : ''}
+          ${card.col ? `<div class="block"><div class="k">搭配</div><div class="col">${esc(card.col)}</div></div>` : ''}
+          ${card.mn ? `<div class="block"><div class="k">记忆</div><div class="col">${esc(card.mn)}</div></div>` : ''}
+          <div class="src">${esc(card.src || '')}</div>
+        </div>
+      </div>
+    </div>
+    <div class="grades" id="grades" style="visibility:hidden">
+      <button class="grade bad" data-r="bad">不会<small>明天再来</small></button>
+      <button class="grade meh" data-r="meh">模糊<small>再练一次</small></button>
+      <button class="grade good" data-r="good">会了<small>拉长间隔</small></button>
+    </div>`;
+
+  $('quit').onclick = () => { if(confirm('结束本轮？已答的会保存。')) finish(true); };
+  const cardEl = $('card');
+  cardEl.onclick = (e) => {
+    if(e.target.id === 'speak') return;
+    cardEl.classList.toggle('flipped');
+    if(cardEl.classList.contains('flipped')){
+      $('grades').style.visibility = 'visible';
+    }
+  };
+  $('speak').onclick = (e) => { e.stopPropagation(); speak(card.w); };
+  document.querySelectorAll('.grade').forEach(b => {
+    b.onclick = () => { gradeCard(card, b.dataset.r); next(b.dataset.r === 'good'); };
+  });
+}
+
+/* -------- 错题卡 -------- */
+function renderError(card){
+  app.innerHTML = `
+    ${progressBar()}
+    <div class="scene">
+      <div class="card" id="card">
+        <div class="face">
+          <div class="qid">${esc(card.qid)} · ${esc(card.type || '')} ${card.cause ? '· ' + esc(card.cause) : ''}</div>
+          <div class="stem">${esc(card.stem || '')}</div>
+          <div class="hint">想一想再点翻面</div>
+        </div>
+        <div class="face back">
+          <div class="qid">${esc(card.qid)}</div>
+          <div class="ansline">
+            <div><span>你写的</span><b class="mine">${esc(card.mine || '（空）')}</b></div>
+            <div><span>正确答案</span><b class="right">${esc(card.ans || '')}</b></div>
+          </div>
+          ${card.ev ? `<div class="block"><div class="k">原文定位</div><div class="ex">${bold(card.ev, card.ans)}</div></div>` : ''}
+          ${card.note ? `<div class="block"><div class="k">当时为什么错</div><div class="col">${esc(card.note)}</div></div>` : ''}
+          <div class="src">${esc(card.src || '')}</div>
+        </div>
+      </div>
+    </div>
+    <div class="grades" id="grades" style="visibility:hidden">
+      <button class="grade bad" data-r="0" style="grid-column:1/2">还是错<small>2 天后再来</small></button>
+      <button class="grade good" data-r="1" style="grid-column:3/4">会了<small>移出队列</small></button>
+    </div>`;
+
+  $('quit').onclick = () => { if(confirm('结束本轮？')) finish(true); };
+  const cardEl = $('card');
+  cardEl.onclick = () => {
+    cardEl.classList.toggle('flipped');
+    if(cardEl.classList.contains('flipped')) $('grades').style.visibility = 'visible';
+  };
+  document.querySelectorAll('.grade').forEach(b => {
+    b.onclick = () => { gradeError(card, b.dataset.r === '1'); next(b.dataset.r === '1'); };
+  });
+}
+
+function next(ok){
+  ok ? SESSION.right++ : SESSION.wrong++;
+  STAT.total = (STAT.total || 0) + 1;
+  if(STAT.doneDay !== dayStr()){ STAT.doneDay = dayStr(); STAT.doneCount = 0; }
+  STAT.doneCount = (STAT.doneCount || 0) + 1;
+  saveStat();
+  SESSION.i++;
+  if(SESSION.i >= SESSION.items.length) finish();
+  else renderCard();
+}
+
+function finish(early){
+  bumpSession();
+  const done = SESSION.i;
+  app.innerHTML = `
+    <div class="done">
+      <div class="big">${done ? '🎉' : '👋'}</div>
+      <h2>${done ? '这轮完成' : '已保存'}</h2>
+      <p>${done ? '明天继续，别断' : '答过的都记下了'}</p>
+      <div class="stats">
+        <div><b>${SESSION.right}</b><span>会了</span></div>
+        <div><b>${SESSION.wrong}</b><span>要重来</span></div>
+        <div><b>🔥 ${STAT.streak}</b><span>连续天数</span></div>
+      </div>
+      <div style="width:100%;margin-top:26px">
+        <button class="btn primary" id="backHome" style="width:100%;justify-content:center">回到首页</button>
+      </div>
+    </div>`;
+  $('backHome').onclick = home;
+  renderStreak();
+}
+
+/* ---------------- utils ---------------- */
+function esc(s){ return String(s == null ? '' : s)
+  .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function bold(text, word){
+  let html = esc(text);
+  html = html.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+  if(word && !html.includes('<b>')){
+    const w = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    html = html.replace(new RegExp(`(${w}\\w*)`, 'i'), '<b>$1</b>');
+  }
+  return html;
+}
+
+function speak(text){
+  try{
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'en-US'; u.rate = 0.9;
+    speechSynthesis.speak(u);
+  }catch(e){ toast('这台设备不支持朗读'); }
+}
+
+function toast(msg){
+  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  setTimeout(()=> t.classList.remove('show'), 1600);
+}
+
+/* ---------------- boot ---------------- */
+async function boot(){
+  loadAll();
+  document.title = '雅思复习';
+  try{
+    const r = await fetch('deck.json?t=' + Date.now());
+    if(!r.ok) throw new Error(r.status);
+    DECK = await r.json();
+  }catch(e){
+    app.innerHTML = `<div class="done"><div class="big">📭</div>
+      <h2>词库没加载上</h2><p>检查 deck.json 是否和本页在同一目录</p>
+      <button class="btn" onclick="location.reload()" style="margin-top:20px">重试</button></div>`;
+    return;
+  }
+  home();
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  }
+}
+boot();
+</script>
+</body>
+</html>
