@@ -1,5 +1,5 @@
 /* 离线缓存：app shell 缓存优先，deck.json 网络优先（拿不到就用缓存） */
-const CACHE = 'ielts-v1';
+const CACHE = 'ielts-v2';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', (e) => {
