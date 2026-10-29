@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
 <meta name="theme-color" content="#0f1115">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -103,7 +103,8 @@
 
   .grades{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;}
   .grade{border:0; border-radius:14px; padding:15px 8px; font-size:14px; font-weight:600;
-         color:#fff; font-family:inherit; transition:transform .08s;}
+         color:#fff; font-family:inherit; transition:transform .08s;
+         touch-action:manipulation; -webkit-user-select:none; user-select:none;}
   .grade:active{transform:scale(.97);}
   .grade.bad{background:var(--bad);} .grade.meh{background:var(--meh);} .grade.good{background:var(--good);}
   .grade small{display:block; font-weight:400; font-size:10px; opacity:.8; margin-top:3px;}
@@ -290,7 +291,7 @@ function home(){
       </button>
     </div>
     <div class="foot">
-      <span>今日 ${doneToday()}/${CFG.quota} · 已学 ${seen}/${total} · v2</span>
+      <span>今日 ${doneToday()}/${CFG.quota} · 已学 ${seen}/${total} · v3</span>
       <a href="#" id="refresh">刷新</a>
     </div>${STORAGE_OK ? '' : '<div style="color:var(--meh);font-size:12px;margin-top:8px">⚠️ 浏览器禁用了本地存储，进度不会保存（请退出无痕模式）</div>'}`;
 
@@ -370,7 +371,7 @@ function renderVocab(card){
   app.innerHTML = `
     ${progressBar()}
     <div class="scene">
-      <div class="card" id="card">
+      <div class="card" id="card" data-flip>
         <div class="face">
           <div class="word ${card.w.length>18?'small':''}">${esc(card.w)}</div>
           ${card.phon ? `<div class="sub">${esc(card.phon)}</div>` : ''}
@@ -395,23 +396,8 @@ function renderVocab(card){
     </div>`;
 
   $('quit').onclick = () => { if(confirm('结束本轮？已答的会保存。')) finish(true); };
-  const cardEl = $('card');
-  cardEl.onclick = (e) => {
-    if(e.target.id === 'speak') return;
-    cardEl.classList.toggle('flipped');
-    if(cardEl.classList.contains('flipped')){
-      $('grades').style.visibility = 'visible';
-    }
-  };
   $('speak').onclick = (e) => { e.stopPropagation(); speak(card.w); };
-  document.querySelectorAll('.grade').forEach(b => {
-    b.onclick = (e) => {
-      e.stopPropagation();
-      const r = b.dataset.r;
-      try { gradeCard(card, r); } catch(err) { console.error(err); }
-      next(r === 'good');
-    };
-  });
+  dbg('render vocab: ' + card.w);
 }
 
 /* -------- 错题卡 -------- */
@@ -419,7 +405,7 @@ function renderError(card){
   app.innerHTML = `
     ${progressBar()}
     <div class="scene">
-      <div class="card" id="card">
+      <div class="card" id="card" data-flip>
         <div class="face">
           <div class="qid">${esc(card.qid)} · ${esc(card.type || '')} ${card.cause ? '· ' + esc(card.cause) : ''}</div>
           <div class="stem">${esc(card.stem || '')}</div>
@@ -443,19 +429,7 @@ function renderError(card){
     </div>`;
 
   $('quit').onclick = () => { if(confirm('结束本轮？')) finish(true); };
-  const cardEl = $('card');
-  cardEl.onclick = () => {
-    cardEl.classList.toggle('flipped');
-    if(cardEl.classList.contains('flipped')) $('grades').style.visibility = 'visible';
-  };
-  document.querySelectorAll('.grade').forEach(b => {
-    b.onclick = (e) => {
-      e.stopPropagation();
-      const ok = b.dataset.r === '1';
-      try { gradeError(card, ok); } catch(err) { console.error(err); }
-      next(ok);
-    };
-  });
+  dbg('render error: ' + card.qid);
 }
 
 function next(ok){
@@ -520,6 +494,64 @@ function toast(msg){
 window.addEventListener('error', (e) => {
   try{ toast('出错了：' + (e.message || '未知')); }catch(_){}
 });
+
+/* ---------------- 事件委托（iOS 上比逐元素 onclick 可靠） ---------------- */
+function flip(card){
+  card.classList.toggle('flipped');
+  const g = document.getElementById('grades');
+  if(g) g.style.visibility = card.classList.contains('flipped') ? 'visible' : 'hidden';
+  dbg('flip -> ' + card.classList.contains('flipped'));
+}
+
+function handleGrade(r){
+  if(!SESSION) return;
+  const item = SESSION.items[SESSION.i];
+  if(!item) return;
+  dbg('grade ' + r + ' on ' + (item.__err ? item.qid : item.w));
+  if(item.__err){
+    const ok = r === '1';
+    try{ gradeError(item, ok); }catch(e){ console.error(e); }
+    next(ok);
+  } else {
+    try{ gradeCard(item, r); }catch(e){ console.error(e); }
+    next(r === 'good');
+  }
+}
+
+let lastAct = 0;
+function onPointer(e){
+  const t = e.target;
+  if(!t || !t.closest) return;
+  if(t.closest('#speak') || t.closest('#quit')) return;
+  const btn = t.closest('[data-r]');
+  if(btn){
+    if(Date.now() - lastAct < 350) return;
+    lastAct = Date.now();
+    handleGrade(btn.dataset.r);
+    return;
+  }
+  const card = t.closest('[data-flip]');
+  if(card) flip(card);
+}
+document.addEventListener('pointerdown', onPointer, true);
+document.addEventListener('click', (e) => { if(!window.PointerEvent) onPointer(e); }, true);
+
+/* ---------------- 调试面板（?debug=1） ---------------- */
+const DEBUG = /[?&]debug=1/.test(location.search);
+let dbgBox = null;
+function dbg(msg){
+  if(!DEBUG) return;
+  if(!dbgBox){
+    dbgBox = document.createElement('div');
+    dbgBox.style.cssText = 'position:fixed;left:0;right:0;bottom:0;max-height:40vh;overflow:auto;' +
+      'background:#000e;color:#7dff9b;font:11px/1.45 ui-monospace,monospace;padding:8px 10px;' +
+      'z-index:9999;white-space:pre-wrap;pointer-events:none';
+    document.body.appendChild(dbgBox);
+    dbgBox.textContent = 'UA: ' + navigator.userAgent + '\n';
+  }
+  dbgBox.textContent += msg + '\n';
+  dbgBox.scrollTop = dbgBox.scrollHeight;
+}
 
 /* ---------------- boot ---------------- */
 async function boot(){
