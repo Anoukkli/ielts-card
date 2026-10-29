@@ -157,14 +157,22 @@ const app = document.getElementById('app');
 const $ = (id) => document.getElementById(id);
 
 /* ---------------- storage ---------------- */
-function loadAll(){
-  try{ SRS = JSON.parse(localStorage.getItem(KEY_SRS) || '{}'); }catch(e){ SRS = {}; }
-  try{ CFG = {...DEFAULTS, ...JSON.parse(localStorage.getItem(KEY_CFG) || '{}')}; }catch(e){ CFG = {...DEFAULTS}; }
-  try{ STAT = {streak:0,lastDay:'',total:0,doneDay:'',doneCount:0, ...JSON.parse(localStorage.getItem(KEY_STAT) || '{}')}; }catch(e){}
+let STORAGE_OK = true;
+function sget(k){
+  try{ return localStorage.getItem(k); }catch(e){ STORAGE_OK = false; return null; }
 }
-function saveSRS(){ localStorage.setItem(KEY_SRS, JSON.stringify(SRS)); }
-function saveCfg(){ localStorage.setItem(KEY_CFG, JSON.stringify(CFG)); }
-function saveStat(){ localStorage.setItem(KEY_STAT, JSON.stringify(STAT)); }
+function sset(k, v){
+  try{ localStorage.setItem(k, v); return true; }
+  catch(e){ STORAGE_OK = false; return false; }
+}
+function loadAll(){
+  try{ SRS = JSON.parse(sget(KEY_SRS) || '{}'); }catch(e){ SRS = {}; }
+  try{ CFG = {...DEFAULTS, ...JSON.parse(sget(KEY_CFG) || '{}')}; }catch(e){ CFG = {...DEFAULTS}; }
+  try{ STAT = {streak:0,lastDay:'',total:0,doneDay:'',doneCount:0, ...JSON.parse(sget(KEY_STAT) || '{}')}; }catch(e){}
+}
+function saveSRS(){ sset(KEY_SRS, JSON.stringify(SRS)); }
+function saveCfg(){ sset(KEY_CFG, JSON.stringify(CFG)); }
+function saveStat(){ sset(KEY_STAT, JSON.stringify(STAT)); }
 
 /* ---------------- date helpers ---------------- */
 function dayStr(d = new Date()){
@@ -282,9 +290,9 @@ function home(){
       </button>
     </div>
     <div class="foot">
-      <span>今日 ${doneToday()}/${CFG.quota} · 已学 ${seen}/${total}</span>
+      <span>今日 ${doneToday()}/${CFG.quota} · 已学 ${seen}/${total} · v2</span>
       <a href="#" id="refresh">刷新</a>
-    </div>`;
+    </div>${STORAGE_OK ? '' : '<div style="color:var(--meh);font-size:12px;margin-top:8px">⚠️ 浏览器禁用了本地存储，进度不会保存（请退出无痕模式）</div>'}`;
 
   $('startVocab').onclick = () => startSession(q, 'vocab');
   $('startErr').onclick = () => startSession(errs.map(e => ({...e, __err:true})), 'error');
@@ -397,7 +405,12 @@ function renderVocab(card){
   };
   $('speak').onclick = (e) => { e.stopPropagation(); speak(card.w); };
   document.querySelectorAll('.grade').forEach(b => {
-    b.onclick = () => { gradeCard(card, b.dataset.r); next(b.dataset.r === 'good'); };
+    b.onclick = (e) => {
+      e.stopPropagation();
+      const r = b.dataset.r;
+      try { gradeCard(card, r); } catch(err) { console.error(err); }
+      next(r === 'good');
+    };
   });
 }
 
@@ -436,7 +449,12 @@ function renderError(card){
     if(cardEl.classList.contains('flipped')) $('grades').style.visibility = 'visible';
   };
   document.querySelectorAll('.grade').forEach(b => {
-    b.onclick = () => { gradeError(card, b.dataset.r === '1'); next(b.dataset.r === '1'); };
+    b.onclick = (e) => {
+      e.stopPropagation();
+      const ok = b.dataset.r === '1';
+      try { gradeError(card, ok); } catch(err) { console.error(err); }
+      next(ok);
+    };
   });
 }
 
@@ -497,8 +515,11 @@ function speak(text){
 
 function toast(msg){
   const t = $('toast'); t.textContent = msg; t.classList.add('show');
-  setTimeout(()=> t.classList.remove('show'), 1600);
+  setTimeout(()=> t.classList.remove('show'), 2600);
 }
+window.addEventListener('error', (e) => {
+  try{ toast('出错了：' + (e.message || '未知')); }catch(_){}
+});
 
 /* ---------------- boot ---------------- */
 async function boot(){
