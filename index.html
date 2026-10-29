@@ -291,9 +291,13 @@ function home(){
       </button>
     </div>
     <div class="foot">
-      <span>今日 ${doneToday()}/${CFG.quota} · 已学 ${seen}/${total} · v3</span>
+      <span>今日 ${doneToday()}/${CFG.quota} · 已学 ${seen}/${total} · v4</span>
       <a href="#" id="refresh">刷新</a>
-    </div>${STORAGE_OK ? '' : '<div style="color:var(--meh);font-size:12px;margin-top:8px">⚠️ 浏览器禁用了本地存储，进度不会保存（请退出无痕模式）</div>'}`;
+    </div>${STORAGE_OK ? '' : `<div style="margin-top:12px;padding:12px 14px;border-radius:14px;
+      background:#3a2a00;color:#ffcf6b;font-size:12px;line-height:1.7">
+      ⚠️ <b>iPhone 关掉了网站存储</b>，背了也会丢。<br>
+      修法：设置 → Safari 浏览器 → 隐私与安全性 → 关闭「阻止所有 Cookie」，然后重新打开本页。
+    </div>`}`;
 
   $('startVocab').onclick = () => startSession(q, 'vocab');
   $('startErr').onclick = () => startSession(errs.map(e => ({...e, __err:true})), 'error');
@@ -316,11 +320,14 @@ function settings(){
       <div class="block"><div class="k">进度</div>
         <div style="font-size:14px;line-height:1.9;color:var(--dim)">
           已学 ${Object.keys(SRS).length} / ${DECK.vocab.length} 个词<br>
-          连续 ${STAT.streak} 天 · 累计复习 ${STAT.total || 0} 次
+          连续 ${STAT.streak} 天 · 累计复习 ${STAT.total || 0} 次<br>
+          本地存储：<span style="color:${STORAGE_OK ? 'var(--good)' : 'var(--bad)'}">${STORAGE_OK ? '可用' : '被禁用（进度会丢）'}</span>
         </div>
       </div>
       <div class="block" style="margin-top:26px">
         <button class="btn" id="export" style="width:100%">导出进度 JSON</button>
+        <button class="btn" id="import" style="width:100%;margin-top:10px">导入进度 JSON</button>
+        <input type="file" id="file" accept="application/json,.json" style="display:none">
         <button class="btn" id="reset" style="width:100%;margin-top:10px;color:var(--bad)">清空本机进度</button>
       </div>
     </div>`;
@@ -333,6 +340,26 @@ function settings(){
       {type:'application/json'});
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob); a.download = `ielts-progress-${dayStr()}.json`; a.click();
+  };
+  $('import').onclick = () => $('file').click();
+  $('file').onchange = (ev) => {
+    const f = ev.target.files && ev.target.files[0];
+    if(!f) return;
+    const rd = new FileReader();
+    rd.onload = () => {
+      try{
+        const d = JSON.parse(rd.result);
+        Object.assign(SRS, d.srs || {});
+        if(d.stat){
+          STAT.streak = Math.max(STAT.streak || 0, d.stat.streak || 0);
+          STAT.total = Math.max(STAT.total || 0, d.stat.total || 0);
+        }
+        saveSRS(); saveStat();
+        toast('已导入 ' + Object.keys(d.srs || {}).length + ' 条进度');
+        settings();
+      }catch(e){ toast('文件格式不对'); }
+    };
+    rd.readAsText(f);
   };
   $('reset').onclick = () => {
     if(confirm('清空本机所有复习进度？不可恢复。')){
