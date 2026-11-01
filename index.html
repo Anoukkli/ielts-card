@@ -7,6 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="雅思复习">
+<link rel="icon" href="data:,">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>雅思复习</title>
@@ -53,7 +54,7 @@
   }
   .btn:active{transform:scale(.98);}
   .btn.primary{background:var(--accent); color:#fff;}
-  .btn small{font-weight:500; opacity:.65; font-size:13px;}
+  .btn small{font-weight:500; opacity:.65; font-size:13px; margin-left:14px; text-align:right; flex:none;}
   .btn:disabled{opacity:.45;}
 
   .foot{margin-top:auto; padding-top:18px; display:flex; justify-content:space-between;
@@ -138,6 +139,8 @@
 </header>
 <main id="app"></main>
 <div class="toast" id="toast"></div>
+
+<script src="writing.js"></script>
 
 <script>
 /* =========================================================
@@ -286,12 +289,14 @@ function home(){
       <button class="btn" id="startErr" ${errs.length? '' : 'disabled'}>
         <span>刷错题</span><small>${errs.length} 道待二刷</small>
       </button>
+      <button class="btn" id="startWrite">
+        <span>写作 45 分钟</span><small>${window.WRITING ? window.WRITING.summaryText() : '语法 · 小作文 · 大作文 · 复盘'}</small>      </button>
       <button class="btn" id="openSettings">
         <span>设置</span><small>每日 ${CFG.quota} 张</small>
       </button>
     </div>
     <div class="foot">
-      <span>今日 ${doneToday()}/${CFG.quota} · 已学 ${seen}/${total} · v4</span>
+      <span>今日 ${doneToday()}/${CFG.quota} · 已学 ${seen}/${total} · v5</span>
       <a href="#" id="refresh">刷新</a>
     </div>${STORAGE_OK ? '' : `<div style="margin-top:12px;padding:12px 14px;border-radius:14px;
       background:#3a2a00;color:#ffcf6b;font-size:12px;line-height:1.7">
@@ -301,9 +306,11 @@ function home(){
 
   $('startVocab').onclick = () => startSession(q, 'vocab');
   $('startErr').onclick = () => startSession(errs.map(e => ({...e, __err:true})), 'error');
+  $('startWrite').onclick = () => window.WRITING && window.WRITING.start();
   $('openSettings').onclick = settings;
   $('refresh').onclick = (e) => { e.preventDefault(); location.reload(); };
   renderStreak();
+  window.__ieltsHome = home;
 }
 
 function settings(){
@@ -595,6 +602,7 @@ async function boot(){
     return;
   }
   home();
+  if(location.hash === '#write' && window.WRITING) window.WRITING.start();
   if('serviceWorker' in navigator){
     navigator.serviceWorker.register('sw.js').catch(()=>{});
   }
