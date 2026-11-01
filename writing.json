@@ -1,99 +1,1679 @@
 {
-  "version": 1,
-  "generated": "2026-11-01",
-  "grammar": [
-    {"id":"g001","p":"冠词","zh":"食品行业在两年中都占据了用水量的最大份额。","hint":"the food industry / account for / the largest share","en":"The food industry accounted for the largest share of water use in both years.","why":"行业名特指时加 the；最高级前必须加 the。","tags":["冠词","最高级"]},
-    {"id":"g002","p":"冠词","zh":"政府应该投资公共交通。","hint":"the government / invest in / public transport","en":"The government should invest in public transport.","why":"特指政府用 the；泛指一类交通方式用零冠词。","tags":["冠词"]},
-    {"id":"g003","p":"冠词","zh":"一项最新调查显示，多数学生睡眠不足。","hint":"a recent survey / the majority of","en":"A recent survey shows that the majority of students do not get enough sleep.","why":"首次提及用 a；the majority of 是固定搭配。","tags":["冠词","主谓一致"]},
-    {"id":"g004","p":"冠词","zh":"环境污染是当今最严峻的挑战之一。","hint":"one of the most serious challenges","en":"Environmental pollution is one of the most serious challenges of our time.","why":"one of the + 最高级 + 复数名词。","tags":["冠词","最高级"]},
-    {"id":"g005","p":"冠词","zh":"在教室里使用手机常被认为是不礼貌的。","hint":"be considered / in the classroom","en":"Using mobile phones in the classroom is often considered impolite.","why":"动名词短语作主语；in the classroom 指特定场所。","tags":["冠词","非谓语"]},
-    {"id":"g006","p":"冠词","zh":"越来越多的人选择在网上购物。","hint":"an increasing number of / shop online","en":"An increasing number of people choose to shop online.","why":"an increasing number of + 复数名词，谓语用复数。","tags":["冠词","主谓一致"]},
-    {"id":"g007","p":"冠词","zh":"他在大学期间主修经济学。","hint":"major in / economics / at university","en":"He majored in economics at university.","why":"学科名前零冠词；at university 是固定搭配。","tags":["冠词","介词"]},
-    {"id":"g008","p":"冠词","zh":"这项政策对低收入家庭影响最大。","hint":"have the greatest impact on","en":"The policy has the greatest impact on low-income families.","why":"最高级前用 the；复数泛指用零冠词。","tags":["冠词","最高级"]},
-
-    {"id":"g009","p":"主谓一致","zh":"每个学生都必须完成一份报告。","hint":"each of the students / be required to","en":"Each of the students is required to complete a report.","why":"each of + 复数名词，谓语用单数。","tags":["主谓一致"]},
-    {"id":"g010","p":"主谓一致","zh":"政府和公司都在采取措施。","hint":"both ... and ... / take measures","en":"Both the government and companies are taking measures.","why":"both ... and ... 连接的主语，谓语用复数。","tags":["主谓一致","时态"]},
-    {"id":"g011","p":"主谓一致","zh":"不是学生，而是老师应该为此负责。","hint":"not ... but ... / be responsible for","en":"Not the students but the teacher is responsible for it.","why":"not ... but ... 遵循就近原则，看 but 后面的主语。","tags":["主谓一致"]},
-    {"id":"g012","p":"主谓一致","zh":"大量塑料垃圾被倒入海洋。","hint":"a large amount of / be dumped into","en":"A large amount of plastic waste is dumped into the ocean.","why":"a large amount of + 不可数名词，谓语用单数。","tags":["主谓一致","被动"]},
-    {"id":"g013","p":"主谓一致","zh":"统计数据表明，犯罪率正在下降。","hint":"statistics show / the crime rate","en":"The statistics show that the crime rate is declining.","why":"statistics 表示数据时作复数，谓语用 show。","tags":["主谓一致","从句"]},
-    {"id":"g014","p":"主谓一致","zh":"我们每个人都能为环保做出贡献。","hint":"each of us / contribute to","en":"Each of us can contribute to environmental protection.","why":"each of us 视为单数，情态动词后用原形。","tags":["主谓一致"]},
-
-    {"id":"g015","p":"时态","zh":"过去十年，城市人口翻了一番。","hint":"over the past decade / double","en":"Over the past decade, the urban population has doubled.","why":"over the past decade 表示持续到现在，用现在完成时。","tags":["时态"]},
-    {"id":"g016","p":"时态","zh":"到 2030 年，一半人口将居住在城市。","hint":"by 2030 / live in cities","en":"By 2030, half of the population will be living in cities.","why":"by + 将来时间点，用将来完成或将来进行时。","tags":["时态"]},
-    {"id":"g017","p":"时态","zh":"我学英语已经五年了。","hint":"for five years","en":"I have been learning English for five years.","why":"for + 时间段且动作仍在持续，用现在完成进行时。","tags":["时态"]},
-    {"id":"g018","p":"时态","zh":"上次考试我没考好，因为准备不足。","hint":"last exam / because of","en":"I did not do well in the last exam because of inadequate preparation.","why":"last exam 是明确的过去时间，用一般过去时。","tags":["时态","介词"]},
-    {"id":"g019","p":"时态","zh":"政府自 2010 年起就在推广电动车。","hint":"since 2010 / promote","en":"The government has been promoting electric vehicles since 2010.","why":"since + 过去时间点，动作延续至今，用现在完成进行时。","tags":["时态"]},
-    {"id":"g020","p":"时态","zh":"如果明天下雨，比赛就取消。","hint":"if / be cancelled","en":"If it rains tomorrow, the match will be cancelled.","why":"主将从现：条件句用一般现在时。","tags":["时态","被动"]},
-    {"id":"g021","p":"时态","zh":"等我到达时，会议已经开始了。","hint":"by the time / already","en":"By the time I arrived, the meeting had already begun.","why":"过去某点之前完成的动作，用过去完成时。","tags":["时态"]},
-    {"id":"g022","p":"时态","zh":"越来越多的人开始意识到这个问题。","hint":"come to realize","en":"More and more people have come to realize the problem.","why":"已经发生并影响现在，用现在完成时。","tags":["时态"]},
-
-    {"id":"g023","p":"被动","zh":"每年有数百万棵树被砍伐。","hint":"millions of trees / cut down","en":"Millions of trees are cut down every year.","why":"被动语态 be + 过去分词，every year 用一般现在时。","tags":["被动"]},
-    {"id":"g024","p":"被动","zh":"这项研究是由一组科学家完成的。","hint":"be conducted by","en":"The study was conducted by a group of scientists.","why":"被动 + by 引出施动者。","tags":["被动"]},
-    {"id":"g025","p":"被动","zh":"应该采取更多措施来减少污染。","hint":"more measures / be taken","en":"More measures should be taken to reduce pollution.","why":"情态动词的被动是 should be done。","tags":["被动"]},
-    {"id":"g026","p":"被动","zh":"据说这座桥建于 19 世纪。","hint":"It is said that / be built","en":"It is said that the bridge was built in the 19th century.","why":"It is said that 句型，后接被动。","tags":["被动","从句"]},
-    {"id":"g027","p":"被动","zh":"这个问题正被广泛讨论。","hint":"be widely discussed","en":"The issue is being widely discussed.","why":"进行时的被动是 is being done。","tags":["被动","时态"]},
-    {"id":"g028","p":"被动","zh":"孩子们应该被鼓励独立思考。","hint":"be encouraged to","en":"Children should be encouraged to think independently.","why":"被动 + 不定式，encourage sb to do 变被动后 to 保留。","tags":["被动","非谓语"]},
-
-    {"id":"g029","p":"比较与倍数","zh":"今年的销量是去年的两倍。","hint":"twice as ... as","en":"This year's sales are twice as high as last year's.","why":"倍数 + as + 形容词 + as 是标准结构。","tags":["比较"]},
-    {"id":"g030","p":"比较与倍数","zh":"城市人口比农村人口多得多。","hint":"far more ... than","en":"The urban population is far larger than the rural population.","why":"far 修饰比较级，表示差距大。","tags":["比较"]},
-    {"id":"g031","p":"比较与倍数","zh":"房价越高，年轻人越难买房。","hint":"the more ... the more","en":"The higher house prices rise, the harder it becomes for young people to buy.","why":"the + 比较级，the + 比较级，表示联动变化。","tags":["比较"]},
-    {"id":"g032","p":"比较与倍数","zh":"与 2000 年相比，贫困率下降了一半。","hint":"compared with / halve","en":"Compared with 2000, the poverty rate has halved.","why":"compared with 作分词状语；halve 表示减半。","tags":["比较","非谓语"]},
-    {"id":"g033","p":"比较与倍数","zh":"这个班的学生人数是那个班的三倍。","hint":"three times as many ... as","en":"There are three times as many students in this class as in that one.","why":"可数名词用 as many as，倍数放在最前面。","tags":["比较"]},
-    {"id":"g034","p":"比较与倍数","zh":"越来越多的人选择步行而不是开车。","hint":"rather than","en":"More and more people choose to walk rather than drive.","why":"rather than 连接两个平行的动词原形。","tags":["比较","非谓语"]},
-    {"id":"g035","p":"比较与倍数","zh":"收入差距正在扩大。","hint":"the income gap / widen","en":"The income gap is widening.","why":"进行时表示正在发生的趋势。","tags":["比较","时态"]},
-    {"id":"g036","p":"比较与倍数","zh":"服务业是经济中增长最快的部分。","hint":"the fastest-growing part of","en":"The service sector is the fastest-growing part of the economy.","why":"复合形容词 fastest-growing 作定语。","tags":["比较"]},
-
-    {"id":"g037","p":"从句","zh":"我认为政府应该禁止在公共场所吸烟。","hint":"I believe that / ban smoking","en":"I believe that the government should ban smoking in public places.","why":"that 引导宾语从句，that 可省略但不影响结构。","tags":["从句"]},
-    {"id":"g038","p":"从句","zh":"这就是为什么许多人选择住在大城市。","hint":"That is why","en":"That is why many people choose to live in big cities.","why":"That is why 后接结果，That is because 后接原因。","tags":["从句"]},
-    {"id":"g039","p":"从句","zh":"虽然他很努力，但还是失败了。","hint":"Although / still","en":"Although he worked hard, he still failed.","why":"although 不能与 but 连用，主句用 still 呼应。","tags":["从句"]},
-    {"id":"g040","p":"从句","zh":"那些不锻炼的人更容易生病。","hint":"those who / be likely to","en":"Those who do not exercise are more likely to fall ill.","why":"those who 引导定语从句，谓语用复数。","tags":["从句","主谓一致"]},
-    {"id":"g041","p":"从句","zh":"原因在于人们缺乏环保意识。","hint":"The reason is that","en":"The reason is that people lack environmental awareness.","why":"The reason is that，不用 because。","tags":["从句"]},
-    {"id":"g042","p":"从句","zh":"无论发生什么，我们都应该保持冷静。","hint":"Whatever happens","en":"Whatever happens, we should stay calm.","why":"whatever 引导让步状语从句，本身作主语。","tags":["从句"]},
-    {"id":"g043","p":"从句","zh":"这项研究证明，睡眠不足会影响记忆力。","hint":"The study shows that / lack of sleep","en":"The study shows that lack of sleep affects memory.","why":"宾语从句；主语是 lack of sleep，谓语用单数。","tags":["从句","主谓一致"]},
-    {"id":"g044","p":"从句","zh":"只有政府和企业合作，问题才能解决。","hint":"Only when / can","en":"Only when the government and businesses cooperate can the problem be solved.","why":"Only + 状语从句置于句首，主句部分倒装。","tags":["从句","倒装"]},
-
-    {"id":"g045","p":"非谓语","zh":"考虑到成本，这个方案不可行。","hint":"Given / feasible","en":"Given the cost, this plan is not feasible.","why":"Given 是过去分词状语，表示考虑到。","tags":["非谓语"]},
-    {"id":"g046","p":"非谓语","zh":"为了解决交通拥堵，政府修建了地铁。","hint":"To solve / traffic congestion","en":"To solve traffic congestion, the government built a subway.","why":"不定式置于句首表示目的。","tags":["非谓语"]},
-    {"id":"g047","p":"非谓语","zh":"与城市相比，农村地区的机会更少。","hint":"Compared with","en":"Compared with cities, rural areas offer fewer opportunities.","why":"过去分词状语，逻辑主语是 rural areas。","tags":["非谓语","比较"]},
-    {"id":"g048","p":"非谓语","zh":"看到这个结果，我很惊讶。","hint":"Seeing / be surprised","en":"Seeing the result, I was surprised.","why":"现在分词作状语，逻辑主语须与主句一致。","tags":["非谓语"]},
-    {"id":"g049","p":"非谓语","zh":"这个问题值得讨论。","hint":"be worth","en":"The issue is worth discussing.","why":"be worth doing，worth 后接动名词。","tags":["非谓语"]},
-    {"id":"g050","p":"非谓语","zh":"他建议推迟会议。","hint":"suggest / postpone","en":"He suggested postponing the meeting.","why":"suggest doing sth，不接不定式。","tags":["非谓语"]},
-    {"id":"g051","p":"非谓语","zh":"被邀请参加典礼的人不多。","hint":"be invited to","en":"Few people were invited to the ceremony.","why":"被动 + few 表示否定数量。","tags":["非谓语","被动"]},
-    {"id":"g052","p":"非谓语","zh":"我们需要更多时间来完成任务。","hint":"time to","en":"We need more time to complete the task.","why":"不定式作后置定语修饰 time。","tags":["非谓语"]},
-
-    {"id":"g053","p":"搭配与介词","zh":"这项政策对经济产生了深远影响。","hint":"have a profound impact on","en":"The policy has had a profound impact on the economy.","why":"impact on 是固定搭配；现在完成时强调影响延续至今。","tags":["搭配","时态"]},
-    {"id":"g054","p":"搭配与介词","zh":"他因作弊而受到处罚。","hint":"be punished for","en":"He was punished for cheating.","why":"punish sb for doing sth，介词后接动名词。","tags":["搭配","被动"]},
-    {"id":"g055","p":"搭配与介词","zh":"我们应该重视心理健康。","hint":"attach importance to","en":"We should attach importance to mental health.","why":"attach importance to 中的 to 是介词。","tags":["搭配"]},
-    {"id":"g056","p":"搭配与介词","zh":"许多人依赖社交媒体获取新闻。","hint":"rely on / for","en":"Many people rely on social media for news.","why":"rely on sb for sth 两个介词各司其职。","tags":["搭配"]},
-    {"id":"g057","p":"搭配与介词","zh":"这个问题的根源在于教育资源分配不均。","hint":"lie in","en":"The root of the problem lies in the unequal distribution of educational resources.","why":"lie in 表示在于，后接名词性成分。","tags":["搭配"]},
-    {"id":"g058","p":"搭配与介词","zh":"人们越来越关注食品安全。","hint":"be concerned about","en":"People are increasingly concerned about food safety.","why":"be concerned about 表示关心、担忧。","tags":["搭配"]},
-    {"id":"g059","p":"搭配与介词","zh":"这次疫情对旅游业造成了巨大损失。","hint":"cause great damage to","en":"The pandemic caused great damage to the tourism industry.","why":"cause damage to 是固定搭配。","tags":["搭配"]},
-    {"id":"g060","p":"搭配与介词","zh":"他没有意识到问题的严重性。","hint":"be aware of","en":"He was not aware of the seriousness of the problem.","why":"be aware of 后接名词；否定用 not aware of。","tags":["搭配"]}
-  ],
-  "task1": [
-    {"id":"t1-01","kind":"总述三句式","title":"饼图 · 悉尼用水","zh":"1997 与 2007 年：食品行业 48% → 41%，仍居首位；建筑行业 5% → 2%，始终最低；服务业 13% → 25%，超过家庭用水（19% → 21%）成为第二。","slots":["句1 总述最大与最小（不写数字）","句2 最明显的变化：谁超过谁","句3 收尾：到期末的格局"],"ref":"Overall, the food industry remained the dominant water consumer in both years, whereas the building industry consistently accounted for the smallest share. Notably, the service industry experienced a significant increase, overtaking household use to become the second largest sector by 2007.","why":"总述段不写具体数字，只回答「谁最大、谁最小、谁变化最明显」，三句封顶。你原稿按年份各写一句，是流水账。"},
-    {"id":"t1-02","kind":"主导与上升","title":"折线图 · 互联网使用率","zh":"2000–2020 年：互联网使用率 20% → 50% → 85%；同期固定电话拥有率 60% → 25%。","slots":["句1 总述两条相反趋势","句2 上升线：起点 + 变化动词 + 终点","句3 下降线：用了多少年、降了多少"],"ref":"Overall, internet use rose steadily throughout the period, while fixed-line ownership followed the opposite trend. In 2000, only one in five people used the internet, but this figure more than quadrupled to 85% by 2020. Over the same period, fixed-line ownership fell by more than half, from 60% to 25%.","why":"总述先给关系（一升一降），再分线写。一句里必须同时有起点、变化、终点，否则读者不知道幅度。"},
-    {"id":"t1-03","kind":"峰值与低谷","title":"柱状图 · 月降雨量","zh":"1 月 80mm，7 月峰值 220mm，12 月低谷 40mm。","slots":["句1 峰值与低谷对照","句2 中间值用倍数或分数定位"],"ref":"Rainfall peaked at 220 mm in July, whereas December recorded the lowest figure at just 40 mm. January saw a moderate 80 mm, roughly one-third of the July peak.","why":"peak at / bottom out at / record the lowest 是三个固定说法；中间值用分数做锚点，比孤立报数有效。"},
-    {"id":"t1-04","kind":"对比与排名","title":"表格 · 人均阅读量","zh":"2020 年人均读书：日本 12 本、德国 11 本、中国 8 本、巴西 4 本。","slots":["句1 头名与紧随者","句2 末位与差距"],"ref":"Japan topped the table with an average of 12 books per person, closely followed by Germany at 11. China recorded 8, while Brazil lagged behind with just 4 — a third of Japan's figure.","why":"排名用 top / be followed by / lag behind；结尾用一个比例把差距说清楚，别只报四个数字。"},
-    {"id":"t1-05","kind":"流程与被动","title":"流程图 · 巧克力制作","zh":"可可豆采摘 → 发酵 → 烘干 → 烘焙 → 研磨 → 与糖混合 → 入模成型。","slots":["句1 前两步（被动）","句2 中段三步","句3 最后成型"],"ref":"First, cocoa pods are harvested by hand and the beans are left to ferment for up to a week. They are then dried in the sun, roasted and ground into a paste. Finally, the paste is mixed with sugar and poured into moulds, where it sets into bars.","why":"流程图全程被动；用 first / then / finally 分段，不要 and then and then 串联。"},
-    {"id":"t1-06","kind":"地图与方位","title":"地图 · 镇中心变化","zh":"1990 年：北侧农田、东侧小店、南侧火车站。现在：农田变停车场，小店变超市，火车站扩建。","slots":["句1 最显著的变化（方位 + 变化动词）","句2 另外两处变化"],"ref":"The most striking change is in the north, where farmland has been replaced by a car park. The small shops in the east have given way to a supermarket, and the railway station in the south has been extended.","why":"地图题先给方位再给变化；变化动词用 be replaced by / give way to / be extended / be converted into。"},
-    {"id":"t1-07","kind":"比例与构成","title":"静态饼图 · 家庭开支","zh":"住房 35%、食品 25%、交通 15%、娱乐 12%、其他 13%。","slots":["句1 最大项与第二项","句2 其余项用 respectively 配对"],"ref":"Housing accounted for the largest proportion of household spending at 35%, followed by food at a quarter. Transport and leisure made up 15% and 12% respectively, while the remaining 13% went on other items.","why":"比例用 account for / make up / constitute；两个数据对应两个主体时用 respectively，顺序不能乱。"},
-    {"id":"t1-08","kind":"双图组合","title":"双图 · 汽车与公交","zh":"2000–2020 年汽车保有量 100 万 → 300 万辆；同期公交乘客 20 亿 → 15 亿。","slots":["句1 两条趋势的关系","句2 各自的数据变化"],"ref":"While car ownership tripled from 1 million to 3 million between 2000 and 2020, public transport ridership fell from 2 billion to 1.5 billion. The two trends moved in opposite directions throughout the period.","why":"双图第一句就要给关系（while 对比），否则读者要自己拼；第二句再补总量判断。"},
-    {"id":"t1-09","kind":"时间跨度","title":"折线图 · 识字率","zh":"1980–2010 年识字率从 60% 稳步上升到 95%。","slots":["句1 时间段 + 起点终点","句2 用百分点收尾"],"ref":"Between 1980 and 2010, the literacy rate climbed steadily from 60% to 95%, an increase of 35 percentage points.","why":"between ... and ...；climb steadily；涨 35 个点要说 percentage points，不是 35 percent。"},
-    {"id":"t1-10","kind":"约数与近似","title":"柱状图 · 政策支持率","zh":"2019 年约三分之二受访者支持；男性略高于一半，女性接近 70%。","slots":["句1 总体比例（约数）","句2 性别对比（两个约数）"],"ref":"In 2019, roughly two-thirds of respondents supported the policy, with just over half of men in favour compared with nearly 70% of women.","why":"roughly / just over / nearly 让约数不假；对比用 compared with，不要用 and。"},
-    {"id":"t1-11","kind":"分组比较","title":"柱状图 · 社交媒体时长","zh":"18–30 岁每天 3 小时，31–50 岁 2 小时，50 岁以上 1 小时。","slots":["句1 最高组 + 倍数压缩另两组"],"ref":"Young adults aged 18–30 spent three hours a day on social media, twice as long as the 31–50 group and three times the figure for those over 50.","why":"三组数据不要三句并列；用倍数把后两组挂到第一组上，句子立刻紧凑。"},
-    {"id":"t1-12","kind":"幅度与转折","title":"折线图 · 出口额","zh":"2008 年出口暴跌 20%，2009 年反弹 15%，之后趋于平稳。","slots":["句1 三个动作（跌、弹、平）"],"ref":"Exports plunged by 20% in 2008, rebounded by 15% the following year, and then levelled off.","why":"plunge / rebound / level off 三个动词定调；幅度用 by + 数字，不用 to。"}
-  ],
-  "task2": [
-    {"id":"t2-01","type":"agree","typeName":"同意与否","prompt":"Some people believe that unpaid community service should be a compulsory part of high school programmes. To what extent do you agree or disagree?","zh":"有人认为高中生必须参加无偿社区服务。你同意到什么程度？","keywords":["compulsory","unpaid","high school"],"stance":"同意，但有保留：应该做，前提是学校提供支持和评估，而不是硬凑时长。","chain":[{"claim":"Compulsory service exposes teenagers to people and problems outside their own bubble.","reason":"Most students spend their days among peers of the same age and background.","example":"Working in a care home or a food bank forces them to talk to the elderly and the poor.","link":"This kind of exposure is hard to replicate in a classroom."},{"claim":"However, compulsion only works if schools provide structure and support.","reason":"Unsupervised placements easily turn into box-ticking exercises.","example":"A student who spends 40 hours stacking shelves learns little beyond following orders.","link":"Schools should therefore partner with vetted organisations and require reflection."}],"traps":["题目问的是 compulsory，必须回应「强制」这一层，不能只写社区服务的好处。","不要全篇举例，每个例子后面要有一句因果。","To what extent 允许有保留，不要写成绝对支持。"],"phrases":["It is often argued that ...","The main reason is that ...","A further consideration is ...","Admittedly, ... However, ..."]},
-    {"id":"t2-02","type":"discuss","typeName":"双边讨论","prompt":"Some people think that universities should provide graduates with the knowledge and skills needed in the workplace. Others think the true function of a university is to give access to knowledge for its own sake. Discuss both views and give your own opinion.","zh":"大学该教职业技能，还是该为知识而知识？讨论双方并给出你的观点。","keywords":["workplace skills","knowledge for its own sake","both"],"stance":"两者不对立：职业能力是底线，通识教育决定上限。","chain":[{"claim":"Workplace-oriented training is essential because most graduates need to earn a living.","reason":"Employers expect basic competence from day one.","example":"A computer science graduate who cannot write code will struggle however widely read they are.","link":"Universities cannot ignore this practical demand."},{"claim":"Yet a university is not a training centre; its wider function is to teach people how to think.","reason":"Specific skills date quickly, whereas judgement does not.","example":"A history graduate may forget the dates but keeps the ability to weigh evidence.","link":"This is why academic breadth should remain part of the curriculum."}],"traps":["discuss both 必须两边都写、篇幅相当，只写一边直接 5 分。","结尾必须给自己的观点，不能只总结双方。","不要把 both views 写成 agree/disagree 的变体。"],"phrases":["Those who support ... argue that ...","On the other hand, ...","In my view, the two are not mutually exclusive.","A balanced approach would ..."]},
-    {"id":"t2-03","type":"adv","typeName":"利弊比较","prompt":"In some countries, more and more people choose to live by themselves. Do the advantages outweigh the disadvantages?","zh":"越来越多人选择独居。利大于弊吗？","keywords":["live alone","outweigh","age groups"],"stance":"对年轻人利大于弊，对老年人相反——按人群分，别一概而论。","chain":[{"claim":"For young adults, living alone builds independence and self-management.","reason":"They must handle bills, cooking and schedules without parental backup.","example":"A 22-year-old renting a flat alone learns to budget far faster than a peer living at home.","link":"These habits pay off for decades."},{"claim":"For older people, however, solitude can turn into isolation.","reason":"Retirement removes the daily social contact that work provided.","example":"An elderly widower living alone may go days without speaking to anyone.","link":"The same housing choice carries very different risks at different ages."}],"traps":["outweigh 要求明确比较，不能两边各写一段就收尾。","要给出判断标准（按年龄、按阶段），否则结论站不住。","不要把独居和孤独直接划等号。"],"phrases":["The benefits are most obvious among ...","By contrast, ...","On balance, the advantages outweigh ...","This is particularly true when ..."]},
-    {"id":"t2-04","type":"problem","typeName":"原因与措施","prompt":"In many cities, traffic congestion has become a serious problem. What are the causes of this problem and what measures could be taken to solve it?","zh":"城市交通拥堵的原因与对策。","keywords":["causes","measures","congestion"],"stance":"根因是私家车仍是最便宜的选项；对策要让公共交通真正有竞争力。","chain":[{"claim":"The root cause is that private cars remain the cheapest and most convenient option.","reason":"Public transport is often slow, crowded or unavailable outside the centre.","example":"A commuter who needs 70 minutes by bus but 25 by car will drive.","link":"Congestion is a rational response to bad alternatives."},{"claim":"The most effective measure is to make public transport genuinely competitive.","reason":"People change behaviour when the alternative is faster, not when they are lectured.","example":"Cities that built dedicated bus lanes cut journey times and saw ridership rise.","link":"Investment must come before restrictions."}],"traps":["原因和措施要一一对应，原因说车多，措施就不能只写「教育公众」。","不要把原因写成「人们乱开车」，那是现象不是原因。","措施要有执行主体（政府 / 企业 / 学校）。"],"phrases":["The primary cause is ...","This can be addressed by ...","A further measure would be to ...","Unless ... , the problem will persist."]},
-    {"id":"t2-05","type":"two","typeName":"两问式","prompt":"In some countries, people spend large amounts of money on weddings. Why is this the case? Is it a positive or negative development?","zh":"为什么人们花大钱办婚礼？这是好事还是坏事？","keywords":["why","positive or negative"],"stance":"原因是面子与比较；总体是负面发展。","chain":[{"claim":"The main reason is that weddings have become a public statement of status.","reason":"Social media turns a private ceremony into a performance judged by hundreds.","example":"Couples compare venues and guest lists with those of their friends.","link":"Spending is driven by comparison, not by the couple's actual needs."},{"claim":"Overall, this is a negative development.","reason":"The money often comes from savings or loans that could fund housing.","example":"A family may spend a year's income on one day and then struggle with rent.","link":"The pressure is financial and emotional at once."}],"traps":["两问都要答，第二问必须明确 positive 或 negative，不能和稀泥。","第一问要挖动机（面子、比较、家庭期待），不能只说「因为爱」。","不要把两问写成两篇小作文，要有连接。"],"phrases":["This trend can be explained by ...","In my view, it is largely a negative development.","The underlying driver is ...","This is not to say that ..."]},
-    {"id":"t2-06","type":"agree","typeName":"同意与否","prompt":"Some people think governments should spend more money on public transport than on roads. To what extent do you agree or disagree?","zh":"政府该把更多钱花在公共交通而不是道路上。你同意吗？","keywords":["public transport","roads","more than"],"stance":"基本同意，但取决于城市密度。","chain":[{"claim":"In dense cities, public transport moves far more people per pound spent.","reason":"A metro line carries the equivalent of several motorway lanes.","example":"London's congestion charge reduced traffic while bus patronage rose.","link":"The efficiency argument is strongest where land is scarce."},{"claim":"In sparsely populated areas, roads remain the only realistic option.","reason":"Buses cannot run profitably where demand is thin.","example":"Rural patients still need roads to reach hospitals.","link":"Spending should therefore follow density, not dogma."}],"traps":["必须回应比较级 more ... than roads，不能只夸公共交通。","不要只写环保，题目问的是花钱优先级。","有保留的同意要写清楚「在什么条件下」。"],"phrases":["The strongest case for ... is in dense cities.","This is not to say that ...","Spending should follow density, not dogma."]},
-    {"id":"t2-07","type":"discuss","typeName":"双边讨论","prompt":"Some people think that technology makes life more complex, while others believe it simplifies life. Discuss both views and give your own opinion.","zh":"科技让生活更复杂，还是更简单？","keywords":["complex","simplify","both views"],"stance":"两边都成立，但净效果是简化。","chain":[{"claim":"Technology adds complexity because every convenience brings a new system to maintain.","reason":"Accounts, updates and compatibility issues consume time.","example":"A single household may juggle five subscriptions and three chargers.","link":"The benefits are real, but so is the cognitive load."},{"claim":"Yet the same tools remove far more effort than they add.","reason":"Tasks that once took hours now take minutes.","example":"Online banking replaced a half-day queue with a two-minute transfer.","link":"On balance, the simplification dominates."}],"traps":["两个观点都要有具体例子，不能一边空转。","自己的观点要明确，不要用「取决于」收尾。","别写成科技产品清单。"],"phrases":["Those who criticise ... point to ...","Supporters, by contrast, emphasise ...","On balance, I side with ...","The key distinction is between ..."]},
-    {"id":"t2-08","type":"adv","typeName":"利弊比较","prompt":"More and more students are choosing to study online instead of attending classes in person. Do the advantages outweigh the disadvantages?","zh":"越来越多学生选择线上而非线下上课。利大于弊吗？","keywords":["online study","in person","outweigh"],"stance":"有条件地利大于弊：结构化的线上课可以，纯放养不行。","chain":[{"claim":"Online study widens access.","reason":"Students can learn from anywhere, including areas with no specialist teachers.","example":"A student in a small town can take a course taught by a professor abroad.","link":"This is a genuine gain in equality of opportunity."},{"claim":"However, it weakens the discipline and feedback that classrooms provide.","reason":"Without fixed schedules and face-to-face contact, many students drift.","example":"Completion rates for unsupervised online courses are notoriously low.","link":"The format works best when it is structured, not when it simply replaces a lecture."}],"traps":["必须比较线上与线下，不能只写线上优缺点。","outweigh 要有明确结论。","不要把「方便」当唯一论据，要写清代价。"],"phrases":["The most obvious advantage is ...","This is not without costs, however.","Whether this is a net gain depends on ...","Provided that ..., the benefits are considerable."]},
-    {"id":"t2-09","type":"problem","typeName":"原因与措施","prompt":"Plastic waste has become a major environmental problem. What are the causes of this problem and what can be done about it?","zh":"塑料垃圾问题的原因与对策。","keywords":["causes","solutions","plastic"],"stance":"根因是价格信号倒挂；对策是生产者责任延伸。","chain":[{"claim":"The core cause is that plastic is cheap to produce and expensive to dispose of properly.","reason":"Manufacturers pay for the product, not for its afterlife.","example":"A bottle costs cents to make and centuries to break down.","link":"The price signal is therefore inverted."},{"claim":"Extended producer responsibility shifts the cost back to the producer.","reason":"If companies pay for collection, they design for recyclability.","example":"Deposit-return schemes in Norway recover over 90% of bottles.","link":"Regulation, not consumer guilt, drives the change."}],"traps":["别把原因写成「人们乱扔」，那是行为不是原因。","措施要写执行主体和机制，不要只写「提高意识」。","原因与措施要对应。"],"phrases":["The problem stems from ...","A second factor is ...","The most practical solution is ...","Without such measures, ..."]},
-    {"id":"t2-10","type":"two","typeName":"两问式","prompt":"More and more people are keeping pets. Why is this happening? Is it a positive or negative development?","zh":"为什么越来越多人养宠物？这是好事还是坏事？","keywords":["why","positive or negative"],"stance":"原因是孤独；总体正面，前提是负责任地养。","chain":[{"claim":"People keep pets because modern life is lonelier than it looks.","reason":"Urbanisation separates people from extended families.","example":"A single professional in a small flat may talk to a dog more than to colleagues.","link":"Pets fill a gap that institutions cannot."},{"claim":"On balance, this is positive, provided ownership is responsible.","reason":"Pets improve mental health and daily routine.","example":"Walking a dog forces exercise and incidental social contact.","link":"The harm comes from neglect, not from the bond itself."}],"traps":["第二问要明确判断，不要通篇写宠物可爱。","原因要写社会结构（独居、城市化），不要只写「喜欢」。","正面结论要加前提，否则经不起反驳。"],"phrases":["This trend can be explained by ...","On balance, I regard it as ...","Provided that ..., the benefits are considerable."]}
-  ]
+ "version": 2,
+ "generated": "2026-11-01",
+ "grammar": [
+  {
+   "id": "g001",
+   "p": "冠词",
+   "zh": "食品行业在两年中都占据了用水量的最大份额。",
+   "hint": "the food industry / account for / the largest share",
+   "en": "The food industry accounted for the largest share of water use in both years.",
+   "why": "行业名特指时加 the；最高级前必须加 the。",
+   "tags": [
+    "冠词",
+    "最高级"
+   ]
+  },
+  {
+   "id": "g002",
+   "p": "冠词",
+   "zh": "政府应该投资公共交通。",
+   "hint": "the government / invest in / public transport",
+   "en": "The government should invest in public transport.",
+   "why": "特指政府用 the；泛指一类交通方式用零冠词。",
+   "tags": [
+    "冠词"
+   ]
+  },
+  {
+   "id": "g003",
+   "p": "冠词",
+   "zh": "一项最新调查显示，多数学生睡眠不足。",
+   "hint": "a recent survey / the majority of",
+   "en": "A recent survey shows that the majority of students do not get enough sleep.",
+   "why": "首次提及用 a；the majority of 是固定搭配。",
+   "tags": [
+    "冠词",
+    "主谓一致"
+   ]
+  },
+  {
+   "id": "g004",
+   "p": "冠词",
+   "zh": "环境污染是当今最严峻的挑战之一。",
+   "hint": "one of the most serious challenges",
+   "en": "Environmental pollution is one of the most serious challenges of our time.",
+   "why": "one of the + 最高级 + 复数名词。",
+   "tags": [
+    "冠词",
+    "最高级"
+   ]
+  },
+  {
+   "id": "g005",
+   "p": "冠词",
+   "zh": "在教室里使用手机常被认为是不礼貌的。",
+   "hint": "be considered / in the classroom",
+   "en": "Using mobile phones in the classroom is often considered impolite.",
+   "why": "动名词短语作主语；in the classroom 指特定场所。",
+   "tags": [
+    "冠词",
+    "非谓语"
+   ]
+  },
+  {
+   "id": "g006",
+   "p": "冠词",
+   "zh": "越来越多的人选择在网上购物。",
+   "hint": "an increasing number of / shop online",
+   "en": "An increasing number of people choose to shop online.",
+   "why": "an increasing number of + 复数名词，谓语用复数。",
+   "tags": [
+    "冠词",
+    "主谓一致"
+   ]
+  },
+  {
+   "id": "g007",
+   "p": "冠词",
+   "zh": "他在大学期间主修经济学。",
+   "hint": "major in / economics / at university",
+   "en": "He majored in economics at university.",
+   "why": "学科名前零冠词；at university 是固定搭配。",
+   "tags": [
+    "冠词",
+    "介词"
+   ]
+  },
+  {
+   "id": "g008",
+   "p": "冠词",
+   "zh": "这项政策对低收入家庭影响最大。",
+   "hint": "have the greatest impact on",
+   "en": "The policy has the greatest impact on low-income families.",
+   "why": "最高级前用 the；复数泛指用零冠词。",
+   "tags": [
+    "冠词",
+    "最高级"
+   ]
+  },
+  {
+   "id": "g009",
+   "p": "主谓一致",
+   "zh": "每个学生都必须完成一份报告。",
+   "hint": "each of the students / be required to",
+   "en": "Each of the students is required to complete a report.",
+   "why": "each of + 复数名词，谓语用单数。",
+   "tags": [
+    "主谓一致"
+   ]
+  },
+  {
+   "id": "g010",
+   "p": "主谓一致",
+   "zh": "政府和公司都在采取措施。",
+   "hint": "both ... and ... / take measures",
+   "en": "Both the government and companies are taking measures.",
+   "why": "both ... and ... 连接的主语，谓语用复数。",
+   "tags": [
+    "主谓一致",
+    "时态"
+   ]
+  },
+  {
+   "id": "g011",
+   "p": "主谓一致",
+   "zh": "不是学生，而是老师应该为此负责。",
+   "hint": "not ... but ... / be responsible for",
+   "en": "Not the students but the teacher is responsible for it.",
+   "why": "not ... but ... 遵循就近原则，看 but 后面的主语。",
+   "tags": [
+    "主谓一致"
+   ]
+  },
+  {
+   "id": "g012",
+   "p": "主谓一致",
+   "zh": "大量塑料垃圾被倒入海洋。",
+   "hint": "a large amount of / be dumped into",
+   "en": "A large amount of plastic waste is dumped into the ocean.",
+   "why": "a large amount of + 不可数名词，谓语用单数。",
+   "tags": [
+    "主谓一致",
+    "被动"
+   ]
+  },
+  {
+   "id": "g013",
+   "p": "主谓一致",
+   "zh": "统计数据表明，犯罪率正在下降。",
+   "hint": "statistics show / the crime rate",
+   "en": "The statistics show that the crime rate is declining.",
+   "why": "statistics 表示数据时作复数，谓语用 show。",
+   "tags": [
+    "主谓一致",
+    "从句"
+   ]
+  },
+  {
+   "id": "g014",
+   "p": "主谓一致",
+   "zh": "我们每个人都能为环保做出贡献。",
+   "hint": "each of us / contribute to",
+   "en": "Each of us can contribute to environmental protection.",
+   "why": "each of us 视为单数，情态动词后用原形。",
+   "tags": [
+    "主谓一致"
+   ]
+  },
+  {
+   "id": "g015",
+   "p": "时态",
+   "zh": "过去十年，城市人口翻了一番。",
+   "hint": "over the past decade / double",
+   "en": "Over the past decade, the urban population has doubled.",
+   "why": "over the past decade 表示持续到现在，用现在完成时。",
+   "tags": [
+    "时态"
+   ]
+  },
+  {
+   "id": "g016",
+   "p": "时态",
+   "zh": "到 2030 年，一半人口将居住在城市。",
+   "hint": "by 2030 / live in cities",
+   "en": "By 2030, half of the population will be living in cities.",
+   "why": "by + 将来时间点，用将来完成或将来进行时。",
+   "tags": [
+    "时态"
+   ]
+  },
+  {
+   "id": "g017",
+   "p": "时态",
+   "zh": "我学英语已经五年了。",
+   "hint": "for five years",
+   "en": "I have been learning English for five years.",
+   "why": "for + 时间段且动作仍在持续，用现在完成进行时。",
+   "tags": [
+    "时态"
+   ]
+  },
+  {
+   "id": "g018",
+   "p": "时态",
+   "zh": "上次考试我没考好，因为准备不足。",
+   "hint": "last exam / because of",
+   "en": "I did not do well in the last exam because of inadequate preparation.",
+   "why": "last exam 是明确的过去时间，用一般过去时。",
+   "tags": [
+    "时态",
+    "介词"
+   ]
+  },
+  {
+   "id": "g019",
+   "p": "时态",
+   "zh": "政府自 2010 年起就在推广电动车。",
+   "hint": "since 2010 / promote",
+   "en": "The government has been promoting electric vehicles since 2010.",
+   "why": "since + 过去时间点，动作延续至今，用现在完成进行时。",
+   "tags": [
+    "时态"
+   ]
+  },
+  {
+   "id": "g020",
+   "p": "时态",
+   "zh": "如果明天下雨，比赛就取消。",
+   "hint": "if / be cancelled",
+   "en": "If it rains tomorrow, the match will be cancelled.",
+   "why": "主将从现：条件句用一般现在时。",
+   "tags": [
+    "时态",
+    "被动"
+   ]
+  },
+  {
+   "id": "g021",
+   "p": "时态",
+   "zh": "等我到达时，会议已经开始了。",
+   "hint": "by the time / already",
+   "en": "By the time I arrived, the meeting had already begun.",
+   "why": "过去某点之前完成的动作，用过去完成时。",
+   "tags": [
+    "时态"
+   ]
+  },
+  {
+   "id": "g022",
+   "p": "时态",
+   "zh": "越来越多的人开始意识到这个问题。",
+   "hint": "come to realize",
+   "en": "More and more people have come to realize the problem.",
+   "why": "已经发生并影响现在，用现在完成时。",
+   "tags": [
+    "时态"
+   ]
+  },
+  {
+   "id": "g023",
+   "p": "被动",
+   "zh": "每年有数百万棵树被砍伐。",
+   "hint": "millions of trees / cut down",
+   "en": "Millions of trees are cut down every year.",
+   "why": "被动语态 be + 过去分词，every year 用一般现在时。",
+   "tags": [
+    "被动"
+   ]
+  },
+  {
+   "id": "g024",
+   "p": "被动",
+   "zh": "这项研究是由一组科学家完成的。",
+   "hint": "be conducted by",
+   "en": "The study was conducted by a group of scientists.",
+   "why": "被动 + by 引出施动者。",
+   "tags": [
+    "被动"
+   ]
+  },
+  {
+   "id": "g025",
+   "p": "被动",
+   "zh": "应该采取更多措施来减少污染。",
+   "hint": "more measures / be taken",
+   "en": "More measures should be taken to reduce pollution.",
+   "why": "情态动词的被动是 should be done。",
+   "tags": [
+    "被动"
+   ]
+  },
+  {
+   "id": "g026",
+   "p": "被动",
+   "zh": "据说这座桥建于 19 世纪。",
+   "hint": "It is said that / be built",
+   "en": "It is said that the bridge was built in the 19th century.",
+   "why": "It is said that 句型，后接被动。",
+   "tags": [
+    "被动",
+    "从句"
+   ]
+  },
+  {
+   "id": "g027",
+   "p": "被动",
+   "zh": "这个问题正被广泛讨论。",
+   "hint": "be widely discussed",
+   "en": "The issue is being widely discussed.",
+   "why": "进行时的被动是 is being done。",
+   "tags": [
+    "被动",
+    "时态"
+   ]
+  },
+  {
+   "id": "g028",
+   "p": "被动",
+   "zh": "孩子们应该被鼓励独立思考。",
+   "hint": "be encouraged to",
+   "en": "Children should be encouraged to think independently.",
+   "why": "被动 + 不定式，encourage sb to do 变被动后 to 保留。",
+   "tags": [
+    "被动",
+    "非谓语"
+   ]
+  },
+  {
+   "id": "g029",
+   "p": "比较与倍数",
+   "zh": "今年的销量是去年的两倍。",
+   "hint": "twice as ... as",
+   "en": "This year's sales are twice as high as last year's.",
+   "why": "倍数 + as + 形容词 + as 是标准结构。",
+   "tags": [
+    "比较"
+   ]
+  },
+  {
+   "id": "g030",
+   "p": "比较与倍数",
+   "zh": "城市人口比农村人口多得多。",
+   "hint": "far more ... than",
+   "en": "The urban population is far larger than the rural population.",
+   "why": "far 修饰比较级，表示差距大。",
+   "tags": [
+    "比较"
+   ]
+  },
+  {
+   "id": "g031",
+   "p": "比较与倍数",
+   "zh": "房价越高，年轻人越难买房。",
+   "hint": "the more ... the more",
+   "en": "The higher house prices rise, the harder it becomes for young people to buy.",
+   "why": "the + 比较级，the + 比较级，表示联动变化。",
+   "tags": [
+    "比较"
+   ]
+  },
+  {
+   "id": "g032",
+   "p": "比较与倍数",
+   "zh": "与 2000 年相比，贫困率下降了一半。",
+   "hint": "compared with / halve",
+   "en": "Compared with 2000, the poverty rate has halved.",
+   "why": "compared with 作分词状语；halve 表示减半。",
+   "tags": [
+    "比较",
+    "非谓语"
+   ]
+  },
+  {
+   "id": "g033",
+   "p": "比较与倍数",
+   "zh": "这个班的学生人数是那个班的三倍。",
+   "hint": "three times as many ... as",
+   "en": "There are three times as many students in this class as in that one.",
+   "why": "可数名词用 as many as，倍数放在最前面。",
+   "tags": [
+    "比较"
+   ]
+  },
+  {
+   "id": "g034",
+   "p": "比较与倍数",
+   "zh": "越来越多的人选择步行而不是开车。",
+   "hint": "rather than",
+   "en": "More and more people choose to walk rather than drive.",
+   "why": "rather than 连接两个平行的动词原形。",
+   "tags": [
+    "比较",
+    "非谓语"
+   ]
+  },
+  {
+   "id": "g035",
+   "p": "比较与倍数",
+   "zh": "收入差距正在扩大。",
+   "hint": "the income gap / widen",
+   "en": "The income gap is widening.",
+   "why": "进行时表示正在发生的趋势。",
+   "tags": [
+    "比较",
+    "时态"
+   ]
+  },
+  {
+   "id": "g036",
+   "p": "比较与倍数",
+   "zh": "服务业是经济中增长最快的部分。",
+   "hint": "the fastest-growing part of",
+   "en": "The service sector is the fastest-growing part of the economy.",
+   "why": "复合形容词 fastest-growing 作定语。",
+   "tags": [
+    "比较"
+   ]
+  },
+  {
+   "id": "g037",
+   "p": "从句",
+   "zh": "我认为政府应该禁止在公共场所吸烟。",
+   "hint": "I believe that / ban smoking",
+   "en": "I believe that the government should ban smoking in public places.",
+   "why": "that 引导宾语从句，that 可省略但不影响结构。",
+   "tags": [
+    "从句"
+   ]
+  },
+  {
+   "id": "g038",
+   "p": "从句",
+   "zh": "这就是为什么许多人选择住在大城市。",
+   "hint": "That is why",
+   "en": "That is why many people choose to live in big cities.",
+   "why": "That is why 后接结果，That is because 后接原因。",
+   "tags": [
+    "从句"
+   ]
+  },
+  {
+   "id": "g039",
+   "p": "从句",
+   "zh": "虽然他很努力，但还是失败了。",
+   "hint": "Although / still",
+   "en": "Although he worked hard, he still failed.",
+   "why": "although 不能与 but 连用，主句用 still 呼应。",
+   "tags": [
+    "从句"
+   ]
+  },
+  {
+   "id": "g040",
+   "p": "从句",
+   "zh": "那些不锻炼的人更容易生病。",
+   "hint": "those who / be likely to",
+   "en": "Those who do not exercise are more likely to fall ill.",
+   "why": "those who 引导定语从句，谓语用复数。",
+   "tags": [
+    "从句",
+    "主谓一致"
+   ]
+  },
+  {
+   "id": "g041",
+   "p": "从句",
+   "zh": "原因在于人们缺乏环保意识。",
+   "hint": "The reason is that",
+   "en": "The reason is that people lack environmental awareness.",
+   "why": "The reason is that，不用 because。",
+   "tags": [
+    "从句"
+   ]
+  },
+  {
+   "id": "g042",
+   "p": "从句",
+   "zh": "无论发生什么，我们都应该保持冷静。",
+   "hint": "Whatever happens",
+   "en": "Whatever happens, we should stay calm.",
+   "why": "whatever 引导让步状语从句，本身作主语。",
+   "tags": [
+    "从句"
+   ]
+  },
+  {
+   "id": "g043",
+   "p": "从句",
+   "zh": "这项研究证明，睡眠不足会影响记忆力。",
+   "hint": "The study shows that / lack of sleep",
+   "en": "The study shows that lack of sleep affects memory.",
+   "why": "宾语从句；主语是 lack of sleep，谓语用单数。",
+   "tags": [
+    "从句",
+    "主谓一致"
+   ]
+  },
+  {
+   "id": "g044",
+   "p": "从句",
+   "zh": "只有政府和企业合作，问题才能解决。",
+   "hint": "Only when / can",
+   "en": "Only when the government and businesses cooperate can the problem be solved.",
+   "why": "Only + 状语从句置于句首，主句部分倒装。",
+   "tags": [
+    "从句",
+    "倒装"
+   ]
+  },
+  {
+   "id": "g045",
+   "p": "非谓语",
+   "zh": "考虑到成本，这个方案不可行。",
+   "hint": "Given / feasible",
+   "en": "Given the cost, this plan is not feasible.",
+   "why": "Given 是过去分词状语，表示考虑到。",
+   "tags": [
+    "非谓语"
+   ]
+  },
+  {
+   "id": "g046",
+   "p": "非谓语",
+   "zh": "为了解决交通拥堵，政府修建了地铁。",
+   "hint": "To solve / traffic congestion",
+   "en": "To solve traffic congestion, the government built a subway.",
+   "why": "不定式置于句首表示目的。",
+   "tags": [
+    "非谓语"
+   ]
+  },
+  {
+   "id": "g047",
+   "p": "非谓语",
+   "zh": "与城市相比，农村地区的机会更少。",
+   "hint": "Compared with",
+   "en": "Compared with cities, rural areas offer fewer opportunities.",
+   "why": "过去分词状语，逻辑主语是 rural areas。",
+   "tags": [
+    "非谓语",
+    "比较"
+   ]
+  },
+  {
+   "id": "g048",
+   "p": "非谓语",
+   "zh": "看到这个结果，我很惊讶。",
+   "hint": "Seeing / be surprised",
+   "en": "Seeing the result, I was surprised.",
+   "why": "现在分词作状语，逻辑主语须与主句一致。",
+   "tags": [
+    "非谓语"
+   ]
+  },
+  {
+   "id": "g049",
+   "p": "非谓语",
+   "zh": "这个问题值得讨论。",
+   "hint": "be worth",
+   "en": "The issue is worth discussing.",
+   "why": "be worth doing，worth 后接动名词。",
+   "tags": [
+    "非谓语"
+   ]
+  },
+  {
+   "id": "g050",
+   "p": "非谓语",
+   "zh": "他建议推迟会议。",
+   "hint": "suggest / postpone",
+   "en": "He suggested postponing the meeting.",
+   "why": "suggest doing sth，不接不定式。",
+   "tags": [
+    "非谓语"
+   ]
+  },
+  {
+   "id": "g051",
+   "p": "非谓语",
+   "zh": "被邀请参加典礼的人不多。",
+   "hint": "be invited to",
+   "en": "Few people were invited to the ceremony.",
+   "why": "被动 + few 表示否定数量。",
+   "tags": [
+    "非谓语",
+    "被动"
+   ]
+  },
+  {
+   "id": "g052",
+   "p": "非谓语",
+   "zh": "我们需要更多时间来完成任务。",
+   "hint": "time to",
+   "en": "We need more time to complete the task.",
+   "why": "不定式作后置定语修饰 time。",
+   "tags": [
+    "非谓语"
+   ]
+  },
+  {
+   "id": "g053",
+   "p": "搭配与介词",
+   "zh": "这项政策对经济产生了深远影响。",
+   "hint": "have a profound impact on",
+   "en": "The policy has had a profound impact on the economy.",
+   "why": "impact on 是固定搭配；现在完成时强调影响延续至今。",
+   "tags": [
+    "搭配",
+    "时态"
+   ]
+  },
+  {
+   "id": "g054",
+   "p": "搭配与介词",
+   "zh": "他因作弊而受到处罚。",
+   "hint": "be punished for",
+   "en": "He was punished for cheating.",
+   "why": "punish sb for doing sth，介词后接动名词。",
+   "tags": [
+    "搭配",
+    "被动"
+   ]
+  },
+  {
+   "id": "g055",
+   "p": "搭配与介词",
+   "zh": "我们应该重视心理健康。",
+   "hint": "attach importance to",
+   "en": "We should attach importance to mental health.",
+   "why": "attach importance to 中的 to 是介词。",
+   "tags": [
+    "搭配"
+   ]
+  },
+  {
+   "id": "g056",
+   "p": "搭配与介词",
+   "zh": "许多人依赖社交媒体获取新闻。",
+   "hint": "rely on / for",
+   "en": "Many people rely on social media for news.",
+   "why": "rely on sb for sth 两个介词各司其职。",
+   "tags": [
+    "搭配"
+   ]
+  },
+  {
+   "id": "g057",
+   "p": "搭配与介词",
+   "zh": "这个问题的根源在于教育资源分配不均。",
+   "hint": "lie in",
+   "en": "The root of the problem lies in the unequal distribution of educational resources.",
+   "why": "lie in 表示在于，后接名词性成分。",
+   "tags": [
+    "搭配"
+   ]
+  },
+  {
+   "id": "g058",
+   "p": "搭配与介词",
+   "zh": "人们越来越关注食品安全。",
+   "hint": "be concerned about",
+   "en": "People are increasingly concerned about food safety.",
+   "why": "be concerned about 表示关心、担忧。",
+   "tags": [
+    "搭配"
+   ]
+  },
+  {
+   "id": "g059",
+   "p": "搭配与介词",
+   "zh": "这次疫情对旅游业造成了巨大损失。",
+   "hint": "cause great damage to",
+   "en": "The pandemic caused great damage to the tourism industry.",
+   "why": "cause damage to 是固定搭配。",
+   "tags": [
+    "搭配"
+   ]
+  },
+  {
+   "id": "g060",
+   "p": "搭配与介词",
+   "zh": "他没有意识到问题的严重性。",
+   "hint": "be aware of",
+   "en": "He was not aware of the seriousness of the problem.",
+   "why": "be aware of 后接名词；否定用 not aware of。",
+   "tags": [
+    "搭配"
+   ]
+  },
+  {
+   "id": "g101",
+   "p": "主谓一致",
+   "zh": "折线图展示了 2010 至 2040 年法国五类媒体广告支出的预测变化。",
+   "hint": "be projected to / advertising spending / across five media",
+   "en": "The line graph shows the projected changes in advertising spending across five media in France from 2010 to 2040.",
+   "why": "你写的是 The graphs shows：主语单数要用 shows；costs on advertising 是中式搭配，应为 spending on advertising。",
+   "tags": [
+    "主谓一致",
+    "搭配"
+   ],
+   "pri": 1,
+   "src": "你的折线图原文"
+  },
+  {
+   "id": "g102",
+   "p": "任务回应",
+   "zh": "2010 年，电视的广告支出最高，占总额的 35% 以上。",
+   "hint": "account for / the largest share / over 35% of the total",
+   "en": "In 2010, television accounted for the largest share of advertising spending, at over 35% of the total.",
+   "why": "你写了 because of its popularity——Task 1 不解释原因，图表没给就不许写；另外 of all 要写成 of the total。",
+   "tags": [
+    "任务回应",
+    "搭配"
+   ],
+   "pri": 1,
+   "src": "你的折线图原文"
+  },
+  {
+   "id": "g103",
+   "p": "缺谓语",
+   "zh": "报纸位居第二，接近 35%。",
+   "hint": "come second / at nearly",
+   "en": "Newspapers came second, at nearly 35%.",
+   "why": "你写 The newspapers is next largest proportion near of all——一句话里没有成立的谓语；排名用 come second / rank second。",
+   "tags": [
+    "缺谓语",
+    "排名"
+   ],
+   "pri": 1,
+   "src": "你的折线图原文"
+  },
+  {
+   "id": "g104",
+   "p": "任务回应",
+   "zh": "相比之下，互联网最低，不足 5%。",
+   "hint": "by contrast / record the lowest figure / under",
+   "en": "By contrast, the Internet recorded the lowest figure, at under 5%.",
+   "why": "不能写 since not every family can possess a computer——这是推测原因；且 no every family 应为 not every family。",
+   "tags": [
+    "任务回应"
+   ],
+   "pri": 1,
+   "src": "你的折线图原文"
+  },
+  {
+   "id": "g105",
+   "p": "主谓一致",
+   "zh": "然而，两者的趋势与过去不同。",
+   "hint": "differ from / those of the past",
+   "en": "However, their trends differ from those of the past.",
+   "why": "the trending of them are 主谓不一致，trending 也不是名词；比较对象要用 those of the past。",
+   "tags": [
+    "主谓一致",
+    "比较"
+   ],
+   "pri": 1,
+   "src": "你的折线图原文"
+  },
+  {
+   "id": "g106",
+   "p": "时态",
+   "zh": "预计到 2040 年，互联网的广告支出将飙升至 45% 以上。",
+   "hint": "be projected to / surge to",
+   "en": "By 2040, spending on Internet advertising is projected to surge to over 45%.",
+   "why": "the cost spend on 应为 spending on；图表预测用 be projected to，不要用 will rapidly surge 这种口语搭配。",
+   "tags": [
+    "时态",
+    "搭配"
+   ],
+   "pri": 1,
+   "src": "你的折线图原文"
+  },
+  {
+   "id": "g107",
+   "p": "搭配与介词",
+   "zh": "这主要是因为互联网的繁荣，它影响了所有类型的媒体。",
+   "hint": "because of / affect / media",
+   "en": "This is mainly because of the boom of the Internet, which has affected all types of media.",
+   "why": "because 接从句、because of 接名词；effect 是名词，动词是 affect；media 本身就是复数。",
+   "tags": [
+    "搭配",
+    "从句"
+   ],
+   "pri": 1,
+   "src": "你的折线图原文"
+  },
+  {
+   "id": "g108",
+   "p": "缺谓语",
+   "zh": "尽管电视在 2010 至 2020 年间有所增长，但未来不可避免地会缓慢下降。",
+   "hint": "although / inevitably decline / in the future",
+   "en": "Although television grew between 2010 and 2020, it will inevitably decline slowly in the future.",
+   "why": "there are unavoidable slow downward 里 downward 是形容词，不能当名词；下降要用动词 decline。",
+   "tags": [
+    "缺谓语",
+    "时态"
+   ],
+   "pri": 1,
+   "src": "你的折线图原文"
+  },
+  {
+   "id": "g109",
+   "p": "主谓一致",
+   "zh": "随着互联网的蓬勃发展，传统媒体尤其是纸媒受到的冲击最大。",
+   "hint": "with / have been the most affected",
+   "en": "With the booming development of the Internet, traditional media, especially print media, have been the most affected.",
+   "why": "media 作主语视为复数，用 have；has been 与复数主语不搭。",
+   "tags": [
+    "主谓一致"
+   ],
+   "pri": 1,
+   "src": "你的折线图原文"
+  },
+  {
+   "id": "g110",
+   "p": "缺谓语",
+   "zh": "报纸和杂志的支出将在未来三十年下降。",
+   "hint": "over the next three decades",
+   "en": "Spending on newspapers and magazines will decline over the next three decades.",
+   "why": "will down 缺动词，down 不能作谓语；三十年用 over the next three decades。",
+   "tags": [
+    "缺谓语",
+    "时态"
+   ],
+   "pri": 1,
+   "src": "你的折线图原文"
+  },
+  {
+   "id": "g111",
+   "p": "主谓一致",
+   "zh": "广播已经只占很小比例，还将继续下降到 5%。",
+   "hint": "account for / continue to fall",
+   "en": "Radio already accounts for a small proportion and will continue to fall to 5%.",
+   "why": "The number of radio channels that already account 里主语是 number，谓语要用 accounts；直接以 radio 作主语更简洁。",
+   "tags": [
+    "主谓一致"
+   ],
+   "pri": 1,
+   "src": "你的折线图原文"
+  },
+  {
+   "id": "g112",
+   "p": "任务回应",
+   "zh": "你想在结尾写「这组数据见证了时代趋势，也指出了实现最大收益的最有效方式」——Task 1 不能这么写。把它改成一句客观的总体判断。",
+   "hint": "reflect a shift / from ... to ...",
+   "en": "Overall, the figures reflect a clear shift in advertising spending from traditional media to the Internet.",
+   "why": "Task 1 不写 In conclusion、不写建议、不预测收益；宏观判断并进 Overview，写完数据就收。",
+   "tags": [
+    "任务回应"
+   ],
+   "pri": 1,
+   "src": "你的折线图原文"
+  },
+  {
+   "id": "g113",
+   "p": "介词",
+   "zh": "该图展示了 1998 至 2008 年法国、德国和英国在食品与其他商品上的收入占比。",
+   "hint": "between ... and / proportion of income",
+   "en": "The chart illustrates the proportion of income spent on food and other goods in France, Germany and the UK between 1998 and 2008.",
+   "why": "between 1998 to 2008 应为 between ... and；including 在这里也不对，国家是范围不是举例。",
+   "tags": [
+    "介词",
+    "搭配"
+   ],
+   "pri": 1,
+   "src": "你的柱状图原文"
+  },
+  {
+   "id": "g114",
+   "p": "拼写",
+   "zh": "1998 年，法国的食品支出约占 15%，到 2008 年飙升至 40%。",
+   "hint": "soar to / by 2008",
+   "en": "In 1998, France spent about 15% of its income on food, and this figure soared to 40% by 2008.",
+   "why": "amounted for 应为 accounted for；soured（变酸）是拼写错误，你要写的是 soared；年份也不能抄错。",
+   "tags": [
+    "拼写",
+    "搭配"
+   ],
+   "pri": 1,
+   "src": "你的柱状图原文"
+  },
+  {
+   "id": "g115",
+   "p": "冠词",
+   "zh": "德国和英国的涨幅较小，分别为 30% 和 15%，都低于法国。",
+   "hint": "see smaller increases / respectively / below France's figure",
+   "en": "Germany and the UK saw smaller increases, to 30% and 15% respectively, both below France's figure.",
+   "why": "had small increase 缺冠词；behind the proportion of France 是中式，用 below France's figure。",
+   "tags": [
+    "冠词",
+    "比较"
+   ],
+   "pri": 1,
+   "src": "你的柱状图原文"
+  },
+  {
+   "id": "g116",
+   "p": "数据准确",
+   "zh": "法国在其他商品上的支出从 1998 年的 10% 上升到 2008 年的 40%。",
+   "hint": "rise from ... to ...",
+   "en": "France's spending on other goods rose from 10% in 1998 to 40% in 2008.",
+   "why": "你把 1998 写成了 2018——Task 1 抄错年份是硬伤；which amounted for 10% ... climbing 这种结构也不成立。",
+   "tags": [
+    "数据准确",
+    "时态"
+   ],
+   "pri": 1,
+   "src": "你的柱状图原文"
+  },
+  {
+   "id": "g117",
+   "p": "搭配与介词",
+   "zh": "英国的比例也从 10% 升到 30% 以上，而德国稳定在 20% 左右。",
+   "hint": "remain stable at / around",
+   "en": "The figure for the UK also rose from 10% to over 30%, while Germany remained stable at around 20%.",
+   "why": "kept the stable trend 应为 remained stable；句首用 But 在学术写作里不合适，用 while 连接。",
+   "tags": [
+    "搭配"
+   ],
+   "pri": 1,
+   "src": "你的柱状图原文"
+  },
+  {
+   "id": "g118",
+   "p": "时态",
+   "zh": "总体而言，十年间食品与其他商品的支出都在上升。",
+   "hint": "over the ten-year period",
+   "en": "Overall, spending on both food and other goods increased over the ten-year period.",
+   "why": "In gernal 拼写错误；有明确过去时间段（1998–2008）时用一般过去时，不用 have increased。",
+   "tags": [
+    "时态",
+    "拼写"
+   ],
+   "pri": 1,
+   "src": "你的柱状图原文"
+  },
+  {
+   "id": "g119",
+   "p": "搭配与介词",
+   "zh": "这两个饼图展示了 1997 和 2007 年悉尼不同部门的用水比例。",
+   "hint": "proportions / across different sectors",
+   "en": "The pie charts illustrate the proportions of water use across different sectors in Sydney in 1997 and 2007.",
+   "why": "diving to different sectors 应为 divided among / across；proportion 指多个比例时用复数。",
+   "tags": [
+    "搭配",
+    "单复数"
+   ],
+   "pri": 1,
+   "src": "你的饼图原文"
+  },
+  {
+   "id": "g120",
+   "p": "冠词",
+   "zh": "总体而言，食品行业在两年中都占据主导地位。",
+   "hint": "hold a dominant position / in both years",
+   "en": "Overall, the food industry held a dominant position in both years.",
+   "why": "Food industry took dominant position 缺两个冠词：the food industry、a dominant position。",
+   "tags": [
+    "冠词",
+    "搭配"
+   ],
+   "pri": 1,
+   "src": "你的饼图原文"
+  },
+  {
+   "id": "g121",
+   "p": "介词",
+   "zh": "相比之下，建筑行业和制造业从 1997 到 2007 年都在下降。",
+   "hint": "both declined / between ... and",
+   "en": "In contrast, the building industry and manufacturing both declined between 1997 and 2007.",
+   "why": "行业名前要加 the；between 1997 to 2007 应为 between ... and。",
+   "tags": [
+    "介词",
+    "冠词"
+   ],
+   "pri": 1,
+   "src": "你的饼图原文"
+  },
+  {
+   "id": "g122",
+   "p": "搭配与介词",
+   "zh": "此外，建筑行业在五个部门中占比最小。",
+   "hint": "account for / the smallest share / among",
+   "en": "In addition, the building industry accounted for the smallest share among the five sectors.",
+   "why": "took the least level of shares 是中式；三者以上用 among，不是 between。",
+   "tags": [
+    "搭配",
+    "介词"
+   ],
+   "pri": 1,
+   "src": "你的饼图原文"
+  },
+  {
+   "id": "g123",
+   "p": "冠词",
+   "zh": "1997 年，食品行业占用水总量的最大份额，达 48%。",
+   "hint": "account for / the largest share / at 48%",
+   "en": "In 1997, the food industry accounted for the largest share of total water use, at 48%.",
+   "why": "took largest peopotion 既有拼写错误又缺冠词；占比用 account for，数字前用 at。",
+   "tags": [
+    "冠词",
+    "搭配"
+   ],
+   "pri": 1,
+   "src": "你的饼图原文"
+  },
+  {
+   "id": "g124",
+   "p": "缺谓语",
+   "zh": "第二大的是家庭用水，占 19%。",
+   "hint": "the second largest",
+   "en": "The second largest was household use, at 19%.",
+   "why": "The second part came to 19%, was Household use 用逗号连接两个谓语，句子不成立；直接用 the second largest 作主语。",
+   "tags": [
+    "缺谓语"
+   ],
+   "pri": 1,
+   "src": "你的饼图原文"
+  },
+  {
+   "id": "g125",
+   "p": "时态",
+   "zh": "服务业与制造业比例相近，分别为 13% 和 15%。",
+   "hint": "show a similar pattern / respectively",
+   "en": "The service industry and manufacturing showed a similar pattern, at 13% and 15% respectively.",
+   "why": "描述 1997 年要用过去时 showed；respectively 的两个数字必须和前面的两个主体同序。",
+   "tags": [
+    "时态",
+    "比较"
+   ],
+   "pri": 1,
+   "src": "你的饼图原文"
+  },
+  {
+   "id": "g126",
+   "p": "指代",
+   "zh": "建筑行业占比小得多，两年都没有超过 5%。",
+   "hint": "play a smaller role / in neither year",
+   "en": "The building industry played a much smaller role, exceeding 5% in neither year.",
+   "why": "with neither of them 指代不清——这里只有一个行业；用 in neither year。",
+   "tags": [
+    "指代"
+   ],
+   "pri": 1,
+   "src": "你的饼图原文"
+  },
+  {
+   "id": "g127",
+   "p": "缺谓语",
+   "zh": "家庭用水仅以 21% 紧随其后。",
+   "hint": "follow closely behind",
+   "en": "Household use followed closely behind at 21%.",
+   "why": "Household use merely behind it 缺谓语，behind 不能单独作谓语，要用 followed。",
+   "tags": [
+    "缺谓语"
+   ],
+   "pri": 1,
+   "src": "你的饼图原文"
+  },
+  {
+   "id": "g128",
+   "p": "用词",
+   "zh": "该表展示了 2012 年某镇俱乐部成员与公众对一座新剧院的评价。",
+   "hint": "rate / the general public",
+   "en": "The table shows how club members and the general public rated a new theatre in one town in 2012.",
+   "why": "received that the Quality was excellent 里 received 不能表示「认为」；评价用 rated，且 quality 不需要大写。",
+   "tags": [
+    "用词"
+   ],
+   "pri": 1,
+   "src": "你的表格原文"
+  },
+  {
+   "id": "g129",
+   "p": "主谓一致",
+   "zh": "88% 的俱乐部成员认为质量「优秀」。",
+   "hint": "rate ... as ...",
+   "en": "88% of club members rated the quality as excellent.",
+   "why": "百分比作主语时，谓语与 of 后面的名词一致（members → rated）。",
+   "tags": [
+    "主谓一致"
+   ],
+   "pri": 1,
+   "src": "你的表格原文"
+  },
+  {
+   "id": "g130",
+   "p": "缺谓语",
+   "zh": "然而，公众中认为「优秀」的仅占 53%。",
+   "hint": "give an excellent rating / only 53%",
+   "en": "However, only 53% of the general public gave an excellent rating.",
+   "why": "general public think it excellent is merely 53% 一句话里塞了两个谓语；用名词短语 the proportion / 53% of 作主语。",
+   "tags": [
+    "缺谓语"
+   ],
+   "pri": 1,
+   "src": "你的表格原文"
+  },
+  {
+   "id": "g131",
+   "p": "衔接",
+   "zh": "在设施方面，两组中「满意」的比例都在 25% 左右。",
+   "hint": "as for / around 25%",
+   "en": "As for facilities, the proportion of satisfied responses was around 25% in both groups.",
+   "why": "About information 应为 As for；has closed 应为 were close to / around。",
+   "tags": [
+    "衔接"
+   ],
+   "pri": 1,
+   "src": "你的表格原文"
+  },
+  {
+   "id": "g132",
+   "p": "比较",
+   "zh": "公众对「差」的评价比例高于俱乐部成员。",
+   "hint": "higher among ... than among ...",
+   "en": "The proportion of poor ratings was higher among the general public than among club members.",
+   "why": "The public consider excellent is higher than club number consider 两个谓语叠在一起；比较要用同级结构，且比例与人要分清。",
+   "tags": [
+    "比较"
+   ],
+   "pri": 1,
+   "src": "你的表格原文"
+  },
+  {
+   "id": "g133",
+   "p": "比较",
+   "zh": "与设施和质量相比，「信息」一项的评价最差。",
+   "hint": "the weakest-rated aspect / compared with",
+   "en": "Information was the weakest-rated aspect, compared with facilities and quality.",
+   "why": "The poportion of poor is higher than facilities and quality 拿「比例」和「项目」比，比较对象不一致。",
+   "tags": [
+    "比较"
+   ],
+   "pri": 1,
+   "src": "你的表格原文"
+  }
+ ],
+ "task1": [
+  {
+   "id": "t1-01",
+   "kind": "动态图 · 引言",
+   "title": "折线图 · 法国广告支出",
+   "zh": "折线图：2010–2040 年法国五类媒体的广告支出预测。写引言段，改写题目，不照抄原题。",
+   "slots": [
+    "用 illustrate + projected changes 改写",
+    "交代五类媒体、地点、时间跨度",
+    "一句话，不解释原因"
+   ],
+   "ref": "The line graph illustrates the projected changes in advertising spending across five media in France between 2010 and 2040.",
+   "why": "你原句 The graphs shows ... which reflects the ups and downs ... in the era：主谓错、从句多余、in the era 空泛。引言只做一件事——改写题目。",
+   "src": "你的折线图原文"
+  },
+  {
+   "id": "t1-02",
+   "kind": "动态图 · 概述",
+   "title": "折线图 · 两条相反趋势",
+   "zh": "同一张图：电视、报纸、杂志、广播预计下降，互联网从不足 5% 升到 45% 以上。写概述段。",
+   "slots": [
+    "用 while 对比两条相反趋势",
+    "不写具体数字",
+    "最多两句"
+   ],
+   "ref": "Overall, while spending on traditional media such as television and newspapers is expected to decline, the figure for the Internet is projected to surge.",
+   "why": "Overview 只写「谁升谁降、谁最大」，数字留给主体段；更不能写 because of its popularity。",
+   "src": "你的折线图原文"
+  },
+  {
+   "id": "t1-03",
+   "kind": "动态图 · 上升组",
+   "title": "折线图 · 互联网",
+   "zh": "互联网 2010 年不足 5%，之后持续增长，2040 年预计超过 45%，成为第一。",
+   "slots": [
+    "起点 + 变化动词 + 终点",
+    "用 surpass / overtake 写超越"
+   ],
+   "ref": "The most striking growth was seen in the Internet. Starting at under 5% in 2010, it grew steadily and is projected to surpass television by 2040, reaching over 45%.",
+   "why": "你写 the cost spend on the Internet will rapidly surge：spend 应为 spending；上升组必须给起点和终点，不能只说 surge。",
+   "src": "你的折线图原文"
+  },
+  {
+   "id": "t1-04",
+   "kind": "动态图 · 下降组",
+   "title": "折线图 · 电视与广播",
+   "zh": "电视 2010 年约 35%，2010–2020 略增，之后缓慢下降；广播已经很小，还将降到 5%。",
+   "slots": [
+    "先升后降用 before 连接",
+    "两个主体用一句对比带过"
+   ],
+   "ref": "In stark contrast, television, which started at around 35%, grew slightly until 2020 before entering a slow decline. Radio, already a minor category, is expected to fall further to 5%.",
+   "why": "你写 there are unavoidable slow downward：downward 是形容词，不能作名词；用 enter a decline / fall further。",
+   "src": "你的折线图原文"
+  },
+  {
+   "id": "t1-05",
+   "kind": "动态图 · 波动与平稳",
+   "title": "柱状图 · 收入占比",
+   "zh": "法国食品支出 1998 年 15% → 2008 年 40%；其他商品 10% → 40%；德国稳定在 20% 附近。",
+   "slots": [
+    "上升用 climb / soar",
+    "平稳用 remain stable at",
+    "年份绝不能抄错"
+   ],
+   "ref": "France's food spending climbed from 15% in 1998 to 40% in 2008, while its spending on other goods rose from 10% to 40%. Germany, by contrast, remained stable at around 20%.",
+   "why": "你把 1998 写成 2018、把 soared 拼成 soured——Task 1 抄错年份和拼写是硬伤。",
+   "src": "你的柱状图原文"
+  },
+  {
+   "id": "t1-06",
+   "kind": "静态图 · 分组",
+   "title": "饼图 · 1997 年用水",
+   "zh": "1997 年：食品 48%、家庭 19%、制造 15%、服务 13%、建筑 5%。按「主导组 / 其余组」写两句。",
+   "slots": [
+    "第一句写前两名",
+    "第二句用 respectively 写后三名"
+   ],
+   "ref": "In 1997, the food industry dominated, accounting for 48% of total water use, followed by household use at 19%. Manufacturing and the service industry accounted for 15% and 13% respectively, while the building industry took only 5%.",
+   "why": "你按 1997 / 2007 分段，把趋势切断了；静态图按大小分组，动态图才按时间。",
+   "src": "你的饼图原文"
+  },
+  {
+   "id": "t1-07",
+   "kind": "静态图 · 排名与倍数",
+   "title": "饼图 · 2007 年用水",
+   "zh": "2007 年：食品 41%、服务 25%、家庭 21%、制造 11%、建筑 2%。写排名与倍数。",
+   "slots": [
+    "用 overtake 写服务超过家庭",
+    "用倍数压缩最小的两个"
+   ],
+   "ref": "By 2007, the food industry remained dominant at 41%, although the service industry had overtaken household use to become the second largest at 25%. Manufacturing fell to 11%, and the building industry's share was less than a fifth of the service sector's.",
+   "why": "overtook the place of 是中式，overtake 直接带宾语；结尾用倍数把 2% 和 25% 挂钩，比单独报数有力。",
+   "src": "你的饼图原文"
+  },
+  {
+   "id": "t1-08",
+   "kind": "表格 · 主语与最高分",
+   "title": "表格 · 剧院评价",
+   "zh": "表格：俱乐部成员 88% 认为质量优秀，公众 53%。写第一句，主语必须是「人的比例」。",
+   "slots": [
+    "the proportion of ... who rated",
+    "两组对比用 compared with"
+   ],
+   "ref": "The proportion of club members who rated the quality as excellent stood at 88%, compared with 53% of the general public.",
+   "why": "你写 Club members received that the Quality was excellent, accounting for 88%：received 不能表示「认为」，主语也不该是人。",
+   "src": "你的表格原文"
+  },
+  {
+   "id": "t1-09",
+   "kind": "表格 · 反差组",
+   "title": "表格 · 设施与差评",
+   "zh": "设施一项两组「满意」都在 25% 左右；「差」的评价公众高于成员。",
+   "slots": [
+    "用 as for 切换维度",
+    "比较用 among ... than among ..."
+   ],
+   "ref": "As for facilities, around 25% of both groups were merely satisfied. The proportion of poor ratings, however, was higher among the general public than among club members.",
+   "why": "About information 应为 As for；has closed 应为 were close to / around。",
+   "src": "你的表格原文"
+  },
+  {
+   "id": "t1-10",
+   "kind": "任务回应 · 结尾禁忌",
+   "title": "改写 · 删掉不该写的那句",
+   "zh": "改写这句，并去掉 Task 1 不该有的内容：「这组数据见证了时代趋势，也指出了实现最大收益的最有效方式。」",
+   "slots": [
+    "删掉结论与建议",
+    "改成一句客观的总体判断"
+   ],
+   "ref": "Overall, the figures reflect a clear shift in advertising spending from traditional media to the Internet.",
+   "why": "Task 1 不写 In conclusion、不写建议、不预测收益；宏观判断并进 Overview，全文到此为止。",
+   "src": "你的折线图原文"
+  },
+  {
+   "id": "t1-11",
+   "kind": "补充题型 · 流程",
+   "title": "流程图 · 巧克力制作",
+   "zh": "可可豆采摘 → 发酵 → 烘干 → 烘焙 → 研磨 → 与糖混合 → 入模成型。",
+   "slots": [
+    "前两步（被动）",
+    "中段三步",
+    "最后成型"
+   ],
+   "ref": "First, cocoa pods are harvested by hand and the beans are left to ferment for up to a week. They are then dried in the sun, roasted and ground into a paste. Finally, the paste is mixed with sugar and poured into moulds, where it sets into bars.",
+   "why": "流程图全程被动；用 first / then / finally 分段，不要 and then and then 串联。",
+   "src": "补充题型（你的四篇里没有）"
+  },
+  {
+   "id": "t1-12",
+   "kind": "补充题型 · 地图",
+   "title": "地图 · 镇中心变化",
+   "zh": "1990 年：北侧农田、东侧小店、南侧火车站。现在：农田变停车场，小店变超市，火车站扩建。",
+   "slots": [
+    "最显著的变化（方位 + 变化动词）",
+    "另外两处变化"
+   ],
+   "ref": "The most striking change is in the north, where farmland has been replaced by a car park. The small shops in the east have given way to a supermarket, and the railway station in the south has been extended.",
+   "why": "地图题先给方位再给变化；变化动词用 be replaced by / give way to / be extended。",
+   "src": "补充题型（你的四篇里没有）"
+  }
+ ],
+ "task2": [
+  {
+   "id": "t2-01",
+   "type": "agree",
+   "typeName": "同意与否",
+   "prompt": "Some people believe that unpaid community service should be a compulsory part of high school programmes. To what extent do you agree or disagree?",
+   "zh": "有人认为高中生必须参加无偿社区服务。你同意到什么程度？",
+   "keywords": [
+    "compulsory",
+    "unpaid",
+    "high school"
+   ],
+   "stance": "同意，但有保留：应该做，前提是学校提供支持和评估，而不是硬凑时长。",
+   "chain": [
+    {
+     "claim": "Compulsory service exposes teenagers to people and problems outside their own bubble.",
+     "reason": "Most students spend their days among peers of the same age and background.",
+     "example": "Working in a care home or a food bank forces them to talk to the elderly and the poor.",
+     "link": "This kind of exposure is hard to replicate in a classroom."
+    },
+    {
+     "claim": "However, compulsion only works if schools provide structure and support.",
+     "reason": "Unsupervised placements easily turn into box-ticking exercises.",
+     "example": "A student who spends 40 hours stacking shelves learns little beyond following orders.",
+     "link": "Schools should therefore partner with vetted organisations and require reflection."
+    }
+   ],
+   "traps": [
+    "题目问的是 compulsory，必须回应「强制」这一层，不能只写社区服务的好处。",
+    "不要全篇举例，每个例子后面要有一句因果。",
+    "To what extent 允许有保留，不要写成绝对支持。"
+   ],
+   "phrases": [
+    "It is often argued that ...",
+    "The main reason is that ...",
+    "A further consideration is ...",
+    "Admittedly, ... However, ..."
+   ]
+  },
+  {
+   "id": "t2-02",
+   "type": "discuss",
+   "typeName": "双边讨论",
+   "prompt": "Some people think that universities should provide graduates with the knowledge and skills needed in the workplace. Others think the true function of a university is to give access to knowledge for its own sake. Discuss both views and give your own opinion.",
+   "zh": "大学该教职业技能，还是该为知识而知识？讨论双方并给出你的观点。",
+   "keywords": [
+    "workplace skills",
+    "knowledge for its own sake",
+    "both"
+   ],
+   "stance": "两者不对立：职业能力是底线，通识教育决定上限。",
+   "chain": [
+    {
+     "claim": "Workplace-oriented training is essential because most graduates need to earn a living.",
+     "reason": "Employers expect basic competence from day one.",
+     "example": "A computer science graduate who cannot write code will struggle however widely read they are.",
+     "link": "Universities cannot ignore this practical demand."
+    },
+    {
+     "claim": "Yet a university is not a training centre; its wider function is to teach people how to think.",
+     "reason": "Specific skills date quickly, whereas judgement does not.",
+     "example": "A history graduate may forget the dates but keeps the ability to weigh evidence.",
+     "link": "This is why academic breadth should remain part of the curriculum."
+    }
+   ],
+   "traps": [
+    "discuss both 必须两边都写、篇幅相当，只写一边直接 5 分。",
+    "结尾必须给自己的观点，不能只总结双方。",
+    "不要把 both views 写成 agree/disagree 的变体。"
+   ],
+   "phrases": [
+    "Those who support ... argue that ...",
+    "On the other hand, ...",
+    "In my view, the two are not mutually exclusive.",
+    "A balanced approach would ..."
+   ]
+  },
+  {
+   "id": "t2-03",
+   "type": "adv",
+   "typeName": "利弊比较",
+   "prompt": "In some countries, more and more people choose to live by themselves. Do the advantages outweigh the disadvantages?",
+   "zh": "越来越多人选择独居。利大于弊吗？",
+   "keywords": [
+    "live alone",
+    "outweigh",
+    "age groups"
+   ],
+   "stance": "对年轻人利大于弊，对老年人相反——按人群分，别一概而论。",
+   "chain": [
+    {
+     "claim": "For young adults, living alone builds independence and self-management.",
+     "reason": "They must handle bills, cooking and schedules without parental backup.",
+     "example": "A 22-year-old renting a flat alone learns to budget far faster than a peer living at home.",
+     "link": "These habits pay off for decades."
+    },
+    {
+     "claim": "For older people, however, solitude can turn into isolation.",
+     "reason": "Retirement removes the daily social contact that work provided.",
+     "example": "An elderly widower living alone may go days without speaking to anyone.",
+     "link": "The same housing choice carries very different risks at different ages."
+    }
+   ],
+   "traps": [
+    "outweigh 要求明确比较，不能两边各写一段就收尾。",
+    "要给出判断标准（按年龄、按阶段），否则结论站不住。",
+    "不要把独居和孤独直接划等号。"
+   ],
+   "phrases": [
+    "The benefits are most obvious among ...",
+    "By contrast, ...",
+    "On balance, the advantages outweigh ...",
+    "This is particularly true when ..."
+   ]
+  },
+  {
+   "id": "t2-04",
+   "type": "problem",
+   "typeName": "原因与措施",
+   "prompt": "In many cities, traffic congestion has become a serious problem. What are the causes of this problem and what measures could be taken to solve it?",
+   "zh": "城市交通拥堵的原因与对策。",
+   "keywords": [
+    "causes",
+    "measures",
+    "congestion"
+   ],
+   "stance": "根因是私家车仍是最便宜的选项；对策要让公共交通真正有竞争力。",
+   "chain": [
+    {
+     "claim": "The root cause is that private cars remain the cheapest and most convenient option.",
+     "reason": "Public transport is often slow, crowded or unavailable outside the centre.",
+     "example": "A commuter who needs 70 minutes by bus but 25 by car will drive.",
+     "link": "Congestion is a rational response to bad alternatives."
+    },
+    {
+     "claim": "The most effective measure is to make public transport genuinely competitive.",
+     "reason": "People change behaviour when the alternative is faster, not when they are lectured.",
+     "example": "Cities that built dedicated bus lanes cut journey times and saw ridership rise.",
+     "link": "Investment must come before restrictions."
+    }
+   ],
+   "traps": [
+    "原因和措施要一一对应，原因说车多，措施就不能只写「教育公众」。",
+    "不要把原因写成「人们乱开车」，那是现象不是原因。",
+    "措施要有执行主体（政府 / 企业 / 学校）。"
+   ],
+   "phrases": [
+    "The primary cause is ...",
+    "This can be addressed by ...",
+    "A further measure would be to ...",
+    "Unless ... , the problem will persist."
+   ]
+  },
+  {
+   "id": "t2-05",
+   "type": "two",
+   "typeName": "两问式",
+   "prompt": "In some countries, people spend large amounts of money on weddings. Why is this the case? Is it a positive or negative development?",
+   "zh": "为什么人们花大钱办婚礼？这是好事还是坏事？",
+   "keywords": [
+    "why",
+    "positive or negative"
+   ],
+   "stance": "原因是面子与比较；总体是负面发展。",
+   "chain": [
+    {
+     "claim": "The main reason is that weddings have become a public statement of status.",
+     "reason": "Social media turns a private ceremony into a performance judged by hundreds.",
+     "example": "Couples compare venues and guest lists with those of their friends.",
+     "link": "Spending is driven by comparison, not by the couple's actual needs."
+    },
+    {
+     "claim": "Overall, this is a negative development.",
+     "reason": "The money often comes from savings or loans that could fund housing.",
+     "example": "A family may spend a year's income on one day and then struggle with rent.",
+     "link": "The pressure is financial and emotional at once."
+    }
+   ],
+   "traps": [
+    "两问都要答，第二问必须明确 positive 或 negative，不能和稀泥。",
+    "第一问要挖动机（面子、比较、家庭期待），不能只说「因为爱」。",
+    "不要把两问写成两篇小作文，要有连接。"
+   ],
+   "phrases": [
+    "This trend can be explained by ...",
+    "In my view, it is largely a negative development.",
+    "The underlying driver is ...",
+    "This is not to say that ..."
+   ]
+  },
+  {
+   "id": "t2-06",
+   "type": "agree",
+   "typeName": "同意与否",
+   "prompt": "Some people think governments should spend more money on public transport than on roads. To what extent do you agree or disagree?",
+   "zh": "政府该把更多钱花在公共交通而不是道路上。你同意吗？",
+   "keywords": [
+    "public transport",
+    "roads",
+    "more than"
+   ],
+   "stance": "基本同意，但取决于城市密度。",
+   "chain": [
+    {
+     "claim": "In dense cities, public transport moves far more people per pound spent.",
+     "reason": "A metro line carries the equivalent of several motorway lanes.",
+     "example": "London's congestion charge reduced traffic while bus patronage rose.",
+     "link": "The efficiency argument is strongest where land is scarce."
+    },
+    {
+     "claim": "In sparsely populated areas, roads remain the only realistic option.",
+     "reason": "Buses cannot run profitably where demand is thin.",
+     "example": "Rural patients still need roads to reach hospitals.",
+     "link": "Spending should therefore follow density, not dogma."
+    }
+   ],
+   "traps": [
+    "必须回应比较级 more ... than roads，不能只夸公共交通。",
+    "不要只写环保，题目问的是花钱优先级。",
+    "有保留的同意要写清楚「在什么条件下」。"
+   ],
+   "phrases": [
+    "The strongest case for ... is in dense cities.",
+    "This is not to say that ...",
+    "Spending should follow density, not dogma."
+   ]
+  },
+  {
+   "id": "t2-07",
+   "type": "discuss",
+   "typeName": "双边讨论",
+   "prompt": "Some people think that technology makes life more complex, while others believe it simplifies life. Discuss both views and give your own opinion.",
+   "zh": "科技让生活更复杂，还是更简单？",
+   "keywords": [
+    "complex",
+    "simplify",
+    "both views"
+   ],
+   "stance": "两边都成立，但净效果是简化。",
+   "chain": [
+    {
+     "claim": "Technology adds complexity because every convenience brings a new system to maintain.",
+     "reason": "Accounts, updates and compatibility issues consume time.",
+     "example": "A single household may juggle five subscriptions and three chargers.",
+     "link": "The benefits are real, but so is the cognitive load."
+    },
+    {
+     "claim": "Yet the same tools remove far more effort than they add.",
+     "reason": "Tasks that once took hours now take minutes.",
+     "example": "Online banking replaced a half-day queue with a two-minute transfer.",
+     "link": "On balance, the simplification dominates."
+    }
+   ],
+   "traps": [
+    "两个观点都要有具体例子，不能一边空转。",
+    "自己的观点要明确，不要用「取决于」收尾。",
+    "别写成科技产品清单。"
+   ],
+   "phrases": [
+    "Those who criticise ... point to ...",
+    "Supporters, by contrast, emphasise ...",
+    "On balance, I side with ...",
+    "The key distinction is between ..."
+   ]
+  },
+  {
+   "id": "t2-08",
+   "type": "adv",
+   "typeName": "利弊比较",
+   "prompt": "More and more students are choosing to study online instead of attending classes in person. Do the advantages outweigh the disadvantages?",
+   "zh": "越来越多学生选择线上而非线下上课。利大于弊吗？",
+   "keywords": [
+    "online study",
+    "in person",
+    "outweigh"
+   ],
+   "stance": "有条件地利大于弊：结构化的线上课可以，纯放养不行。",
+   "chain": [
+    {
+     "claim": "Online study widens access.",
+     "reason": "Students can learn from anywhere, including areas with no specialist teachers.",
+     "example": "A student in a small town can take a course taught by a professor abroad.",
+     "link": "This is a genuine gain in equality of opportunity."
+    },
+    {
+     "claim": "However, it weakens the discipline and feedback that classrooms provide.",
+     "reason": "Without fixed schedules and face-to-face contact, many students drift.",
+     "example": "Completion rates for unsupervised online courses are notoriously low.",
+     "link": "The format works best when it is structured, not when it simply replaces a lecture."
+    }
+   ],
+   "traps": [
+    "必须比较线上与线下，不能只写线上优缺点。",
+    "outweigh 要有明确结论。",
+    "不要把「方便」当唯一论据，要写清代价。"
+   ],
+   "phrases": [
+    "The most obvious advantage is ...",
+    "This is not without costs, however.",
+    "Whether this is a net gain depends on ...",
+    "Provided that ..., the benefits are considerable."
+   ]
+  },
+  {
+   "id": "t2-09",
+   "type": "problem",
+   "typeName": "原因与措施",
+   "prompt": "Plastic waste has become a major environmental problem. What are the causes of this problem and what can be done about it?",
+   "zh": "塑料垃圾问题的原因与对策。",
+   "keywords": [
+    "causes",
+    "solutions",
+    "plastic"
+   ],
+   "stance": "根因是价格信号倒挂；对策是生产者责任延伸。",
+   "chain": [
+    {
+     "claim": "The core cause is that plastic is cheap to produce and expensive to dispose of properly.",
+     "reason": "Manufacturers pay for the product, not for its afterlife.",
+     "example": "A bottle costs cents to make and centuries to break down.",
+     "link": "The price signal is therefore inverted."
+    },
+    {
+     "claim": "Extended producer responsibility shifts the cost back to the producer.",
+     "reason": "If companies pay for collection, they design for recyclability.",
+     "example": "Deposit-return schemes in Norway recover over 90% of bottles.",
+     "link": "Regulation, not consumer guilt, drives the change."
+    }
+   ],
+   "traps": [
+    "别把原因写成「人们乱扔」，那是行为不是原因。",
+    "措施要写执行主体和机制，不要只写「提高意识」。",
+    "原因与措施要对应。"
+   ],
+   "phrases": [
+    "The problem stems from ...",
+    "A second factor is ...",
+    "The most practical solution is ...",
+    "Without such measures, ..."
+   ]
+  },
+  {
+   "id": "t2-10",
+   "type": "two",
+   "typeName": "两问式",
+   "prompt": "More and more people are keeping pets. Why is this happening? Is it a positive or negative development?",
+   "zh": "为什么越来越多人养宠物？这是好事还是坏事？",
+   "keywords": [
+    "why",
+    "positive or negative"
+   ],
+   "stance": "原因是孤独；总体正面，前提是负责任地养。",
+   "chain": [
+    {
+     "claim": "People keep pets because modern life is lonelier than it looks.",
+     "reason": "Urbanisation separates people from extended families.",
+     "example": "A single professional in a small flat may talk to a dog more than to colleagues.",
+     "link": "Pets fill a gap that institutions cannot."
+    },
+    {
+     "claim": "On balance, this is positive, provided ownership is responsible.",
+     "reason": "Pets improve mental health and daily routine.",
+     "example": "Walking a dog forces exercise and incidental social contact.",
+     "link": "The harm comes from neglect, not from the bond itself."
+    }
+   ],
+   "traps": [
+    "第二问要明确判断，不要通篇写宠物可爱。",
+    "原因要写社会结构（独居、城市化），不要只写「喜欢」。",
+    "正面结论要加前提，否则经不起反驳。"
+   ],
+   "phrases": [
+    "This trend can be explained by ...",
+    "On balance, I regard it as ...",
+    "Provided that ..., the benefits are considerable."
+   ]
+  }
+ ]
 }
