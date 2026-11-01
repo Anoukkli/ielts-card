@@ -379,9 +379,9 @@
   function gradesHTML(kind) {
     if (kind === 'g' || kind === 't1') {
       return '<div class="w-grades">' +
-        '<button class="grade bad" data-r="bad">不会<small>明天再来</small></button>' +
-        '<button class="grade meh" data-r="meh">差一点<small>拼写 / 小错</small></button>' +
-        '<button class="grade good" data-r="good">写对了<small>拉长间隔</small></button>' +
+        '<button class="grade bad" data-wr="bad">不会<small>明天再来</small></button>' +
+        '<button class="grade meh" data-wr="meh">差一点<small>拼写 / 小错</small></button>' +
+        '<button class="grade good" data-wr="good">写对了<small>拉长间隔</small></button>' +
         '</div>';
     }
     return '';
@@ -409,8 +409,8 @@
     var btn = document.getElementById('wcheck');
     if (btn) { btn.disabled = true; btn.style.display = 'none'; }
 
-    $$('[data-r]').forEach(function (b) {
-      b.onclick = function () { saveGrade(item, val, kind, b.getAttribute('data-r'), r.score); };
+    $$('[data-wr]').forEach(function (b) {
+      b.onclick = function () { saveGrade(item, val, kind, b.getAttribute('data-wr'), r.score); };
     });
     var p = document.getElementById('wpanel');
     if (p && p.scrollIntoView) p.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
