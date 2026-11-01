@@ -141,6 +141,7 @@
 <div class="toast" id="toast"></div>
 
 <script src="writing.js"></script>
+<script src="patterns.js"></script>
 
 <script>
 /* =========================================================
@@ -294,12 +295,15 @@ function home(){
       </button>
       <button class="btn" id="startWrite">
         <span>写作 45 分钟</span><small>${window.WRITING ? window.WRITING.summaryText() : '语法 · 小作文 · 大作文 · 复盘'}</small>      </button>
+      <button class="btn" id="startPat">
+        <span>句型卡</span><small>${window.PATTERNS ? window.PATTERNS.summaryText() : '1 个句型 × 3 个主题'}</small>
+      </button>
       <button class="btn" id="openSettings">
         <span>设置</span><small>每日 ${CFG.quota} 张</small>
       </button>
     </div>
     <div class="foot">
-      <span>今日 ${doneToday()}/${CFG.quota} · 已学 ${seen}/${total} · v8</span>
+      <span>今日 ${doneToday()}/${CFG.quota} · 已学 ${seen}/${total} · v9</span>
       <a href="#" id="refresh">刷新</a>
     </div>${STORAGE_OK ? '' : `<div style="margin-top:12px;padding:12px 14px;border-radius:14px;
       background:#3a2a00;color:#ffcf6b;font-size:12px;line-height:1.7">
@@ -312,6 +316,7 @@ function home(){
   $('startReview').onclick = () => startSession(
     shuffle(DECK.errors).slice(0, 10).map(e => ({...e, __err:true})), 'error', true);
   $('startWrite').onclick = () => window.WRITING && window.WRITING.start();
+  $('startPat').onclick = () => window.PATTERNS && window.PATTERNS.start();
   $('openSettings').onclick = settings;
   $('refresh').onclick = (e) => { e.preventDefault(); location.reload(); };
   renderStreak();
