@@ -1,6 +1,8 @@
-/* 离线缓存：app shell 缓存优先，deck.json 网络优先（拿不到就用缓存） */
-const CACHE = 'ielts-v4';
-const SHELL = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
+/* 离线缓存：app shell 缓存优先，deck.json / writing.json 网络优先（拿不到就用缓存） */
+const CACHE = 'ielts-v5';
+const SHELL = ['./', './index.html', './writing.js', './manifest.webmanifest',
+               './icon-192.png', './icon-512.png'];
+const NETFIRST = ['deck.json', 'writing.json'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
@@ -15,7 +17,7 @@ self.addEventListener('activate', (e) => {
 
 self.addEventListener('fetch', (e) => {
   const url = new URL(e.request.url);
-  if (url.pathname.endsWith('deck.json')) {
+  if (NETFIRST.some(f => url.pathname.endsWith(f))) {
     e.respondWith(
       fetch(e.request).then(res => {
         const copy = res.clone();
