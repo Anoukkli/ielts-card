@@ -132,7 +132,11 @@
         var sa = ST.srs[a.id].s || 0, sb = ST.srs[b.id].s || 0;
         return sa - sb;
       });
-      return seeded(due, seed).concat(seeded(unseen, seed + 7)).concat(later)
+      // 你自己的原文改写的题（pri）先出，通用题往后排
+      var hot = unseen.filter(function (x) { return x.pri; });
+      var rest = unseen.filter(function (x) { return !x.pri; });
+      var fresh = seeded(hot, seed + 3).concat(seeded(rest, seed + 7));
+      return seeded(due, seed).concat(fresh).concat(later)
         .slice(0, PLAN.g).map(function (x) { return x.id; });
     }
     if (k === 't1') {
@@ -298,7 +302,7 @@
     appEl().innerHTML =
       head('g', ROUND.i + 1, ROUND.ids.length, item.p) +
       '<div class="w-card">' +
-      '<div class="w-kicker">盯住：' + esc((item.tags || []).join(' / ')) + '</div>' +
+      '<div class="w-kicker">' + (item.src ? esc(item.src) + ' · ' : '') + '盯住：' + esc((item.tags || []).join(' / ')) + '</div>' +
       '<div class="w-zh">' + esc(item.zh) + '</div>' +
       '<div class="w-hint">提示词（不要求顺序一致）' + chips + '</div>' +
       '<textarea class="w-ta" id="wans" rows="3" autocapitalize="sentences" autocorrect="off" spellcheck="false" placeholder="用英文写一遍…"></textarea>' +
