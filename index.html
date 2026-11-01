@@ -289,6 +289,9 @@ function home(){
       <button class="btn" id="startErr" ${errs.length? '' : 'disabled'}>
         <span>刷错题</span><small>${errs.length} 道待二刷</small>
       </button>
+      <button class="btn" id="startReview" ${DECK.errors.length? '' : 'disabled'}>
+        <span>错题回顾</span><small>随机 ${Math.min(10, DECK.errors.length)} 题 · 不动进度</small>
+      </button>
       <button class="btn" id="startWrite">
         <span>写作 45 分钟</span><small>${window.WRITING ? window.WRITING.summaryText() : '语法 · 小作文 · 大作文 · 复盘'}</small>      </button>
       <button class="btn" id="openSettings">
@@ -296,7 +299,7 @@ function home(){
       </button>
     </div>
     <div class="foot">
-      <span>今日 ${doneToday()}/${CFG.quota} · 已学 ${seen}/${total} · v5</span>
+      <span>今日 ${doneToday()}/${CFG.quota} · 已学 ${seen}/${total} · v6</span>
       <a href="#" id="refresh">刷新</a>
     </div>${STORAGE_OK ? '' : `<div style="margin-top:12px;padding:12px 14px;border-radius:14px;
       background:#3a2a00;color:#ffcf6b;font-size:12px;line-height:1.7">
@@ -306,6 +309,8 @@ function home(){
 
   $('startVocab').onclick = () => startSession(q, 'vocab');
   $('startErr').onclick = () => startSession(errs.map(e => ({...e, __err:true})), 'error');
+  $('startReview').onclick = () => startSession(
+    shuffle(DECK.errors).slice(0, 10).map(e => ({...e, __err:true})), 'error', true);
   $('startWrite').onclick = () => window.WRITING && window.WRITING.start();
   $('openSettings').onclick = settings;
   $('refresh').onclick = (e) => { e.preventDefault(); location.reload(); };
@@ -379,9 +384,9 @@ function settings(){
 /* ---------------- session ---------------- */
 let SESSION = null;
 
-function startSession(items, kind){
+function startSession(items, kind, practice){
   if(!items.length) return;
-  SESSION = { items, kind, i:0, right:0, wrong:0 };
+  SESSION = { items, kind, i:0, right:0, wrong:0, practice: !!practice };
   renderCard();
 }
 
@@ -468,17 +473,19 @@ function renderError(card){
 
 function next(ok){
   ok ? SESSION.right++ : SESSION.wrong++;
-  STAT.total = (STAT.total || 0) + 1;
-  if(STAT.doneDay !== dayStr()){ STAT.doneDay = dayStr(); STAT.doneCount = 0; }
-  STAT.doneCount = (STAT.doneCount || 0) + 1;
-  saveStat();
+  if(!SESSION.practice){
+    STAT.total = (STAT.total || 0) + 1;
+    if(STAT.doneDay !== dayStr()){ STAT.doneDay = dayStr(); STAT.doneCount = 0; }
+    STAT.doneCount = (STAT.doneCount || 0) + 1;
+    saveStat();
+  }
   SESSION.i++;
   if(SESSION.i >= SESSION.items.length) finish();
   else renderCard();
 }
 
 function finish(early){
-  bumpSession();
+  if(!SESSION.practice) bumpSession();
   const done = SESSION.i;
   app.innerHTML = `
     <div class="done">
@@ -544,10 +551,10 @@ function handleGrade(r){
   dbg('grade ' + r + ' on ' + (item.__err ? item.qid : item.w));
   if(item.__err){
     const ok = r === '1';
-    try{ gradeError(item, ok); }catch(e){ console.error(e); }
+    if(!SESSION.practice){ try{ gradeError(item, ok); }catch(e){ console.error(e); } }
     next(ok);
   } else {
-    try{ gradeCard(item, r); }catch(e){ console.error(e); }
+    if(!SESSION.practice){ try{ gradeCard(item, r); }catch(e){ console.error(e); } }
     next(r === 'good');
   }
 }
