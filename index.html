@@ -299,7 +299,7 @@ function home(){
       </button>
     </div>
     <div class="foot">
-      <span>今日 ${doneToday()}/${CFG.quota} · 已学 ${seen}/${total} · v6</span>
+      <span>今日 ${doneToday()}/${CFG.quota} · 已学 ${seen}/${total} · v7</span>
       <a href="#" id="refresh">刷新</a>
     </div>${STORAGE_OK ? '' : `<div style="margin-top:12px;padding:12px 14px;border-radius:14px;
       background:#3a2a00;color:#ffcf6b;font-size:12px;line-height:1.7">
@@ -545,7 +545,7 @@ function flip(card){
 }
 
 function handleGrade(r){
-  if(!SESSION) return;
+  if(!SESSION || !document.getElementById('card')) return;
   const item = SESSION.items[SESSION.i];
   if(!item) return;
   dbg('grade ' + r + ' on ' + (item.__err ? item.qid : item.w));
@@ -564,6 +564,7 @@ function onPointer(e){
   const t = e.target;
   if(!t || !t.closest) return;
   if(t.closest('#speak') || t.closest('#quit')) return;
+  if(t.closest('.w-grades')) return;
   const btn = t.closest('[data-r]');
   if(btn){
     if(Date.now() - lastAct < 350) return;
