@@ -1,5 +1,5 @@
 {
- "version": 2,
+ "version": 3,
  "generated": "2026-11-01",
  "grammar": [
   {
@@ -1134,6 +1134,169 @@
    ],
    "pri": 1,
    "src": "你的表格原文"
+  },
+  {
+   "id": "g134",
+   "p": "单复数与标点",
+   "zh": "该表细分了大一学生对学院三门课程（经济学、法学、商学）所提供资源给出「很好」评价的比例。",
+   "hint": "provides a breakdown of / percentages of / across three courses",
+   "en": "The table provides a breakdown of the percentages of first-year students who gave a 'very good' rating to the resources provided by a college across three courses: Economics, Law and Commerce.",
+   "why": "三门课程对应多个资源，用复数 percentages；英文冒号后要空一格。",
+   "tags": [
+    "单复数",
+    "标点"
+   ],
+   "pri": 1,
+   "src": "你的表格原文（11-02）"
+  },
+  {
+   "id": "g135",
+   "p": "拼写",
+   "zh": "总体而言，商科学生在所有方面的评价都最高。",
+   "hint": "Commerce students / across all aspects",
+   "en": "Overall, it is clear that Commerce students recorded the highest proportions across all aspects.",
+   "why": "acpects 应为 aspects；students of commerce 啰嗦，Commerce students 更地道；it's 在正式写作里写全拼 it is。",
+   "tags": [
+    "拼写",
+    "表达"
+   ],
+   "pri": 1,
+   "src": "你的表格原文（11-02）"
+  },
+  {
+   "id": "g136",
+   "p": "数据准确",
+   "zh": "值得注意的是，教学在经济学和商科中评价最高，但在法学中得分最低。",
+   "hint": "while / the most highly rated aspect / the lowest rating",
+   "en": "Notably, while teaching was the most highly rated aspect in Economics and Commerce, it received the lowest rating in Law.",
+   "why": "Overview 写错事实是致命的——你原来把经济学 Pre-course information 的 59% 当成了法学的最低分。写之前先核对哪个数字属于哪门课。",
+   "tags": [
+    "数据准确",
+    "比较"
+   ],
+   "pri": 1,
+   "src": "你的表格原文（11-02）"
+  },
+  {
+   "id": "g137",
+   "p": "数据对应",
+   "zh": "商科学生的评价最积极：学前信息和教学都是 95%，导师支持为 93%。",
+   "hint": "both stood at 95% / followed by tutor support at 93%",
+   "en": "Commerce students recorded the most positive response. Specifically, their ratings for pre-course information and teaching both stood at 95%, followed by tutor support at 93%.",
+   "why": "你列了三个项目却只给两个数据；三项对三个数要用 respectively 或拆句。especially at 也不能接三个并列名词。",
+   "tags": [
+    "数据对应",
+    "比较"
+   ],
+   "pri": 1,
+   "src": "你的表格原文（11-02）"
+  },
+  {
+   "id": "g138",
+   "p": "缺谓语",
+   "zh": "紧随其后的是纸质资源，为 85%。",
+   "hint": "This was followed by / standing at 85%",
+   "en": "This was followed by print resources, standing at 85%.",
+   "why": "Followed by 前面必须有主句，不能独立成句；resourses 拼写错误。",
+   "tags": [
+    "缺谓语",
+    "拼写"
+   ],
+   "pri": 1,
+   "src": "你的表格原文（11-02）"
+  },
+  {
+   "id": "g139",
+   "p": "拼写",
+   "zh": "有趣的是，经济学学生对教学的评价也很高，与商科持平。",
+   "hint": "Economics students / remarkably high / matching the figure for",
+   "en": "Interestingly, Economics students also gave a remarkably high rating to teaching, matching the figure for Commerce.",
+   "why": "Economic 是形容词，学科名是 Economics；remarkbly hig 应为 remarkably high。",
+   "tags": [
+    "拼写"
+   ],
+   "pri": 1,
+   "src": "你的表格原文（11-02）"
+  },
+  {
+   "id": "g140",
+   "p": "主谓一致",
+   "zh": "相比之下，法学学生的各项评分普遍较低。",
+   "hint": "the figures for / were generally lower",
+   "en": "In stark contrast, the figures for Law students were generally lower.",
+   "why": "the figure ... were 主谓不一致；多项评分用复数 figures。",
+   "tags": [
+    "主谓一致"
+   ],
+   "pri": 1,
+   "src": "你的表格原文（11-02）"
+  },
+  {
+   "id": "g141",
+   "p": "最高级",
+   "zh": "尤其是教学，仅获得 62% 的最低评分。",
+   "hint": "In particular / the lowest rating at 62%",
+   "en": "In particular, teaching gained the lowest rating at 62%.",
+   "why": "全表最低要用最高级 lowest，不是 lower；particular 别拼成 patricular。",
+   "tags": [
+    "最高级",
+    "拼写"
+   ],
+   "pri": 1,
+   "src": "你的表格原文（11-02）"
+  },
+  {
+   "id": "g142",
+   "p": "指代",
+   "zh": "至于经济学学生，尽管他们对教学和导师的评价很高，但他们的学前信息在各方面中得分最低，仅 59%。",
+   "hint": "despite their / among all aspects",
+   "en": "Turning to Economics students, despite their high rating for teaching and tutor, their pre-course information received the lowest proportion among all aspects, at just 59%.",
+   "why": "its 不能指代复数的 students，要用 their；of all parts 应为 among all aspects；highrating / recieved 是拼写错误。",
+   "tags": [
+    "指代",
+    "拼写"
+   ],
+   "pri": 1,
+   "src": "你的表格原文（11-02）"
+  },
+  {
+   "id": "g143",
+   "p": "拼写",
+   "zh": "有趣的是，经济学学生对资源和教学的评价都特别高。",
+   "hint": "Economics / remarkably / resources / ratings",
+   "en": "Interestingly, Economics students gave remarkably high ratings to resources and teaching.",
+   "why": "这一句里有四个你反复拼错的词：Economics、remarkably、resources、ratings。拼写题没有技巧，只能写慢一点。",
+   "tags": [
+    "拼写"
+   ],
+   "pri": 1,
+   "src": "你的表格原文（11-02）"
+  },
+  {
+   "id": "g144",
+   "p": "数据对应",
+   "zh": "这三个方面的评分分别为 95%、93% 和 85%。",
+   "hint": "respectively",
+   "en": "The ratings for these three aspects were 95%, 93% and 85% respectively.",
+   "why": "三项对三个数字必须用 respectively，否则读者不知道哪个数字属于哪一项。",
+   "tags": [
+    "数据对应"
+   ],
+   "pri": 1,
+   "src": "你的表格原文（11-02）"
+  },
+  {
+   "id": "g145",
+   "p": "标点",
+   "zh": "课程包括经济学、法学和商学。",
+   "hint": "courses: Economics, Law and Commerce",
+   "en": "The three courses are Economics, Law and Commerce.",
+   "why": "英文冒号后要空一格；列举三项时最后一项前用 and，逗号可省。",
+   "tags": [
+    "标点"
+   ],
+   "pri": 1,
+   "src": "你的表格原文（11-02）"
   }
  ],
  "task1": [
@@ -1296,6 +1459,20 @@
    "ref": "The most striking change is in the north, where farmland has been replaced by a car park. The small shops in the east have given way to a supermarket, and the railway station in the south has been extended.",
    "why": "地图题先给方位再给变化；变化动词用 be replaced by / give way to / be extended。",
    "src": "补充题型（你的四篇里没有）"
+  },
+  {
+   "id": "t1-13",
+   "kind": "表格 · 概述（事实准确）",
+   "title": "表格 · 大一学生评价",
+   "zh": "表格：大一学生对三门课程（经济、法学、商科）在五个方面的「很好」评价比例。商科整体最高；教学在商科和经济都是 95%，在法学只有 62%（全表最低）。写概述段。",
+   "slots": [
+    "Overview 只写最大反差",
+    "指出教学在两门课最高、在法学最低",
+    "不写具体数字"
+   ],
+   "ref": "Overall, Commerce students gave the most positive ratings across most aspects. Notably, while teaching was the most highly rated aspect in Economics and Commerce, it received the lowest rating in Law.",
+   "why": "Overview 写错事实是致命的——你原来把经济学的 59% 当成法学的最低分。先核对「哪个数字属于哪门课」，再写反差。",
+   "src": "你的表格原文（11-02）"
   }
  ],
  "task2": [
