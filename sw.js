@@ -1,5 +1,5 @@
 /* 离线缓存：app shell 缓存优先，deck.json / writing.json 网络优先（拿不到就用缓存） */
-const CACHE = 'ielts-v12';
+const CACHE = 'ielts-v13';
 const SHELL = ['./', './index.html', './writing.js', './patterns.js', './ideas.js', './manifest.webmanifest',
                './icon-192.png', './icon-512.png'];
 const NETFIRST = ['deck.json', 'writing.json', 'patterns.json', 'ideas.json'];
