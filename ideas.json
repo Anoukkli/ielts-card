@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "generated": "2026-11-10",
+  "prompts": [
+    {"id":"i1","topic":"教育","prompt":"University education should be free for all students. To what extent do you agree or disagree?","zh":"大学教育应对所有学生免费。你同意吗？","stance":"反对全面免费，支持按收入资助。","args":[
+      {"claim":"Free tuition strains public budgets without improving quality.","reason":"Many governments already underfund teaching and facilities.","example":"Several countries with free tuition face overcrowded lecture halls."},
+      {"claim":"Means-tested support directs money to those who need it.","reason":"Wealthy families can afford fees without subsidy.","example":"Income-based loans in Australia keep participation high."}]},
+    {"id":"i2","topic":"教育","prompt":"Some people think homework should be banned in primary schools. Do you agree or disagree?","zh":"有人认为小学应该取消家庭作业。你同意吗？","stance":"支持减少，不支持全禁。","args":[
+      {"claim":"Excessive homework crowds out play and sleep.","reason":"Young children need rest and physical activity to develop.","example":"Finnish primary pupils get little homework and still perform well."},
+      {"claim":"Short daily practice builds routine.","reason":"Brief review consolidates what was taught in class.","example":"Ten minutes of reading each evening improves literacy."}]},
+    {"id":"i3","topic":"环境","prompt":"Individuals can do little to improve the environment; only governments and companies can make a difference. To what extent do you agree?","zh":"个人对环保作用有限，只有政府和企业能改变。你同意吗？","stance":"政府和企业的杠杆更大，但个人不是无用。","args":[
+      {"claim":"Systemic change requires regulation and investment.","reason":"Individual choices are constrained by the infrastructure available.","example":"A commuter cannot take the bus if no route exists."},
+      {"claim":"Individual habits shape market demand.","reason":"Companies respond to what consumers buy.","example":"The growth of plant-based food followed changing diets."}]},
+    {"id":"i4","topic":"环境","prompt":"Plastic packaging should be banned completely. To what extent do you agree or disagree?","zh":"应彻底禁用塑料包装。你同意吗？","stance":"支持限制一次性塑料，不支持一刀切。","args":[
+      {"claim":"A blanket ban may push producers towards worse alternatives.","reason":"Paper and glass carry higher energy and transport costs.","example":"A paper bag must be reused many times to offset its footprint."},
+      {"claim":"Regulation should target single-use items instead.","reason":"Most plastic waste comes from packaging used once.","example":"Deposit schemes recover the majority of bottles."}]},
+    {"id":"i5","topic":"科技","prompt":"Artificial intelligence will replace many jobs. Is this a positive or negative development?","zh":"人工智能会取代许多工作。这是好事还是坏事？","stance":"净效应偏正面，但必须配再培训。","args":[
+      {"claim":"Automation removes tasks rather than whole occupations.","reason":"Most jobs combine routine and non-routine work.","example":"ATMs cut teller numbers while banks opened more branches."},
+      {"claim":"New roles appear around the technology.","reason":"Every automated system needs maintenance and oversight.","example":"Data annotation and AI auditing are now job categories."}]},
+    {"id":"i6","topic":"科技","prompt":"Social media does more harm than good to young people. To what extent do you agree?","zh":"社交媒体对年轻人弊大于利。你同意吗？","stance":"有害，但取决于使用方式。","args":[
+      {"claim":"Constant comparison damages self-esteem.","reason":"Curated feeds present unrealistic lives.","example":"Heavy Instagram use is linked to anxiety in teenagers."},
+      {"claim":"The same platforms provide support and information.","reason":"Marginalised groups find communities online.","example":"Young people with rare conditions connect through forums."}]},
+    {"id":"i7","topic":"健康","prompt":"Governments should tax unhealthy food to improve public health. Do you agree or disagree?","zh":"政府应对不健康食品征税以改善公共健康。你同意吗？","stance":"支持，但要配合教育与补贴。","args":[
+      {"claim":"Price signals change purchasing behaviour.","reason":"Consumers are sensitive to cost.","example":"Mexico's sugar tax reduced sales of sugary drinks."},
+      {"claim":"Taxes alone can hit poorer households hardest.","reason":"Regressive taxes take a larger share of low incomes.","example":"Low-income families spend more of their budget on food."}]},
+    {"id":"i8","topic":"工作","prompt":"More people are working from home. Do the advantages outweigh the disadvantages?","zh":"越来越多人居家办公。利大于弊吗？","stance":"利大于弊，但需要规则。","args":[
+      {"claim":"It saves commuting time and widens access to jobs.","reason":"Workers can apply for roles outside their city.","example":"Rural employees now work for urban firms."},
+      {"claim":"It weakens collaboration and onboarding.","reason":"Informal learning happens in shared spaces.","example":"New graduates report feeling isolated."}]},
+    {"id":"i9","topic":"教育","prompt":"Students should take a gap year before starting university. Do the advantages outweigh the disadvantages?","zh":"学生应在上大学前间隔一年。利大于弊吗？","stance":"利大于弊，前提是有计划。","args":[
+      {"claim":"It builds maturity and direction.","reason":"Students choose courses more deliberately after working.","example":"Volunteers often return with clearer career goals."},
+      {"claim":"It can become lost time.","reason":"Without structure a year simply drifts.","example":"Unplanned gaps add little to a CV."}]},
+    {"id":"i10","topic":"工作","prompt":"Employers should prioritise skills over academic qualifications. Do you agree?","zh":"雇主应更看重技能而非学历。你同意吗？","stance":"同意，但学历仍是筛选底线。","args":[
+      {"claim":"Skills predict performance better than certificates.","reason":"Jobs change faster than curricula.","example":"Tech firms hire self-taught developers."},
+      {"claim":"Degrees still signal persistence and breadth.","reason":"Employers need a cheap way to filter large pools.","example":"Many graduate schemes still require a degree."}]},
+    {"id":"i11","topic":"政府","prompt":"Governments should provide free childcare for working parents. Do you agree?","zh":"政府应为在职父母提供免费托育。你同意吗？","stance":"支持，回报高于成本。","args":[
+      {"claim":"It raises female employment.","reason":"Childcare costs keep parents out of work.","example":"Quebec's subsidised scheme increased mothers' employment."},
+      {"claim":"Early education improves long-term outcomes.","reason":"Cognitive gaps appear before school age.","example":"Head Start programmes show lasting benefits."}]},
+    {"id":"i12","topic":"城市","prompt":"Cities should limit the number of cars in the centre. Do you agree?","zh":"城市应限制市中心车辆。你同意吗？","stance":"支持，但必须先有替代方案。","args":[
+      {"claim":"Charging and limiting cars cuts congestion and pollution.","reason":"Drivers change behaviour when the cost is visible.","example":"London's congestion charge reduced traffic by a third."},
+      {"claim":"Restrictions can hurt small businesses.","reason":"Customers who drive may shop elsewhere.","example":"Some retailers report falling footfall."}]},
+    {"id":"i13","topic":"媒体","prompt":"News media should be regulated by the government. To what extent do you agree?","zh":"新闻媒体应由政府监管。你同意吗？","stance":"反对政府直接管内容，支持独立监管。","args":[
+      {"claim":"State control risks censorship.","reason":"Governments have an interest in favourable coverage.","example":"Press freedom indices link state ownership to lower trust."},
+      {"claim":"Independent regulators can curb misinformation.","reason":"Platforms profit from engagement rather than accuracy.","example":"Ofcom enforces accuracy rules on broadcasters."}]},
+    {"id":"i14","topic":"文化","prompt":"Governments should spend money on protecting traditional culture rather than on new arts. Discuss both views.","zh":"政府应把钱花在保护传统文化而不是新艺术上。讨论双方。","stance":"两者都要，比例随阶段调整。","args":[
+      {"claim":"Heritage sustains identity and attracts tourism.","reason":"Cultural sites are economic assets.","example":"Restored historic centres draw visitors."},
+      {"claim":"New arts drive innovation and youth engagement.","reason":"Creative industries need seed funding.","example":"Public film funds launched major directors."}]},
+    {"id":"i15","topic":"社会","prompt":"The ageing population causes problems for society. What problems does it cause and what solutions can you suggest?","zh":"人口老龄化带来问题。有哪些问题，如何解决？","stance":"问题在劳动力与养老成本，解法在延退与移民。","args":[
+      {"claim":"A shrinking workforce strains pensions.","reason":"Fewer contributors support more retirees.","example":"Japan raised the retirement age above 65."},
+      {"claim":"Immigration can offset labour shortages.","reason":"Younger workers pay into the system.","example":"Canada's points system fills gaps."}]},
+    {"id":"i16","topic":"消费","prompt":"Why do people buy expensive brands? Is it a positive or negative development?","zh":"为什么人们买昂贵品牌？这是好事还是坏事？","stance":"原因是身份信号；总体偏负面。","args":[
+      {"claim":"People buy brands to signal status.","reason":"Visible logos communicate wealth.","example":"Luxury handbags hold resale value."},
+      {"claim":"It becomes negative when funded by debt.","reason":"Consumption is increasingly paid for on credit.","example":"Buy-now-pay-later debt is rising among young adults."}]}
+  ]
+}
