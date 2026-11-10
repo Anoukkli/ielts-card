@@ -143,6 +143,7 @@
 <script src="writing.js"></script>
 <script src="patterns.js"></script>
 <script src="ideas.js"></script>
+<script src="backup.js"></script>
 
 <script>
 /* =========================================================
@@ -304,7 +305,7 @@ function home(){
       </button>
     </div>
     <div class="foot">
-      <span>今日 ${doneToday()}/${CFG.quota} · 已学 ${seen}/${total} · v13</span>
+      <span>今日 ${doneToday()}/${CFG.quota} · 已学 ${seen}/${total} · v14</span>
       <a href="#" id="refresh">刷新</a>
     </div>${STORAGE_OK ? '' : `<div style="margin-top:12px;padding:12px 14px;border-radius:14px;
       background:#3a2a00;color:#ffcf6b;font-size:12px;line-height:1.7">
@@ -325,6 +326,7 @@ function home(){
 }
 
 function settings(){
+  const BK = window.BACKUP ? window.BACKUP.summary() : {vocab:0,writeLogs:0,ideaLogs:0};
   app.innerHTML = `
     <div class="stage">
       <div class="topbar"><button class="close" id="back">‹</button><div style="flex:1"></div></div>
@@ -342,9 +344,20 @@ function settings(){
           本地存储：<span style="color:${STORAGE_OK ? 'var(--good)' : 'var(--bad)'}">${STORAGE_OK ? '可用' : '被禁用（进度会丢）'}</span>
         </div>
       </div>
-      <div class="block" style="margin-top:26px">
-        <button class="btn" id="export" style="width:100%">导出进度 JSON</button>
-        <button class="btn" id="import" style="width:100%;margin-top:10px">导入进度 JSON</button>
+      <div class="block" style="margin-top:22px">
+        <div class="k">手机 ↔ 电脑（合并，不覆盖）</div>
+        <div style="font-size:12px;color:var(--dim);line-height:1.8;margin:8px 0 10px">
+          本机：单词 ${BK.vocab} 条 · 写作 ${BK.writeLogs} 条 · 观点 ${BK.ideaLogs} 条<br>
+          电脑上练的，先在电脑点「全量导出」，把文件传到手机，再在手机上「导入并合并」。
+        </div>
+        <button class="btn primary" id="exportAll" style="width:100%;justify-content:center">全量导出（手机↔电脑）</button>
+        <button class="btn" id="importAll" style="width:100%;margin-top:10px;justify-content:center">导入并合并</button>
+        <input type="file" id="fileAll" accept="application/json,.json" style="display:none">
+      </div>
+      <div class="block" style="margin-top:18px">
+        <div class="k">其他</div>
+        <button class="btn" id="export" style="width:100%;margin-top:8px">仅导出单词进度</button>
+        <button class="btn" id="import" style="width:100%;margin-top:8px">仅导入单词进度</button>
         <input type="file" id="file" accept="application/json,.json" style="display:none">
         <button class="btn" id="reset" style="width:100%;margin-top:10px;color:var(--bad)">清空本机进度</button>
       </div>
@@ -375,6 +388,24 @@ function settings(){
         saveSRS(); saveStat();
         toast('已导入 ' + Object.keys(d.srs || {}).length + ' 条进度');
         settings();
+      }catch(e){ toast('文件格式不对'); }
+    };
+    rd.readAsText(f);
+  };
+  $('exportAll').onclick = () => {
+    const n = window.BACKUP.exportAll();
+    toast('已导出全量备份（' + n + ' 条记录）');
+  };
+  $('importAll').onclick = () => $('fileAll').click();
+  $('fileAll').onchange = (ev) => {
+    const f = ev.target.files && ev.target.files[0];
+    if(!f) return;
+    const rd = new FileReader();
+    rd.onload = () => {
+      try{
+        const r = window.BACKUP.importPayload(JSON.parse(rd.result));
+        toast('已合并：单词 ' + r.vocab + ' · 写作 ' + r.writeLogs + ' 条 · 观点 ' + r.ideaLogs + ' 条');
+        setTimeout(() => location.reload(), 1200);
       }catch(e){ toast('文件格式不对'); }
     };
     rd.readAsText(f);
