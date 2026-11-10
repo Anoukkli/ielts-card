@@ -201,6 +201,7 @@
   }
 
   function renderHub() {
+    clearBodyTimer();
     day();
     var d = peekDay();
     var elapsed = elapsedSec();
@@ -227,6 +228,15 @@
       '<div class="w-timebar"><span>今日已用 <b>' + fmt(elapsed) + '</b> / 45:00</span>' +
       '<span class="' + (elapsed > TARGET_MIN * 60 ? 'w-over' : '') + '">' + (doneCount() === 4 ? '收工' : '') + '</span></div>' +
       rows +
+      '<div class="w-k" style="margin-top:10px">加练（不计入上面四块）</div>' +
+      '<button class="w-blk" id="wstartBody">' +
+      '<div class="w-blk-main"><div class="w-blk-t">主体段专项</div>' +
+      '<div class="w-blk-s">只写一段 · 主题句→原因→例子→回扣 · 10 分钟计时</div></div>' +
+      '<div class="w-blk-r">10 分钟</div></button>' +
+      '<button class="w-blk" id="wstartIdea">' +
+      '<div class="w-blk-main"><div class="w-blk-t">观点速练</div>' +
+      '<div class="w-blk-s">90 秒想两个论点 · 3 题 · 治没话讲</div></div>' +
+      '<div class="w-blk-r">' + (window.IDEAS ? window.IDEAS.summaryText() : '3 题') + '</div></button>' +
       '<div class="w-links">' +
       '<button class="w-link" id="wbank">错句库 · ' + bad + ' 条</button>' +
       '<button class="w-link" id="wexport">导出写作记录</button>' +
@@ -240,6 +250,90 @@
     });
     $('#wbank').onclick = renderBank;
     $('#wexport').onclick = exportLog;
+    $('#wstartBody').onclick = startBody;
+    $('#wstartIdea').onclick = function () {
+      if (window.IDEAS) window.IDEAS.start(); else toast('观点库没加载上');
+    };
+  }
+
+  /* ---------------- 主体段专项 ---------------- */
+  var BODY_T = null;
+  function clearBodyTimer() { if (BODY_T) { clearInterval(BODY_T); BODY_T = null; } }
+
+  function startBody() {
+    clearBodyTimer();
+    var item = DATA.task2[Math.floor(Date.now() / 864e5) % DATA.task2.length];
+    ROUND = { k: 'body', step: 0, item: item, left: 600 };
+    renderBody();
+  }
+
+  function renderBody() {
+    var item = ROUND.item;
+    clearClock();
+    clearBodyTimer();
+    appEl().innerHTML = top('主体段 · 10 分钟', item.typeName) +
+      '<div class="w-card">' +
+      '<div class="w-kicker">只写主体段 1，不写开头结尾</div>' +
+      '<div class="w-en">' + esc(item.prompt) + '</div>' +
+      '<div class="w-zh">' + esc(item.zh) + '</div>' +
+      '<div class="w-hint">参考立场：' + esc(item.stance || '') + '</div>' +
+      '<div class="w-bodyclock" id="wbodyclock">10:00</div>' +
+      '<textarea class="w-ta" id="wans" rows="8" autocapitalize="sentences" autocorrect="off" spellcheck="false" placeholder="主题句 → 原因 → 例子 → 回扣"></textarea>' +
+      '<button class="btn primary" id="wcheck">看参考段落</button>' +
+      '</div><div id="wpanel"></div>';
+    bindBack(function () { clearBodyTimer(); renderHub(); });
+    var left = 600;
+    BODY_T = setInterval(function () {
+      var el = document.getElementById('wbodyclock');
+      if (!el) { clearBodyTimer(); return; }
+      left--;
+      if (left <= 0) {
+        el.textContent = '时间到';
+        el.classList.add('over');
+        clearBodyTimer();
+        return;
+      }
+      el.textContent = fmt(left);
+      el.classList.toggle('over', left < 120);
+    }, 1000);
+
+    document.getElementById('wcheck').onclick = function () {
+      var val = (document.getElementById('wans').value || '').trim();
+      if (val.split(/\s+/).length < 30) { toast('主体段至少写 5 句再对照'); return; }
+      showBodyPanel(item, val);
+    };
+  }
+
+  function showBodyPanel(item, val) {
+    clearBodyTimer();
+    var c = (item.chain && item.chain[0]) || {};
+    var model = [c.claim, c.reason, c.example, c.link].filter(Boolean).join(' ');
+    var checks = ['主题句说了这一段要证明什么', '有 because / since 这类原因', '有一个具体例子', '最后一句回扣了立场'];
+    document.getElementById('wpanel').innerHTML =
+      '<div class="w-card">' +
+      '<div class="w-k">参考段落（你的论点链拼起来）</div>' +
+      '<div class="w-ref">' + esc(model) + '</div>' +
+      '<div class="w-k">你的段落</div>' +
+      '<div class="w-mine">' + esc(val) + '</div>' +
+      '</div>' +
+      '<div class="w-card"><div class="w-k">自检（缺一条就重写这段）</div>' +
+      checks.map(function (t, i) {
+        return '<label class="w-check"><input type="checkbox" data-c="' + i + '">' + esc(t) + '</label>';
+      }).join('') + '</div>' +
+      '<button class="btn primary" id="wbodysave" style="width:100%;justify-content:center">完成这段</button>';
+    var ta = document.getElementById('wans');
+    if (ta) ta.readOnly = true;
+    var btn = document.getElementById('wcheck');
+    if (btn) btn.style.display = 'none';
+    document.getElementById('wbodysave').onclick = function () {
+      ST.logs.push({
+        d: today(), t: Date.now(), block: 'body', id: item.id, zh: item.zh,
+        mine: val, ref: model, grade: 'done'
+      });
+      save();
+      toast('记下了');
+      renderHub();
+    };
   }
 
   /* ---------------- block entry ---------------- */
@@ -640,7 +734,8 @@
       '.w-title{font-size:16px;font-weight:600;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
       '.w-count{font-size:12px;color:var(--dim);font-variant-numeric:tabular-nums}',
       '.w-clock{font-size:12px;color:var(--dim);font-variant-numeric:tabular-nums}',
-      '.w-clock.over{color:var(--bad)}',
+      '.w-bodyclock{font-size:13px;color:var(--dim);font-variant-numeric:tabular-nums;margin-top:14px}',
+      '.w-bodyclock.over{color:var(--bad)}',
       '.w-intro{font-size:12px;color:var(--dim);line-height:1.65;margin:2px 0 14px}',
       '.w-dots{display:flex;gap:6px;margin:0 0 10px}',
       '.w-dot{flex:1;height:5px;border-radius:3px;background:var(--line);transition:background .2s}',
