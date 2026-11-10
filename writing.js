@@ -339,7 +339,7 @@
   /* ---------------- block entry ---------------- */
   function startBlock(k) {
     var d = day();
-    if (k === 'rev') { ROUND = { k: 'rev' }; renderRev(); return; }
+    if (k === 'rev') { renderReviewMenu(); return; }
     if (!d.items[k]) { d.items[k] = pickItems(k); save(); }
     var ids = d.items[k];
     var i = d.done[k] || 0;
@@ -356,8 +356,10 @@
       '<div class="big">✅</div><h2>这块今天完成了</h2>' +
       '<p>' + (k === 'g' ? '明天会按间隔把弱的再推回来' : '明天换新题') + '</p></div>' +
       (rows ? '<div class="w-k">今天写的</div>' + rows : '') +
-      '<button class="btn primary" id="wbackhome" style="margin-top:22px;justify-content:center">回到今日</button>';
+      '<button class="btn primary" id="wbackhome" style="margin-top:22px;justify-content:center">回到今日</button>' +
+      '<button class="btn" id="wreviewblock" style="margin-top:10px;width:100%;justify-content:center">复盘这块</button>';
     document.getElementById('wbackhome').onclick = renderHub;
+    document.getElementById('wreviewblock').onclick = function () { renderBlockReview(k); };
     bindBack(renderHub);
     startClock();
   }
@@ -696,6 +698,76 @@
       d.rev = true;
       save();
       toast('记下了');
+      renderHub();
+    };
+  }
+
+  /* ---------------- 分块复盘 ---------------- */
+  function renderReviewMenu() {
+    var blocks = [['g', '语法'], ['t1', '小作文'], ['t2', '大作文']];
+    var rows = blocks.map(function (b) {
+      var n = ST.logs.filter(function (l) { return l.block === b[0]; }).length;
+      return '<button class="w-blk" data-rv="' + b[0] + '">' +
+        '<div class="w-blk-main"><div class="w-blk-t">' + b[1] + '复盘</div>' +
+        '<div class="w-blk-s">' + n + ' 条记录 · 可打磨保存</div></div>' +
+        '<div class="w-blk-r">›</div></button>';
+    }).join('');
+    appEl().innerHTML = top('复盘') +
+      '<div class="w-intro">按模块分开看，不然会乱。每条都能存「打磨后的版本」。</div>' +
+      rows +
+      '<button class="w-blk" id="wreviewIdea"><div class="w-blk-main"><div class="w-blk-t">观点复盘</div>' +
+      '<div class="w-blk-s">看过的题 + 你写的两个论点 + 参考</div></div><div class="w-blk-r">›</div></button>' +
+      '<button class="w-link" id="wreviewAll" style="width:100%;margin-top:6px">全部记录（旧版混排）</button>';
+    bindBack(renderHub);
+    $$('[data-rv]').forEach(function (b) {
+      b.onclick = function () { renderBlockReview(b.getAttribute('data-rv')); };
+    });
+    document.getElementById('wreviewIdea').onclick = function () {
+      if (window.IDEAS && window.IDEAS.review) window.IDEAS.review();
+      else toast('观点库没加载上');
+    };
+    document.getElementById('wreviewAll').onclick = renderRev;
+    startClock();
+  }
+
+  function renderBlockReview(k) {
+    var logs = ST.logs.filter(function (l) { return l.block === k; }).slice(-20).reverse();
+    var rows = logs.length ? logs.map(function (l) {
+      var idx = ST.logs.indexOf(l);
+      return '<div class="w-card" style="margin-bottom:10px">' +
+        '<div class="w-kicker">' + esc(l.d || '') + (l.zh ? ' · ' + esc(l.zh) : '') + '</div>' +
+        '<div class="w-log-a">你：' + esc(l.mine || '（空）') + '</div>' +
+        '<div class="w-log-a ref">参考：' + esc(l.ref || '') + '</div>' +
+        '<textarea class="w-ta sm" data-polish="' + idx + '" rows="2" placeholder="打磨后的版本：改一个词、换个句型都算">' + esc(l.polish || '') + '</textarea>' +
+        '<button class="w-link" data-save="' + idx + '" style="width:100%;margin-top:8px">保存打磨</button>' +
+        '</div>';
+    }).join('') : '<div class="w-empty">这块还没有记录。</div>';
+    var rule = ST.logs.filter(function (l) { return l.block === 'rule' && l.k === k; }).slice(-1)[0];
+    appEl().innerHTML = top(LABEL[k] + ' 复盘') +
+      '<div class="w-intro">只复盘这一块。写错的那句，下面直接写打磨版；改一个词也算练习。</div>' +
+      rows +
+      '<div class="w-card"><div class="w-k">这块的一句话规则</div>' +
+      '<textarea class="w-ta" id="wrule" rows="3" placeholder="例：数据句先写时间，再写数字。">' + esc(rule ? rule.mine : '') + '</textarea>' +
+      '<button class="btn primary" id="wrulesave" style="width:100%;justify-content:center">保存规则</button></div>';
+    bindBack(renderHub);
+    startClock();
+    $$('[data-save]').forEach(function (b) {
+      b.onclick = function () {
+        var i = +b.getAttribute('data-save');
+        var ta = document.querySelector('[data-polish="' + i + '"]');
+        ST.logs[i].polish = (ta.value || '').trim();
+        save();
+        toast('打磨已存');
+      };
+    });
+    document.getElementById('wrulesave').onclick = function () {
+      var v = (document.getElementById('wrule').value || '').trim();
+      if (!v) { toast('写一句再存'); return; }
+      ST.logs.push({ d: today(), t: Date.now(), block: 'rule', k: k, mine: v, grade: 'note' });
+      var d = day();
+      d.rev = true;
+      save();
+      toast('规则已存');
       renderHub();
     };
   }
