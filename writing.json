@@ -1,5 +1,5 @@
 {
- "version": 3,
+ "version": 4,
  "generated": "2026-11-01",
  "grammar": [
   {
@@ -1297,6 +1297,54 @@
    ],
    "pri": 1,
    "src": "你的表格原文（11-02）"
+  },
+  {
+   "id": "g146",
+   "p": "分词与包含",
+   "zh": "这张表格细分了生活在贫困中的不同类型家庭。平均而言，11% 的家庭（包含近两百万人）处于这种状况。",
+   "hint": "gives a breakdown of / comprising / were in this position",
+   "en": "The table gives a breakdown of the different types of family who were living in poverty. On average, 11% of all households, comprising almost two million people, were in this position.",
+   "why": "type 要用复数 types；两百万是 two million people，million 不加 s；数据是过去的事，用 were living / were in this position；comprising 是分词插入语，前后必须加逗号。",
+   "tags": [
+    "单复数",
+    "分词",
+    "数据准确"
+   ],
+   "pri": 1,
+   "src": "你的表格练习（11-10）",
+   "orig": "The table provides a breakdown of the different type of family living in poverty. On average, 11% of all households (nearly 2 millions people) live in this situation."
+  },
+  {
+   "id": "g147",
+   "p": "分词与倍数",
+   "zh": "然而，仅由单亲或单身成年人组成的家庭，其贫困人口比例几乎是这个数字的两倍，分别为 21% 和 19%。",
+   "hint": "consisting of / almost double this proportion / with ... respectively",
+   "en": "However, those consisting of only one parent or a single adult had almost double this proportion of poor people, with 21% and 19% respectively.",
+   "why": "你写 those families who merely consisting of——who 后面不能接分词：要么 who consist of，要么 those consisting of；主语重心放在 those 上；respectively 前用 with，不用 at；parenets 拼写。",
+   "tags": [
+    "分词",
+    "倍数",
+    "指代"
+   ],
+   "pri": 1,
+   "src": "你的表格练习（11-10）",
+   "orig": "However, the poverty proportion of those families who merely consisting of sole parenets or single adults is almost double this proportion, respectively at 21% and 19%."
+  },
+  {
+   "id": "g148",
+   "p": "比较级与形式主语",
+   "zh": "值得注意的是，对于有孩子的这两类家庭，此时生活在贫困中的比例高于平均水平。情侣通常更宽裕。",
+   "hint": "It is noticeable that / a higher than average proportion / tended to be better off",
+   "en": "It is noticeable that for both types of household with children, a higher than average proportion were living in poverty at this time. Couples generally tended to be better off.",
+   "why": "noticeble 拼写；children families 应为 households with children；描述过去数据用 were living；couple 指群体用复数 Couples；better off 是固定搭配，不能写成 better。",
+   "tags": [
+    "比较",
+    "主谓一致",
+    "拼写"
+   ],
+   "pri": 1,
+   "src": "你的表格练习（11-10）",
+   "orig": "It is noticeble that the poverty proportion of children families is higher than average, but couple tended to be better off."
   }
  ],
  "task1": [
