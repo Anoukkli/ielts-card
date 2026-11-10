@@ -500,6 +500,7 @@
       extra +
       '<div class="w-k">为什么这么写</div>' +
       '<div class="w-why">' + esc(item.why) + '</div>' +
+      (item.orig ? '<div class="w-k">你当时的原句</div><div class="w-mine">' + esc(item.orig) + '</div>' : '') +
       '</div>' + gradesHTML(kind);
 
     var ta = document.getElementById('wans');
@@ -668,9 +669,18 @@
   function renderRev() {
     var logs = ST.logs.filter(function (l) { return l.d === today() && l.block !== 'rule'; });
     var rows = logs.length ? logs.map(logRow).join('') : '<div class="w-empty">今天还没有记录。先做前面三块。</div>';
+    var hist = DATA.grammar.filter(function (x) { return x.orig; }).slice(-6).reverse();
+    var histHtml = hist.length ? '<div class="w-k">历史错句（来自批改）</div>' + hist.map(function (x) {
+      return '<div class="w-log">' +
+        '<div class="w-log-h"><span class="w-tag meh">' + esc(x.p) + '</span>' +
+        '<span class="w-log-d">' + esc(x.src || '') + '</span></div>' +
+        '<div class="w-log-a">你：' + esc(x.orig) + '</div>' +
+        '<div class="w-log-a ref">参考：' + esc(x.en) + '</div>' +
+        '</div>';
+    }).join('') : '';
     appEl().innerHTML = top(LABEL.rev) +
       '<div class="w-intro">只挑最刺眼的一条，抄下来，写一句能带走的规则。写多了等于没写。</div>' +
-      rows +
+      rows + histHtml +
       '<div class="w-card" style="margin-top:14px">' +
       '<div class="w-k">今天最刺眼的一句 + 一句话规则</div>' +
       '<textarea class="w-ta" id="wrule" rows="4" placeholder="例：Food industry took largest share → 行业名和最高级都别裸奔，the 要补上。"></textarea>' +
