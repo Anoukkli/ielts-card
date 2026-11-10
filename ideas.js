@@ -44,6 +44,7 @@
     try { ST = JSON.parse(localStorage.getItem(KEY) || 'null') || {}; } catch (e) { ST = {}; }
     if (!ST.srs) ST.srs = {};
     if (!ST.days) ST.days = {};
+    if (!ST.logs) ST.logs = [];
   }
   function save() {
     try { localStorage.setItem(KEY, JSON.stringify(ST)); } catch (e) { toast('存不进去：检查 Safari 存储设置'); }
@@ -122,9 +123,11 @@
       '<div class="i-intro">看到题目先别写全文：90 秒内逼自己想出两个论点，再看观点库缺了什么。练的是「有话讲」，不是写整篇。</div>' +
       '<div class="i-stat"><b>' + n + '</b> / ' + PER_DAY + ' 题 <span>今天</span></div>' +
       '<button class="i-btn" id="istart">' + (n >= PER_DAY ? '今天已练完，再来一组' : '开始 3 题') + '</button>' +
+      '<button class="i-link" id="ireview">复盘 · 打磨写过的论点</button>' +
       '<div class="i-tip">每题只有 90 秒。想不出来就空着，看参考时才知道自己缺哪一类理由。</div>';
     bindBack(function () { if (window.WRITING && window.WRITING.start) window.WRITING.start(); });
     document.getElementById('istart').onclick = startRound;
+    document.getElementById('ireview').onclick = renderReview;
   }
 
   function startRound() {
@@ -197,6 +200,8 @@
     $$('[data-ig]').forEach(function (b) {
       b.onclick = function () {
         grade(p.id, b.getAttribute('data-ig'));
+        ST.logs.push({ d: today(), t: Date.now(), id: p.id, prompt: p.prompt, zh: p.zh,
+          mine: mine, claims: p.args.map(function (a) { return a.claim; }), polish: '' });
         var d = day();
         d.n = (d.n || 0) + 1;
         save();
@@ -231,6 +236,33 @@
     });
   }
 
+  function renderReview() {
+    var logs = ST.logs.slice(-20).reverse();
+    var rows = logs.length ? logs.map(function (l) {
+      var idx = ST.logs.indexOf(l);
+      return '<div class="i-card">' +
+        '<div class="i-kicker">' + esc(l.d || '') + '</div>' +
+        '<div class="i-en" style="font-size:14px">' + esc(l.prompt || '') + '</div>' +
+        '<div class="i-arg-l" style="margin-top:10px"><b>你写的</b>' + (l.mine ? esc(l.mine).split(String.fromCharCode(10)).join('<br>') : '（空）') + '</div>' +
+        '<div class="i-arg-l"><b>参考</b>' + esc((l.claims || []).join(' / ')) + '</div>' +
+        '<textarea class="i-ta" data-polish="' + idx + '" rows="2" placeholder="打磨后的论点：更具体、更有因果">' + esc(l.polish || '') + '</textarea>' +
+        '<button class="i-link" data-save="' + idx + '" style="width:100%;margin-top:8px">保存打磨</button>' +
+        '</div>';
+    }).join('') : '<div class="i-done"><p>还没有记录。先练一组。</p></div>';
+    appEl().innerHTML = top('观点复盘') +
+      '<div class="i-intro">看过的题都在这里。论点写得虚，就在下面重写一版存起来。</div>' + rows;
+    bindBack(renderHub);
+    $$('[data-save]').forEach(function (b) {
+      b.onclick = function () {
+        var i = +b.getAttribute('data-save');
+        var ta = document.querySelector('[data-polish="' + i + '"]');
+        ST.logs[i].polish = (ta.value || '').trim();
+        save();
+        toast('打磨已存');
+      };
+    });
+  }
+
   function injectCSS() {
     if (document.getElementById('i-style')) return;
     var css = [
@@ -242,6 +274,7 @@
       '.i-stat{font-size:13px;color:var(--dim);margin:6px 0 14px}',
       '.i-stat b{font-size:26px;color:var(--fg);font-weight:700}',
       '.i-stat span{font-size:12px;margin-left:4px}',
+      '.i-link{width:100%;margin-top:10px;background:none;border:1px solid var(--line);border-radius:12px;padding:11px;color:var(--dim);font-size:12px;font-family:inherit}',
       '.i-btn{width:100%;border:0;border-radius:16px;padding:15px 16px;font-size:15.5px;font-weight:600;background:var(--accent);color:#fff;font-family:inherit}',
       '.i-tip{font-size:11px;color:var(--dim);line-height:1.6;margin-top:12px}',
       '.i-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:12px}',
@@ -281,6 +314,7 @@
 
   window.IDEAS = {
     start: function () { open(); return false; },
+    review: function () { load(); renderReview(); },
     summaryText: function () {
       load();
       var d = peekDay();
