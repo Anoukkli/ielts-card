@@ -1,173 +1,858 @@
 {
-  "version": 1,
-  "generated": "2026-11-01",
-  "patterns": [
+ "version": 2,
+ "generated": "2026-11-01",
+ "patterns": [
+  {
+   "id": "p1",
+   "group": "动态图",
+   "name": "引言：改写题目",
+   "frame": "The line graph illustrates the changes in [变量] in [地点] between [年] and [年].",
+   "note": "引言只做一件事：改写题目。变量、地点、时间三样齐全，不加原因、不加评价。",
+   "variants": [
     {
-      "id": "p1", "group": "动态图", "name": "引言：改写题目",
-      "frame": "The line graph illustrates the changes in [变量] in [地点] between [年] and [年].",
-      "note": "引言只做一件事：改写题目。变量、地点、时间三样齐全，不加原因、不加评价。",
-      "variants": [
-        {"id": "p1-1", "topic": "教育", "zh": "2005 至 2020 年，某国大学生人数的变化。", "hint": "the number of university students / between ... and ...", "en": "The line graph illustrates the changes in the number of university students in one country between 2005 and 2020."},
-        {"id": "p1-2", "topic": "交通", "zh": "1990 至 2015 年，某市私家车数量的变化。", "hint": "the number of private cars / one city", "en": "The line graph illustrates the changes in the number of private cars in one city between 1990 and 2015."},
-        {"id": "p1-3", "topic": "环境", "zh": "2000 至 2020 年，某国可再生能源占比的变化。", "hint": "the share of renewable energy", "en": "The line graph illustrates the changes in the share of renewable energy in one country between 2000 and 2020."}
-      ]
+     "id": "p1-1",
+     "topic": "教育",
+     "zh": "2005 至 2020 年，某国大学生人数的变化。",
+     "hint": "the number of university students / between ... and ...",
+     "en": "The line graph illustrates the changes in the number of university students in one country between 2005 and 2020."
     },
     {
-      "id": "p2", "group": "动态图", "name": "概述：两条相反趋势",
-      "frame": "Overall, while the figures for A showed an overall downward trend, the data for B experienced a significant surge.",
-      "note": "Overview 只写方向与对比，不写数字；while 连接两条相反趋势，一句话收住。",
-      "variants": [
-        {"id": "p2-1", "topic": "媒体", "zh": "报纸销量持续下降，网络新闻阅读量大幅上升。", "hint": "newspapers / online news / surge", "en": "Overall, while the figures for newspapers showed an overall downward trend, the data for online news experienced a significant surge."},
-        {"id": "p2-2", "topic": "交通", "zh": "市中心自行车出行下降，私家车出行上升。", "hint": "cycling / private cars", "en": "Overall, while the figures for cycling showed an overall downward trend, the data for private cars experienced a significant surge."},
-        {"id": "p2-3", "topic": "就业", "zh": "制造业就业下降，服务业就业上升。", "hint": "manufacturing / the service sector", "en": "Overall, while the figures for manufacturing showed an overall downward trend, the data for the service sector experienced a significant surge."}
-      ]
+     "id": "p1-2",
+     "topic": "交通",
+     "zh": "1990 至 2015 年，某市私家车数量的变化。",
+     "hint": "the number of private cars / one city",
+     "en": "The line graph illustrates the changes in the number of private cars in one city between 1990 and 2015."
     },
     {
-      "id": "p3", "group": "动态图", "name": "上升组：起点、过程、终点",
-      "frame": "The most striking growth was seen in A. Starting at X in YEAR, it experienced modest growth before surging to Y by YEAR.",
-      "note": "上升组必须给起点、过程、终点；before surging to 把两个阶段压进一句，避免流水账。",
-      "variants": [
-        {"id": "p3-1", "topic": "科技", "zh": "互联网使用率从 2000 年的 20% 缓慢增长，到 2020 年升至 85%。", "hint": "starting at 20% / before surging to 85%", "en": "The most striking growth was seen in internet use. Starting at 20% in 2000, it experienced modest growth before surging to 85% by 2020."},
-        {"id": "p3-2", "topic": "环境", "zh": "回收率从 2005 年的 10% 稳步上升，到 2020 年达到 45%。", "hint": "recycling rate / before surging to 45%", "en": "The most striking growth was seen in the recycling rate. Starting at 10% in 2005, it experienced modest growth before surging to 45% by 2020."},
-        {"id": "p3-3", "topic": "教育", "zh": "线上课程注册人数从 2015 年的 5 万增长到 2020 年的 40 万。", "hint": "online course enrolments / before surging to 400,000", "en": "The most striking growth was seen in online course enrolments. Starting at 50,000 in 2015, it experienced modest growth before surging to 400,000 by 2020."}
-      ]
-    },
-    {
-      "id": "p4", "group": "动态图", "name": "下降组：波动后下滑",
-      "frame": "In stark contrast, the trend for A was more volatile. It started at X, and after a period of fluctuation, it entered a sustained downward trajectory, plummeting to Y by YEAR.",
-      "note": "波动 + 下降要两个动作：先 fluctuate，再 enter a downward trajectory；plummet 收尾。",
-      "variants": [
-        {"id": "p4-1", "topic": "制造业", "zh": "制造业就业从 30% 起步，1990 至 2000 年间波动，之后持续下降，到 2020 年跌至 12%。", "hint": "manufacturing employment / plummeting to 12%", "en": "In stark contrast, the trend for manufacturing employment was more volatile. It started at 30%, and after a period of fluctuation between 1990 and 2000, it entered a sustained downward trajectory, plummeting to 12% by 2020."},
-        {"id": "p4-2", "topic": "出版", "zh": "纸质书销量从 2005 年的高位波动，随后持续下滑，2019 年跌到原来的一半。", "hint": "paper book sales / plummeting to half its 2005 level", "en": "In stark contrast, the trend for paper book sales was more volatile. It started at a peak in 2005, and after a period of fluctuation, it entered a sustained downward trajectory, plummeting to half its 2005 level by 2019."},
-        {"id": "p4-3", "topic": "通信", "zh": "固定电话拥有率从 60% 起步，先小幅波动，之后一路下滑到 25%。", "hint": "fixed-line ownership / plummeting to 25%", "en": "In stark contrast, the trend for fixed-line ownership was more volatile. It started at 60%, and after a period of fluctuation, it entered a sustained downward trajectory, plummeting to 25%."}
-      ]
-    },
-    {
-      "id": "p5", "group": "动态图", "name": "平稳组：一句话带过",
-      "frame": "Meanwhile, A showed relative stability, standing at around X% throughout the period.",
-      "note": "平稳组不展开；showed relative stability / standing at 是固定搭配。",
-      "variants": [
-        {"id": "p5-1", "topic": "用水", "zh": "家庭用水在整个时期稳定在 20% 左右。", "hint": "household water use / around 20%", "en": "Meanwhile, household water use showed relative stability, standing at around 20% throughout the period."},
-        {"id": "p5-2", "topic": "铁路", "zh": "铁路客运占比在 1990 至 2010 年间稳定在 8% 左右。", "hint": "the rail passenger share / around 8%", "en": "Meanwhile, the rail passenger share showed relative stability, standing at around 8% between 1990 and 2010."},
-        {"id": "p5-3", "topic": "农业", "zh": "农业就业比例在整个时期保持在 5% 左右。", "hint": "agricultural employment", "en": "Meanwhile, agricultural employment showed relative stability, standing at around 5% throughout the period."}
-      ]
-    },
-    {
-      "id": "p6", "group": "静态图", "name": "引言：没有时间变化",
-      "frame": "The bar chart illustrates the proportions of [变量] in [地点] in [年].",
-      "note": "静态图没有时间变化，用 proportions of，不要写 changes。",
-      "variants": [
-        {"id": "p6-1", "topic": "开支", "zh": "2019 年某国家庭开支的构成比例。", "hint": "household spending / proportions of", "en": "The bar chart illustrates the proportions of household spending in one country in 2019."},
-        {"id": "p6-2", "topic": "能源", "zh": "2020 年某国能源来源的构成比例。", "hint": "energy sources", "en": "The bar chart illustrates the proportions of energy sources in one country in 2020."},
-        {"id": "p6-3", "topic": "时间", "zh": "2018 年大学生时间分配的构成比例。", "hint": "time allocated to different activities", "en": "The bar chart illustrates the proportions of time allocated to different activities by university students in 2018."}
-      ]
-    },
-    {
-      "id": "p7", "group": "静态图", "name": "概述：最大与最小",
-      "frame": "Overall, A accounted for the largest share of X, while B constituted the smallest proportion.",
-      "note": "静态图 Overview 抓最大最小；account for / constitute 换着用，避免重复。",
-      "variants": [
-        {"id": "p7-1", "topic": "开支", "zh": "住房占比最大，其他支出占比最小。", "hint": "housing / other items", "en": "Overall, housing accounted for the largest share of spending, while other items constituted the smallest proportion."},
-        {"id": "p7-2", "topic": "能源", "zh": "煤炭占比最大，可再生能源占比最小。", "hint": "coal / renewables", "en": "Overall, coal accounted for the largest share of energy, while renewables constituted the smallest proportion."},
-        {"id": "p7-3", "topic": "时间", "zh": "学习占时间最多，锻炼占时间最少。", "hint": "study / exercise", "en": "Overall, study accounted for the largest share of students' time, while exercise constituted the smallest proportion."}
-      ]
-    },
-    {
-      "id": "p8", "group": "静态图", "name": "主导组：前两名合并",
-      "frame": "Regarding the two dominant sectors, they share a similar pattern. A ranked as the primary source, accounting for X%, closely followed by B at Y%.",
-      "note": "前两名合并成一句：ranked as / closely followed by，避免两句流水账。",
-      "variants": [
-        {"id": "p8-1", "topic": "能源", "zh": "煤炭 40% 与石油 35% 是最主要的两个能源来源。", "hint": "coal 40% / oil 35% / closely followed", "en": "Regarding the two dominant sectors, they share a similar pattern. Coal ranked as the primary source, accounting for 40%, closely followed by oil at 35%."},
-        {"id": "p8-2", "topic": "开支", "zh": "住房 35% 与食品 25% 是最大的两项开支。", "hint": "housing / food", "en": "Regarding the two dominant sectors, they share a similar pattern. Housing ranked as the primary source, accounting for 35%, closely followed by food at 25%."},
-        {"id": "p8-3", "topic": "交通", "zh": "私家车 45% 与公交 30% 是主要出行方式。", "hint": "private cars / public transport", "en": "Regarding the two dominant sectors, they share a similar pattern. Private cars ranked as the primary source, accounting for 45%, closely followed by public transport at 30%."}
-      ]
-    },
-    {
-      "id": "p9", "group": "静态图", "name": "少数组：用倍数挂靠",
-      "frame": "A played a far smaller role, at only X%, which was about half of the figure for B.",
-      "note": "少数组不要单独报数，用倍数挂到主体上：about half of / a quarter of / a tenth of。",
-      "variants": [
-        {"id": "p9-1", "topic": "能源", "zh": "可再生能源仅占 10%，约为煤炭的四分之一。", "hint": "renewables 10% / a quarter of", "en": "Renewables played a far smaller role, at only 10%, which was about a quarter of the figure for coal."},
-        {"id": "p9-2", "topic": "交通", "zh": "骑行仅占 5%，约为开车的十分之一。", "hint": "cycling 5% / a tenth of", "en": "Cycling played a far smaller role, at only 5%, which was about a tenth of the figure for driving."},
-        {"id": "p9-3", "topic": "开支", "zh": "娱乐支出仅占 8%，约为住房的四分之一。", "hint": "leisure 8% / a quarter of", "en": "Leisure played a far smaller role, at only 8%, which was about a quarter of the figure for housing."}
-      ]
-    },
-    {
-      "id": "p10", "group": "表格", "name": "引言：先定主语",
-      "frame": "The table provides a breakdown of the percentages of [人群] giving an 'excellent' rating across [方面] in [对象].",
-      "note": "表格题先定主语：是「人的比例」，不是设施本身。",
-      "variants": [
-        {"id": "p10-1", "topic": "课程", "zh": "2019 年学生对三门课程各方面给出「优秀」评价的比例。", "hint": "students / three courses", "en": "The table provides a breakdown of the percentages of students giving an 'excellent' rating across three courses in 2019."},
-        {"id": "p10-2", "topic": "酒店", "zh": "2020 年顾客对三家酒店各方面给出「优秀」评价的比例。", "hint": "guests / three hotels", "en": "The table provides a breakdown of the percentages of guests giving an 'excellent' rating across three hotels in 2020."},
-        {"id": "p10-3", "topic": "培训", "zh": "2021 年员工对培训项目各方面给出「优秀」评价的比例。", "hint": "employees / training programmes", "en": "The table provides a breakdown of the percentages of employees giving an 'excellent' rating across training programmes in 2021."}
-      ]
-    },
-    {
-      "id": "p11", "group": "表格", "name": "概述：谁最捧场",
-      "frame": "Overall, [群体] recorded the highest proportions across most aspects.",
-      "note": "Overview 找「谁最捧场」，一句收住；across most aspects 比 in all 稳。",
-      "variants": [
-        {"id": "p11-1", "topic": "学生", "zh": "商科学生在多数方面评价最高。", "hint": "commerce students / across most aspects", "en": "Overall, commerce students recorded the highest proportions across most aspects."},
-        {"id": "p11-2", "topic": "酒店", "zh": "五星酒店在多数方面评价最高。", "hint": "the five-star hotel", "en": "Overall, the five-star hotel recorded the highest proportions across most aspects."},
-        {"id": "p11-3", "topic": "员工", "zh": "年轻员工在多数方面评价最高。", "hint": "younger employees", "en": "Overall, younger employees recorded the highest proportions across most aspects."}
-      ]
-    },
-    {
-      "id": "p12", "group": "表格", "name": "反差组：先总后分",
-      "frame": "In stark contrast, the figures for [群体] were generally lower. In particular, [项目] was the weakest-rated aspect at merely X%.",
-      "note": "反差组先总后分：In stark contrast 起句，In particular 落到最低项。",
-      "variants": [
-        {"id": "p12-1", "topic": "剧院", "zh": "公众的评价普遍较低，尤其「信息」一项仅为 20%。", "hint": "the general public / information / 20%", "en": "In stark contrast, the figures for the general public were generally lower. In particular, information was the weakest-rated aspect at merely 20%."},
-        {"id": "p12-2", "topic": "酒店", "zh": "经济型酒店评价普遍较低，尤其「服务」一项仅为 35%。", "hint": "the budget hotel / service", "en": "In stark contrast, the figures for the budget hotel were generally lower. In particular, service was the weakest-rated aspect at merely 35%."},
-        {"id": "p12-3", "topic": "员工", "zh": "新员工评价普遍较低，尤其「反馈」一项仅为 18%。", "hint": "new employees / feedback", "en": "In stark contrast, the figures for new employees were generally lower. In particular, feedback was the weakest-rated aspect at merely 18%."}
-      ]
+     "id": "p1-3",
+     "topic": "环境",
+     "zh": "2000 至 2020 年，某国可再生能源占比的变化。",
+     "hint": "the share of renewable energy",
+     "en": "The line graph illustrates the changes in the share of renewable energy in one country between 2000 and 2020."
     }
-  ],
-  "upgrades": [
-    {"id": "u1", "group": "趋势", "basic": "increase a lot", "up": "surge", "zh": "2020 年电动车销量大幅上升。", "hint": "surge", "en": "Electric vehicle sales surged in 2020.", "why": "surge 是不及物动词，直接跟 in + 时间；不要说 were surged。"},
-    {"id": "u2", "group": "趋势", "basic": "decrease a lot", "up": "plummet", "zh": "2008 年后纸质书销量骤降。", "hint": "plummet", "en": "Paper book sales plummeted after 2008.", "why": "plummet 比 fall 重，适合暴跌；常接 to + 终点。"},
-    {"id": "u3", "group": "趋势", "basic": "increase slowly", "up": "climb gradually", "zh": "农村收入缓慢上升。", "hint": "climb gradually", "en": "Rural incomes climbed gradually.", "why": "gradually 放动词后；climb 已含上升，不再加 up。"},
-    {"id": "u4", "group": "趋势", "basic": "go up and down", "up": "fluctuate", "zh": "油价在 60 到 90 美元之间波动。", "hint": "fluctuate between", "en": "Oil prices fluctuated between $60 and $90.", "why": "fluctuate between A and B 是固定结构。"},
-    {"id": "u5", "group": "趋势", "basic": "reach the highest point", "up": "peak", "zh": "游客数量在八月达到峰值。", "hint": "peak", "en": "Visitor numbers peaked in August.", "why": "peak 作动词：peak at + 数值 / in + 月份。"},
-    {"id": "u6", "group": "趋势", "basic": "reach the lowest point", "up": "bottom out", "zh": "失业率在 2010 年触底。", "hint": "bottom out", "en": "Unemployment bottomed out in 2010.", "why": "bottom out 是「触底」，之后常回升。"},
-    {"id": "u7", "group": "趋势", "basic": "stay the same", "up": "remain stable", "zh": "市场份额保持不变，约 20%。", "hint": "remain stable at", "en": "The market share remained stable at around 20%.", "why": "remain stable at + 数值；stable 是形容词。"},
-    {"id": "u8", "group": "趋势", "basic": "become more than", "up": "overtake", "zh": "2020 年线上销售超过线下。", "hint": "overtake", "en": "Online sales overtook in-store sales in 2020.", "why": "overtake 直接带宾语，不加 the place of。"},
-
-    {"id": "u9", "group": "程度", "basic": "very", "up": "considerably", "zh": "城市住房成本远高于农村。", "hint": "considerably higher", "en": "Housing costs are considerably higher in cities than in rural areas.", "why": "修饰比较级用 considerably / significantly，不用 very。"},
-    {"id": "u10", "group": "程度", "basic": "a little", "up": "marginally", "zh": "失业率略微下降。", "hint": "marginally", "en": "The unemployment rate declined marginally.", "why": "marginally = 略微，常与 decline / rise 搭配。"},
-    {"id": "u11", "group": "程度", "basic": "quickly", "up": "rapidly", "zh": "技术迅速变化。", "hint": "rapidly", "en": "Technology is changing rapidly.", "why": "rapidly 修饰变化速度；quickly 偏口语。"},
-    {"id": "u12", "group": "程度", "basic": "suddenly", "up": "sharply", "zh": "2020 年失业率急剧上升。", "hint": "sharply", "en": "Unemployment rose sharply in 2020.", "why": "sharply 表幅度陡，suddenly 表时间突然。"},
-
-    {"id": "u13", "group": "观点", "basic": "I think", "up": "In my view", "zh": "我认为塑料袋应该被禁用。", "hint": "In my view", "en": "In my view, plastic bags should be banned.", "why": "In my view 后接逗号，比 I think 更书面。"},
-    {"id": "u14", "group": "观点", "basic": "many people think", "up": "It is widely believed that", "zh": "很多人认为大学只应教职业技能。", "hint": "It is widely believed that", "en": "It is widely believed that universities should teach only job skills.", "why": "形式主语 it，避免 many people 开头。"},
-    {"id": "u15", "group": "观点", "basic": "someone says", "up": "argue", "zh": "有人主张取消家庭作业。", "hint": "argue that", "en": "Some argue that homework should be abolished.", "why": "argue that 比 say 更适合学术论证。"},
-    {"id": "u16", "group": "观点", "basic": "important", "up": "crucial", "zh": "早期教育至关重要。", "hint": "crucial", "en": "Early education is crucial.", "why": "crucial 后常接 to / for + 名词。"},
-    {"id": "u17", "group": "观点", "basic": "good", "up": "beneficial", "zh": "锻炼对心理健康有益。", "hint": "beneficial to", "en": "Exercise is beneficial to mental health.", "why": "beneficial to 是固定搭配。"},
-    {"id": "u18", "group": "观点", "basic": "bad", "up": "detrimental", "zh": "长期压力对健康有害。", "hint": "detrimental to", "en": "Prolonged stress is detrimental to health.", "why": "detrimental to 比 harmful 更学术。"},
-
-    {"id": "u19", "group": "因果与衔接", "basic": "because", "up": "due to", "zh": "由于成本上升，公司裁减了岗位。", "hint": "due to", "en": "Companies cut jobs due to rising costs.", "why": "due to + 名词；because + 从句。"},
-    {"id": "u20", "group": "因果与衔接", "basic": "so", "up": "therefore", "zh": "因此，政府应加大投入。", "hint": "Therefore", "en": "Therefore, the government should increase investment.", "why": "Therefore 放句首加逗号；句中对应用 thus。"},
-    {"id": "u21", "group": "因果与衔接", "basic": "but", "up": "however", "zh": "然而，这项政策也有缺点。", "hint": "However", "en": "However, this policy also has drawbacks.", "why": "However 后加逗号；学术写作少用 But 起句。"},
-    {"id": "u22", "group": "因果与衔接", "basic": "for example", "up": "a case in point", "zh": "芬兰的教育体系就是一个例子。", "hint": "A case in point is", "en": "A case in point is the Finnish education system.", "why": "a case in point is + 名词，比 for example 更紧凑。"},
-    {"id": "u23", "group": "因果与衔接", "basic": "in conclusion", "up": "on balance", "zh": "总体而言，利大于弊。", "hint": "On balance", "en": "On balance, the benefits outweigh the drawbacks.", "why": "on balance = 权衡之后；结尾避免 in conclusion 套话。"},
-    {"id": "u24", "group": "因果与衔接", "basic": "also", "up": "moreover", "zh": "此外，远程办公节省通勤时间。", "hint": "Moreover", "en": "Moreover, remote work saves commuting time.", "why": "Moreover 后加逗号，用于递进。"},
-    {"id": "u25", "group": "因果与衔接", "basic": "although", "up": "despite", "zh": "尽管经济增长，贫困依然存在。", "hint": "Despite", "en": "Despite economic growth, poverty persists.", "why": "despite + 名词；although + 从句。"},
-
-    {"id": "u26", "group": "动词", "basic": "cause", "up": "lead to", "zh": "空气污染导致呼吸系统疾病。", "hint": "lead to", "en": "Air pollution leads to respiratory diseases.", "why": "lead to + 名词，比 cause 更中性。"},
-    {"id": "u27", "group": "动词", "basic": "solve", "up": "tackle", "zh": "政府必须解决住房危机。", "hint": "tackle", "en": "Governments must tackle the housing crisis.", "why": "tackle 强调着手处理，solve 强调已解决。"},
-    {"id": "u28", "group": "动词", "basic": "improve", "up": "enhance", "zh": "实习能提升就业能力。", "hint": "enhance", "en": "Internships enhance employability.", "why": "enhance + 抽象名词（能力、效率、体验）。"},
-    {"id": "u29", "group": "动词", "basic": "reduce", "up": "curb", "zh": "必须减少塑料的使用。", "hint": "curb", "en": "Plastic use must be curbed.", "why": "curb 常与 use / emissions / spending 搭配。"},
-    {"id": "u30", "group": "动词", "basic": "help", "up": "facilitate", "zh": "科技促进了交流。", "hint": "facilitate", "en": "Technology facilitates communication.", "why": "facilitate 后接过程或交流，不接人。"},
-    {"id": "u31", "group": "动词", "basic": "use", "up": "utilise", "zh": "农民使用节水技术。", "hint": "utilise", "en": "Farmers utilise water-saving technology.", "why": "utilise 更正式，强调有效利用。"},
-    {"id": "u32", "group": "动词", "basic": "get", "up": "obtain", "zh": "学生可以获得奖学金。", "hint": "obtain", "en": "Students can obtain scholarships.", "why": "obtain 用于正式获得（学位、许可、资金）。"},
-    {"id": "u33", "group": "动词", "basic": "show", "up": "demonstrate", "zh": "数据表明了一个明显的趋势。", "hint": "demonstrate", "en": "The data demonstrate a clear trend.", "why": "data 作复数，谓语用 demonstrate。"},
-
-    {"id": "u34", "group": "名词与人群", "basic": "people", "up": "individuals", "zh": "个人应减少浪费。", "hint": "Individuals", "en": "Individuals should reduce waste.", "why": "individuals 强调个体责任，比 people 精确。"},
-    {"id": "u35", "group": "名词与人群", "basic": "old people", "up": "the elderly", "zh": "老年人需要更好的护理。", "hint": "The elderly", "en": "The elderly need better care.", "why": "the + 形容词表群体，谓语用复数。"},
-    {"id": "u36", "group": "名词与人群", "basic": "children", "up": "youngsters", "zh": "年轻人花太多时间在屏幕上。", "hint": "Youngsters", "en": "Youngsters spend too much time on screens.", "why": "youngsters 偏青少年，children 指更小的孩子。"},
-    {"id": "u37", "group": "名词与人群", "basic": "government", "up": "the authorities", "zh": "当局应加强监管。", "hint": "The authorities", "en": "The authorities should tighten regulation.", "why": "the authorities 指政府部门，谓语用复数。"},
-    {"id": "u38", "group": "名词与人群", "basic": "advantage", "up": "merit", "zh": "该方案的主要优点在于成本低。", "hint": "merit", "en": "The main merit of this scheme is its low cost.", "why": "merit 可数，常与 main / considerable 搭配。"},
-    {"id": "u39", "group": "名词与人群", "basic": "disadvantage", "up": "drawback", "zh": "主要缺点是成本高。", "hint": "drawback", "en": "The main drawback is the high cost.", "why": "drawback 可数；downside 偏口语。"},
-    {"id": "u40", "group": "名词与人群", "basic": "problem", "up": "issue", "zh": "住房问题日益严重。", "hint": "issue", "en": "The housing issue is becoming more serious.", "why": "issue 更中性，problem 更强调困难。"}
-  ]
+   ]
+  },
+  {
+   "id": "p2",
+   "group": "动态图",
+   "name": "概述：两条相反趋势",
+   "frame": "Overall, while the figures for A showed an overall downward trend, the data for B experienced a significant surge.",
+   "note": "Overview 只写方向与对比，不写数字；while 连接两条相反趋势，一句话收住。",
+   "variants": [
+    {
+     "id": "p2-1",
+     "topic": "媒体",
+     "zh": "报纸销量持续下降，网络新闻阅读量大幅上升。",
+     "hint": "newspapers / online news / surge",
+     "en": "Overall, while the figures for newspapers showed an overall downward trend, the data for online news experienced a significant surge."
+    },
+    {
+     "id": "p2-2",
+     "topic": "交通",
+     "zh": "市中心自行车出行下降，私家车出行上升。",
+     "hint": "cycling / private cars",
+     "en": "Overall, while the figures for cycling showed an overall downward trend, the data for private cars experienced a significant surge."
+    },
+    {
+     "id": "p2-3",
+     "topic": "就业",
+     "zh": "制造业就业下降，服务业就业上升。",
+     "hint": "manufacturing / the service sector",
+     "en": "Overall, while the figures for manufacturing showed an overall downward trend, the data for the service sector experienced a significant surge."
+    }
+   ]
+  },
+  {
+   "id": "p3",
+   "group": "动态图",
+   "name": "上升组：起点、过程、终点",
+   "frame": "The most striking growth was seen in A. Starting at X in YEAR, it experienced modest growth before surging to Y by YEAR.",
+   "note": "上升组必须给起点、过程、终点；before surging to 把两个阶段压进一句，避免流水账。",
+   "variants": [
+    {
+     "id": "p3-1",
+     "topic": "科技",
+     "zh": "互联网使用率从 2000 年的 20% 缓慢增长，到 2020 年升至 85%。",
+     "hint": "starting at 20% / before surging to 85%",
+     "en": "The most striking growth was seen in internet use. Starting at 20% in 2000, it experienced modest growth before surging to 85% by 2020."
+    },
+    {
+     "id": "p3-2",
+     "topic": "环境",
+     "zh": "回收率从 2005 年的 10% 稳步上升，到 2020 年达到 45%。",
+     "hint": "recycling rate / before surging to 45%",
+     "en": "The most striking growth was seen in the recycling rate. Starting at 10% in 2005, it experienced modest growth before surging to 45% by 2020."
+    },
+    {
+     "id": "p3-3",
+     "topic": "教育",
+     "zh": "线上课程注册人数从 2015 年的 5 万增长到 2020 年的 40 万。",
+     "hint": "online course enrolments / before surging to 400,000",
+     "en": "The most striking growth was seen in online course enrolments. Starting at 50,000 in 2015, it experienced modest growth before surging to 400,000 by 2020."
+    }
+   ]
+  },
+  {
+   "id": "p4",
+   "group": "动态图",
+   "name": "下降组：波动后下滑",
+   "frame": "In stark contrast, the trend for A was more volatile. It started at X, and after a period of fluctuation, it entered a sustained downward trajectory, plummeting to Y by YEAR.",
+   "note": "波动 + 下降要两个动作：先 fluctuate，再 enter a downward trajectory；plummet 收尾。",
+   "variants": [
+    {
+     "id": "p4-1",
+     "topic": "制造业",
+     "zh": "制造业就业从 30% 起步，1990 至 2000 年间波动，之后持续下降，到 2020 年跌至 12%。",
+     "hint": "manufacturing employment / plummeting to 12%",
+     "en": "In stark contrast, the trend for manufacturing employment was more volatile. It started at 30%, and after a period of fluctuation between 1990 and 2000, it entered a sustained downward trajectory, plummeting to 12% by 2020."
+    },
+    {
+     "id": "p4-2",
+     "topic": "出版",
+     "zh": "纸质书销量从 2005 年的高位波动，随后持续下滑，2019 年跌到原来的一半。",
+     "hint": "paper book sales / plummeting to half its 2005 level",
+     "en": "In stark contrast, the trend for paper book sales was more volatile. It started at a peak in 2005, and after a period of fluctuation, it entered a sustained downward trajectory, plummeting to half its 2005 level by 2019."
+    },
+    {
+     "id": "p4-3",
+     "topic": "通信",
+     "zh": "固定电话拥有率从 60% 起步，先小幅波动，之后一路下滑到 25%。",
+     "hint": "fixed-line ownership / plummeting to 25%",
+     "en": "In stark contrast, the trend for fixed-line ownership was more volatile. It started at 60%, and after a period of fluctuation, it entered a sustained downward trajectory, plummeting to 25%."
+    }
+   ]
+  },
+  {
+   "id": "p5",
+   "group": "动态图",
+   "name": "平稳组：一句话带过",
+   "frame": "Meanwhile, A showed relative stability, standing at around X% throughout the period.",
+   "note": "平稳组不展开；showed relative stability / standing at 是固定搭配。",
+   "variants": [
+    {
+     "id": "p5-1",
+     "topic": "用水",
+     "zh": "家庭用水在整个时期稳定在 20% 左右。",
+     "hint": "household water use / around 20%",
+     "en": "Meanwhile, household water use showed relative stability, standing at around 20% throughout the period."
+    },
+    {
+     "id": "p5-2",
+     "topic": "铁路",
+     "zh": "铁路客运占比在 1990 至 2010 年间稳定在 8% 左右。",
+     "hint": "the rail passenger share / around 8%",
+     "en": "Meanwhile, the rail passenger share showed relative stability, standing at around 8% between 1990 and 2010."
+    },
+    {
+     "id": "p5-3",
+     "topic": "农业",
+     "zh": "农业就业比例在整个时期保持在 5% 左右。",
+     "hint": "agricultural employment",
+     "en": "Meanwhile, agricultural employment showed relative stability, standing at around 5% throughout the period."
+    }
+   ]
+  },
+  {
+   "id": "p6",
+   "group": "静态图",
+   "name": "引言：没有时间变化",
+   "frame": "The bar chart illustrates the proportions of [变量] in [地点] in [年].",
+   "note": "静态图没有时间变化，用 proportions of，不要写 changes。",
+   "variants": [
+    {
+     "id": "p6-1",
+     "topic": "开支",
+     "zh": "2019 年某国家庭开支的构成比例。",
+     "hint": "household spending / proportions of",
+     "en": "The bar chart illustrates the proportions of household spending in one country in 2019."
+    },
+    {
+     "id": "p6-2",
+     "topic": "能源",
+     "zh": "2020 年某国能源来源的构成比例。",
+     "hint": "energy sources",
+     "en": "The bar chart illustrates the proportions of energy sources in one country in 2020."
+    },
+    {
+     "id": "p6-3",
+     "topic": "时间",
+     "zh": "2018 年大学生时间分配的构成比例。",
+     "hint": "time allocated to different activities",
+     "en": "The bar chart illustrates the proportions of time allocated to different activities by university students in 2018."
+    }
+   ]
+  },
+  {
+   "id": "p7",
+   "group": "静态图",
+   "name": "概述：最大与最小",
+   "frame": "Overall, A accounted for the largest share of X, while B constituted the smallest proportion.",
+   "note": "静态图 Overview 抓最大最小；account for / constitute 换着用，避免重复。",
+   "variants": [
+    {
+     "id": "p7-1",
+     "topic": "开支",
+     "zh": "住房占比最大，其他支出占比最小。",
+     "hint": "housing / other items",
+     "en": "Overall, housing accounted for the largest share of spending, while other items constituted the smallest proportion."
+    },
+    {
+     "id": "p7-2",
+     "topic": "能源",
+     "zh": "煤炭占比最大，可再生能源占比最小。",
+     "hint": "coal / renewables",
+     "en": "Overall, coal accounted for the largest share of energy, while renewables constituted the smallest proportion."
+    },
+    {
+     "id": "p7-3",
+     "topic": "时间",
+     "zh": "学习占时间最多，锻炼占时间最少。",
+     "hint": "study / exercise",
+     "en": "Overall, study accounted for the largest share of students' time, while exercise constituted the smallest proportion."
+    }
+   ]
+  },
+  {
+   "id": "p8",
+   "group": "静态图",
+   "name": "主导组：前两名合并",
+   "frame": "Regarding the two dominant sectors, they share a similar pattern. A ranked as the primary source, accounting for X%, closely followed by B at Y%.",
+   "note": "前两名合并成一句：ranked as / closely followed by，避免两句流水账。",
+   "variants": [
+    {
+     "id": "p8-1",
+     "topic": "能源",
+     "zh": "煤炭 40% 与石油 35% 是最主要的两个能源来源。",
+     "hint": "coal 40% / oil 35% / closely followed",
+     "en": "Regarding the two dominant sectors, they share a similar pattern. Coal ranked as the primary source, accounting for 40%, closely followed by oil at 35%."
+    },
+    {
+     "id": "p8-2",
+     "topic": "开支",
+     "zh": "住房 35% 与食品 25% 是最大的两项开支。",
+     "hint": "housing / food",
+     "en": "Regarding the two dominant sectors, they share a similar pattern. Housing ranked as the primary source, accounting for 35%, closely followed by food at 25%."
+    },
+    {
+     "id": "p8-3",
+     "topic": "交通",
+     "zh": "私家车 45% 与公交 30% 是主要出行方式。",
+     "hint": "private cars / public transport",
+     "en": "Regarding the two dominant sectors, they share a similar pattern. Private cars ranked as the primary source, accounting for 45%, closely followed by public transport at 30%."
+    }
+   ]
+  },
+  {
+   "id": "p9",
+   "group": "静态图",
+   "name": "少数组：用倍数挂靠",
+   "frame": "A played a far smaller role, at only X%, which was about half of the figure for B.",
+   "note": "少数组不要单独报数，用倍数挂到主体上：about half of / a quarter of / a tenth of。",
+   "variants": [
+    {
+     "id": "p9-1",
+     "topic": "能源",
+     "zh": "可再生能源仅占 10%，约为煤炭的四分之一。",
+     "hint": "renewables 10% / a quarter of",
+     "en": "Renewables played a far smaller role, at only 10%, which was about a quarter of the figure for coal."
+    },
+    {
+     "id": "p9-2",
+     "topic": "交通",
+     "zh": "骑行仅占 5%，约为开车的十分之一。",
+     "hint": "cycling 5% / a tenth of",
+     "en": "Cycling played a far smaller role, at only 5%, which was about a tenth of the figure for driving."
+    },
+    {
+     "id": "p9-3",
+     "topic": "开支",
+     "zh": "娱乐支出仅占 8%，约为住房的四分之一。",
+     "hint": "leisure 8% / a quarter of",
+     "en": "Leisure played a far smaller role, at only 8%, which was about a quarter of the figure for housing."
+    }
+   ]
+  },
+  {
+   "id": "p10",
+   "group": "表格",
+   "name": "引言：先定主语",
+   "frame": "The table provides a breakdown of the percentages of [人群] giving an 'excellent' rating across [方面] in [对象].",
+   "note": "表格题先定主语：是「人的比例」，不是设施本身。",
+   "variants": [
+    {
+     "id": "p10-1",
+     "topic": "课程",
+     "zh": "2019 年学生对三门课程各方面给出「优秀」评价的比例。",
+     "hint": "students / three courses",
+     "en": "The table provides a breakdown of the percentages of students giving an 'excellent' rating across three courses in 2019."
+    },
+    {
+     "id": "p10-2",
+     "topic": "酒店",
+     "zh": "2020 年顾客对三家酒店各方面给出「优秀」评价的比例。",
+     "hint": "guests / three hotels",
+     "en": "The table provides a breakdown of the percentages of guests giving an 'excellent' rating across three hotels in 2020."
+    },
+    {
+     "id": "p10-3",
+     "topic": "培训",
+     "zh": "2021 年员工对培训项目各方面给出「优秀」评价的比例。",
+     "hint": "employees / training programmes",
+     "en": "The table provides a breakdown of the percentages of employees giving an 'excellent' rating across training programmes in 2021."
+    }
+   ]
+  },
+  {
+   "id": "p11",
+   "group": "表格",
+   "name": "概述：谁最捧场",
+   "frame": "Overall, [群体] recorded the highest proportions across most aspects.",
+   "note": "Overview 找「谁最捧场」，一句收住；across most aspects 比 in all 稳。",
+   "variants": [
+    {
+     "id": "p11-1",
+     "topic": "学生",
+     "zh": "商科学生在多数方面评价最高。",
+     "hint": "commerce students / across most aspects",
+     "en": "Overall, commerce students recorded the highest proportions across most aspects."
+    },
+    {
+     "id": "p11-2",
+     "topic": "酒店",
+     "zh": "五星酒店在多数方面评价最高。",
+     "hint": "the five-star hotel",
+     "en": "Overall, the five-star hotel recorded the highest proportions across most aspects."
+    },
+    {
+     "id": "p11-3",
+     "topic": "员工",
+     "zh": "年轻员工在多数方面评价最高。",
+     "hint": "younger employees",
+     "en": "Overall, younger employees recorded the highest proportions across most aspects."
+    }
+   ]
+  },
+  {
+   "id": "p12",
+   "group": "表格",
+   "name": "反差组：先总后分",
+   "frame": "In stark contrast, the figures for [群体] were generally lower. In particular, [项目] was the weakest-rated aspect at merely X%.",
+   "note": "反差组先总后分：In stark contrast 起句，In particular 落到最低项。",
+   "variants": [
+    {
+     "id": "p12-1",
+     "topic": "剧院",
+     "zh": "公众的评价普遍较低，尤其「信息」一项仅为 20%。",
+     "hint": "the general public / information / 20%",
+     "en": "In stark contrast, the figures for the general public were generally lower. In particular, information was the weakest-rated aspect at merely 20%."
+    },
+    {
+     "id": "p12-2",
+     "topic": "酒店",
+     "zh": "经济型酒店评价普遍较低，尤其「服务」一项仅为 35%。",
+     "hint": "the budget hotel / service",
+     "en": "In stark contrast, the figures for the budget hotel were generally lower. In particular, service was the weakest-rated aspect at merely 35%."
+    },
+    {
+     "id": "p12-3",
+     "topic": "员工",
+     "zh": "新员工评价普遍较低，尤其「反馈」一项仅为 18%。",
+     "hint": "new employees / feedback",
+     "en": "In stark contrast, the figures for new employees were generally lower. In particular, feedback was the weakest-rated aspect at merely 18%."
+    }
+   ]
+  },
+  {
+   "id": "p13",
+   "group": "表格",
+   "name": "分类与包含：comprising",
+   "frame": "The table gives a breakdown of [类别] who were [状态]. On average, X% of all [单位], comprising [数量], were in this position.",
+   "note": "两个考点：breakdown of 后面接复数类别；comprising 是分词插入语，前后加逗号，用来补人数。",
+   "variants": [
+    {
+     "id": "p13-1",
+     "topic": "贫困家庭",
+     "zh": "这张表格细分了生活在贫困中的不同类型家庭。平均而言，11% 的家庭（包含近两百万人）处于这种状况。",
+     "hint": "gives a breakdown of / comprising / in this position",
+     "en": "The table gives a breakdown of the different types of family who were living in poverty. On average, 11% of all households, comprising almost two million people, were in this position."
+    },
+    {
+     "id": "p13-2",
+     "topic": "兼职学生",
+     "zh": "这张表格细分了做兼职的不同类型学生。平均而言，40% 的本科生（包含近三万人）处于这种状况。",
+     "hint": "undergraduates / comprising nearly 30,000 people",
+     "en": "The table gives a breakdown of the different types of student who were working part-time. On average, 40% of all undergraduates, comprising nearly 30,000 people, were in this position."
+    },
+    {
+     "id": "p13-3",
+     "topic": "远程员工",
+     "zh": "这张表格细分了远程办公的不同类型员工。平均而言，25% 的员工（包含近五百人）处于这种状况。",
+     "hint": "employees / comprising almost 500 people",
+     "en": "The table gives a breakdown of the different types of employee who were working remotely. On average, 25% of all staff, comprising almost 500 people, were in this position."
+    }
+   ]
+  },
+  {
+   "id": "p14",
+   "group": "表格",
+   "name": "倍数与独立结构：consisting of",
+   "frame": "However, those consisting of [构成] had almost double this proportion of [人群], with X% and Y% respectively.",
+   "note": "those + 分词 是独立结构，不要再加 who；倍数用 almost double this proportion；两个数字用 with ... respectively 收尾。",
+   "variants": [
+    {
+     "id": "p14-1",
+     "topic": "单亲与单身",
+     "zh": "然而，仅由单亲或单身成年人组成的家庭，其贫困人口比例几乎是这个数字的两倍，分别为 21% 和 19%。",
+     "hint": "consisting of / almost double / with ... respectively",
+     "en": "However, those consisting of only one parent or a single adult had almost double this proportion of poor people, with 21% and 19% respectively."
+    },
+    {
+     "id": "p14-2",
+     "topic": "小公司与个体",
+     "zh": "然而，仅由十人以下小公司或个体经营者构成的雇主，其兼职员工比例几乎是这个数字的两倍，分别为 32% 和 28%。",
+     "hint": "fewer than ten employees / sole traders",
+     "en": "However, those consisting of fewer than ten employees or sole traders had almost double this proportion of part-time workers, with 32% and 28% respectively."
+    },
+    {
+     "id": "p14-3",
+     "topic": "研究生与夜校",
+     "zh": "然而，仅由研究生或夜校学员组成的学习者，其线上学习比例几乎是这个数字的两倍，分别为 45% 和 38%。",
+     "hint": "postgraduate students / evening-course learners",
+     "en": "However, those consisting of postgraduate students or evening-course learners had almost double this proportion of online learners, with 45% and 38% respectively."
+    }
+   ]
+  },
+  {
+   "id": "p15",
+   "group": "表格",
+   "name": "比较级与形式主语：It is noticeable that",
+   "frame": "It is noticeable that for both types of [群体], a higher than average proportion were [状态] at this time. [群体] generally tended to be better off.",
+   "note": "It is noticeable that 引出反差；higher than average 放名词前；tended to be better off 是固定搭配。",
+   "variants": [
+    {
+     "id": "p15-1",
+     "topic": "有孩家庭",
+     "zh": "值得注意的是，对于有孩子的这两类家庭，此时生活在贫困中的比例高于平均水平。情侣通常更宽裕。",
+     "hint": "household with children / higher than average / better off",
+     "en": "It is noticeable that for both types of household with children, a higher than average proportion were living in poverty at this time. Couples generally tended to be better off."
+    },
+    {
+     "id": "p15-2",
+     "topic": "有孩员工",
+     "zh": "值得注意的是，对于有孩子的这两类员工，此时做兼职的比例高于平均水平。资深员工通常更宽裕。",
+     "hint": "employee with children / working part-time",
+     "en": "It is noticeable that for both types of employee with children, a higher than average proportion were working part-time at this time. Senior staff generally tended to be better off."
+    },
+    {
+     "id": "p15-3",
+     "topic": "有孩学生",
+     "zh": "值得注意的是，对于有孩子的这两类学生，此时非全日制学习的比例高于平均水平。成年学生通常更宽裕。",
+     "hint": "student with children / studying part-time",
+     "en": "It is noticeable that for both types of student with children, a higher than average proportion were studying part-time at this time. Mature students generally tended to be better off."
+    }
+   ]
+  }
+ ],
+ "upgrades": [
+  {
+   "id": "u1",
+   "group": "趋势",
+   "basic": "increase a lot",
+   "up": "surge",
+   "zh": "2020 年电动车销量大幅上升。",
+   "hint": "surge",
+   "en": "Electric vehicle sales surged in 2020.",
+   "why": "surge 是不及物动词，直接跟 in + 时间；不要说 were surged。"
+  },
+  {
+   "id": "u2",
+   "group": "趋势",
+   "basic": "decrease a lot",
+   "up": "plummet",
+   "zh": "2008 年后纸质书销量骤降。",
+   "hint": "plummet",
+   "en": "Paper book sales plummeted after 2008.",
+   "why": "plummet 比 fall 重，适合暴跌；常接 to + 终点。"
+  },
+  {
+   "id": "u3",
+   "group": "趋势",
+   "basic": "increase slowly",
+   "up": "climb gradually",
+   "zh": "农村收入缓慢上升。",
+   "hint": "climb gradually",
+   "en": "Rural incomes climbed gradually.",
+   "why": "gradually 放动词后；climb 已含上升，不再加 up。"
+  },
+  {
+   "id": "u4",
+   "group": "趋势",
+   "basic": "go up and down",
+   "up": "fluctuate",
+   "zh": "油价在 60 到 90 美元之间波动。",
+   "hint": "fluctuate between",
+   "en": "Oil prices fluctuated between $60 and $90.",
+   "why": "fluctuate between A and B 是固定结构。"
+  },
+  {
+   "id": "u5",
+   "group": "趋势",
+   "basic": "reach the highest point",
+   "up": "peak",
+   "zh": "游客数量在八月达到峰值。",
+   "hint": "peak",
+   "en": "Visitor numbers peaked in August.",
+   "why": "peak 作动词：peak at + 数值 / in + 月份。"
+  },
+  {
+   "id": "u6",
+   "group": "趋势",
+   "basic": "reach the lowest point",
+   "up": "bottom out",
+   "zh": "失业率在 2010 年触底。",
+   "hint": "bottom out",
+   "en": "Unemployment bottomed out in 2010.",
+   "why": "bottom out 是「触底」，之后常回升。"
+  },
+  {
+   "id": "u7",
+   "group": "趋势",
+   "basic": "stay the same",
+   "up": "remain stable",
+   "zh": "市场份额保持不变，约 20%。",
+   "hint": "remain stable at",
+   "en": "The market share remained stable at around 20%.",
+   "why": "remain stable at + 数值；stable 是形容词。"
+  },
+  {
+   "id": "u8",
+   "group": "趋势",
+   "basic": "become more than",
+   "up": "overtake",
+   "zh": "2020 年线上销售超过线下。",
+   "hint": "overtake",
+   "en": "Online sales overtook in-store sales in 2020.",
+   "why": "overtake 直接带宾语，不加 the place of。"
+  },
+  {
+   "id": "u9",
+   "group": "程度",
+   "basic": "very",
+   "up": "considerably",
+   "zh": "城市住房成本远高于农村。",
+   "hint": "considerably higher",
+   "en": "Housing costs are considerably higher in cities than in rural areas.",
+   "why": "修饰比较级用 considerably / significantly，不用 very。"
+  },
+  {
+   "id": "u10",
+   "group": "程度",
+   "basic": "a little",
+   "up": "marginally",
+   "zh": "失业率略微下降。",
+   "hint": "marginally",
+   "en": "The unemployment rate declined marginally.",
+   "why": "marginally = 略微，常与 decline / rise 搭配。"
+  },
+  {
+   "id": "u11",
+   "group": "程度",
+   "basic": "quickly",
+   "up": "rapidly",
+   "zh": "技术迅速变化。",
+   "hint": "rapidly",
+   "en": "Technology is changing rapidly.",
+   "why": "rapidly 修饰变化速度；quickly 偏口语。"
+  },
+  {
+   "id": "u12",
+   "group": "程度",
+   "basic": "suddenly",
+   "up": "sharply",
+   "zh": "2020 年失业率急剧上升。",
+   "hint": "sharply",
+   "en": "Unemployment rose sharply in 2020.",
+   "why": "sharply 表幅度陡，suddenly 表时间突然。"
+  },
+  {
+   "id": "u13",
+   "group": "观点",
+   "basic": "I think",
+   "up": "In my view",
+   "zh": "我认为塑料袋应该被禁用。",
+   "hint": "In my view",
+   "en": "In my view, plastic bags should be banned.",
+   "why": "In my view 后接逗号，比 I think 更书面。"
+  },
+  {
+   "id": "u14",
+   "group": "观点",
+   "basic": "many people think",
+   "up": "It is widely believed that",
+   "zh": "很多人认为大学只应教职业技能。",
+   "hint": "It is widely believed that",
+   "en": "It is widely believed that universities should teach only job skills.",
+   "why": "形式主语 it，避免 many people 开头。"
+  },
+  {
+   "id": "u15",
+   "group": "观点",
+   "basic": "someone says",
+   "up": "argue",
+   "zh": "有人主张取消家庭作业。",
+   "hint": "argue that",
+   "en": "Some argue that homework should be abolished.",
+   "why": "argue that 比 say 更适合学术论证。"
+  },
+  {
+   "id": "u16",
+   "group": "观点",
+   "basic": "important",
+   "up": "crucial",
+   "zh": "早期教育至关重要。",
+   "hint": "crucial",
+   "en": "Early education is crucial.",
+   "why": "crucial 后常接 to / for + 名词。"
+  },
+  {
+   "id": "u17",
+   "group": "观点",
+   "basic": "good",
+   "up": "beneficial",
+   "zh": "锻炼对心理健康有益。",
+   "hint": "beneficial to",
+   "en": "Exercise is beneficial to mental health.",
+   "why": "beneficial to 是固定搭配。"
+  },
+  {
+   "id": "u18",
+   "group": "观点",
+   "basic": "bad",
+   "up": "detrimental",
+   "zh": "长期压力对健康有害。",
+   "hint": "detrimental to",
+   "en": "Prolonged stress is detrimental to health.",
+   "why": "detrimental to 比 harmful 更学术。"
+  },
+  {
+   "id": "u19",
+   "group": "因果与衔接",
+   "basic": "because",
+   "up": "due to",
+   "zh": "由于成本上升，公司裁减了岗位。",
+   "hint": "due to",
+   "en": "Companies cut jobs due to rising costs.",
+   "why": "due to + 名词；because + 从句。"
+  },
+  {
+   "id": "u20",
+   "group": "因果与衔接",
+   "basic": "so",
+   "up": "therefore",
+   "zh": "因此，政府应加大投入。",
+   "hint": "Therefore",
+   "en": "Therefore, the government should increase investment.",
+   "why": "Therefore 放句首加逗号；句中对应用 thus。"
+  },
+  {
+   "id": "u21",
+   "group": "因果与衔接",
+   "basic": "but",
+   "up": "however",
+   "zh": "然而，这项政策也有缺点。",
+   "hint": "However",
+   "en": "However, this policy also has drawbacks.",
+   "why": "However 后加逗号；学术写作少用 But 起句。"
+  },
+  {
+   "id": "u22",
+   "group": "因果与衔接",
+   "basic": "for example",
+   "up": "a case in point",
+   "zh": "芬兰的教育体系就是一个例子。",
+   "hint": "A case in point is",
+   "en": "A case in point is the Finnish education system.",
+   "why": "a case in point is + 名词，比 for example 更紧凑。"
+  },
+  {
+   "id": "u23",
+   "group": "因果与衔接",
+   "basic": "in conclusion",
+   "up": "on balance",
+   "zh": "总体而言，利大于弊。",
+   "hint": "On balance",
+   "en": "On balance, the benefits outweigh the drawbacks.",
+   "why": "on balance = 权衡之后；结尾避免 in conclusion 套话。"
+  },
+  {
+   "id": "u24",
+   "group": "因果与衔接",
+   "basic": "also",
+   "up": "moreover",
+   "zh": "此外，远程办公节省通勤时间。",
+   "hint": "Moreover",
+   "en": "Moreover, remote work saves commuting time.",
+   "why": "Moreover 后加逗号，用于递进。"
+  },
+  {
+   "id": "u25",
+   "group": "因果与衔接",
+   "basic": "although",
+   "up": "despite",
+   "zh": "尽管经济增长，贫困依然存在。",
+   "hint": "Despite",
+   "en": "Despite economic growth, poverty persists.",
+   "why": "despite + 名词；although + 从句。"
+  },
+  {
+   "id": "u26",
+   "group": "动词",
+   "basic": "cause",
+   "up": "lead to",
+   "zh": "空气污染导致呼吸系统疾病。",
+   "hint": "lead to",
+   "en": "Air pollution leads to respiratory diseases.",
+   "why": "lead to + 名词，比 cause 更中性。"
+  },
+  {
+   "id": "u27",
+   "group": "动词",
+   "basic": "solve",
+   "up": "tackle",
+   "zh": "政府必须解决住房危机。",
+   "hint": "tackle",
+   "en": "Governments must tackle the housing crisis.",
+   "why": "tackle 强调着手处理，solve 强调已解决。"
+  },
+  {
+   "id": "u28",
+   "group": "动词",
+   "basic": "improve",
+   "up": "enhance",
+   "zh": "实习能提升就业能力。",
+   "hint": "enhance",
+   "en": "Internships enhance employability.",
+   "why": "enhance + 抽象名词（能力、效率、体验）。"
+  },
+  {
+   "id": "u29",
+   "group": "动词",
+   "basic": "reduce",
+   "up": "curb",
+   "zh": "必须减少塑料的使用。",
+   "hint": "curb",
+   "en": "Plastic use must be curbed.",
+   "why": "curb 常与 use / emissions / spending 搭配。"
+  },
+  {
+   "id": "u30",
+   "group": "动词",
+   "basic": "help",
+   "up": "facilitate",
+   "zh": "科技促进了交流。",
+   "hint": "facilitate",
+   "en": "Technology facilitates communication.",
+   "why": "facilitate 后接过程或交流，不接人。"
+  },
+  {
+   "id": "u31",
+   "group": "动词",
+   "basic": "use",
+   "up": "utilise",
+   "zh": "农民使用节水技术。",
+   "hint": "utilise",
+   "en": "Farmers utilise water-saving technology.",
+   "why": "utilise 更正式，强调有效利用。"
+  },
+  {
+   "id": "u32",
+   "group": "动词",
+   "basic": "get",
+   "up": "obtain",
+   "zh": "学生可以获得奖学金。",
+   "hint": "obtain",
+   "en": "Students can obtain scholarships.",
+   "why": "obtain 用于正式获得（学位、许可、资金）。"
+  },
+  {
+   "id": "u33",
+   "group": "动词",
+   "basic": "show",
+   "up": "demonstrate",
+   "zh": "数据表明了一个明显的趋势。",
+   "hint": "demonstrate",
+   "en": "The data demonstrate a clear trend.",
+   "why": "data 作复数，谓语用 demonstrate。"
+  },
+  {
+   "id": "u34",
+   "group": "名词与人群",
+   "basic": "people",
+   "up": "individuals",
+   "zh": "个人应减少浪费。",
+   "hint": "Individuals",
+   "en": "Individuals should reduce waste.",
+   "why": "individuals 强调个体责任，比 people 精确。"
+  },
+  {
+   "id": "u35",
+   "group": "名词与人群",
+   "basic": "old people",
+   "up": "the elderly",
+   "zh": "老年人需要更好的护理。",
+   "hint": "The elderly",
+   "en": "The elderly need better care.",
+   "why": "the + 形容词表群体，谓语用复数。"
+  },
+  {
+   "id": "u36",
+   "group": "名词与人群",
+   "basic": "children",
+   "up": "youngsters",
+   "zh": "年轻人花太多时间在屏幕上。",
+   "hint": "Youngsters",
+   "en": "Youngsters spend too much time on screens.",
+   "why": "youngsters 偏青少年，children 指更小的孩子。"
+  },
+  {
+   "id": "u37",
+   "group": "名词与人群",
+   "basic": "government",
+   "up": "the authorities",
+   "zh": "当局应加强监管。",
+   "hint": "The authorities",
+   "en": "The authorities should tighten regulation.",
+   "why": "the authorities 指政府部门，谓语用复数。"
+  },
+  {
+   "id": "u38",
+   "group": "名词与人群",
+   "basic": "advantage",
+   "up": "merit",
+   "zh": "该方案的主要优点在于成本低。",
+   "hint": "merit",
+   "en": "The main merit of this scheme is its low cost.",
+   "why": "merit 可数，常与 main / considerable 搭配。"
+  },
+  {
+   "id": "u39",
+   "group": "名词与人群",
+   "basic": "disadvantage",
+   "up": "drawback",
+   "zh": "主要缺点是成本高。",
+   "hint": "drawback",
+   "en": "The main drawback is the high cost.",
+   "why": "drawback 可数；downside 偏口语。"
+  },
+  {
+   "id": "u40",
+   "group": "名词与人群",
+   "basic": "problem",
+   "up": "issue",
+   "zh": "住房问题日益严重。",
+   "hint": "issue",
+   "en": "The housing issue is becoming more serious.",
+   "why": "issue 更中性，problem 更强调困难。"
+  }
+ ]
 }
