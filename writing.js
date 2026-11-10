@@ -229,10 +229,10 @@
       '<span class="' + (elapsed > TARGET_MIN * 60 ? 'w-over' : '') + '">' + (doneCount() === 4 ? '收工' : '') + '</span></div>' +
       rows +
       '<div class="w-k" style="margin-top:10px">加练（不计入上面四块）</div>' +
-      '<button class="w-blk" id="wstartBody">' +
-      '<div class="w-blk-main"><div class="w-blk-t">主体段专项</div>' +
-      '<div class="w-blk-s">只写一段 · 主题句→原因→例子→回扣 · 10 分钟计时</div></div>' +
-      '<div class="w-blk-r">10 分钟</div></button>' +
+      '<button class="w-blk" id="wstartEssay">' +
+      '<div class="w-blk-main"><div class="w-blk-t">成篇套模板</div>' +
+      '<div class="w-blk-s">观点 → 框架 → 两段主体 · 约 25 分钟</div></div>' +
+      '<div class="w-blk-r">' + (window.ESSAY ? window.ESSAY.summaryText() : '4 步') + '</div></button>' +
       '<button class="w-blk" id="wstartIdea">' +
       '<div class="w-blk-main"><div class="w-blk-t">观点速练</div>' +
       '<div class="w-blk-s">90 秒想两个论点 · 3 题 · 治没话讲</div></div>' +
@@ -250,7 +250,9 @@
     });
     $('#wbank').onclick = renderBank;
     $('#wexport').onclick = exportLog;
-    $('#wstartBody').onclick = startBody;
+    $('#wstartEssay').onclick = function () {
+      if (window.ESSAY) window.ESSAY.start(); else toast('成篇模块没加载上');
+    };
     $('#wstartIdea').onclick = function () {
       if (window.IDEAS) window.IDEAS.start(); else toast('观点库没加载上');
     };
