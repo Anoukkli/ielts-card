@@ -1,0 +1,123 @@
+{
+  "version": 1,
+  "types": [
+    {"id": "opinion", "name": "观点类", "keys": ["agree", "disagree", "to what extent", "do you agree"],
+     "plan": ["intro", "reason1", "reason2", "conclusion"]},
+    {"id": "discuss", "name": "双边讨论", "keys": ["discuss both", "both views", "both sides"],
+     "plan": ["intro", "viewA", "viewB", "myview", "conclusion"]},
+    {"id": "advdis", "name": "利弊类", "keys": ["advantages", "disadvantages", "outweigh", "benefits outweigh"],
+     "plan": ["intro", "benefit", "drawback", "weigh", "conclusion"]},
+    {"id": "problem", "name": "问题解决", "keys": ["causes", "solutions", "what can be done", "measures", "solve"],
+     "plan": ["intro", "cause", "solution", "conclusion"]},
+    {"id": "two", "name": "两问式", "keys": ["why do", "why are", "why is", "positive or negative", "positive or a negative"],
+     "plan": ["intro", "answer1", "answer2", "conclusion"]}
+  ],
+  "kinds": {
+    "intro": {
+      "name": "引入段",
+      "slots": ["topic", "other", "stance"],
+      "labels": {"topic": "题目关键词（英文短语）", "other": "对方最合理的理由（一句）", "stance": "你的立场（一句）"},
+      "frames": [
+        "In recent years, the question of whether {topic} has generated considerable debate. While some maintain that {other}, I would argue that {stance}.",
+        "Few issues are as divisive as {topic}. Although {other} is a widely held view, this essay contends that {stance}.",
+        "{topic} has long been a matter of public concern. In my view, {stance}, even though {other}."
+      ]
+    },
+    "reason": {
+      "name": "理由段",
+      "slots": ["claim", "reason", "example", "link"],
+      "labels": {"claim": "论点句（这段要证明什么）", "reason": "原因（because 后面那半句）", "example": "具体例子（一个人/一件事/一个国家）", "link": "回扣（所以它支持你的立场）"},
+      "frames": [
+        "The primary justification for this position is that {claim}. This is largely because {reason}. A case in point is {example}, which demonstrates that {link}.",
+        "A further consideration is {claim}. Since {reason}, it follows that {link}. This is illustrated by {example}.",
+        "Central to this argument is the idea that {claim}. The reason is that {reason}; {example} offers a clear illustration, and it ultimately shows that {link}."
+      ]
+    },
+    "view": {
+      "name": "观点段",
+      "slots": ["view", "reason", "example"],
+      "labels": {"view": "这一方的核心主张", "reason": "他们为什么这样想", "example": "能支撑它的例子"},
+      "frames": [
+        "Supporters of this position contend that {view}. Their core argument is that {reason}. By way of illustration, {example}.",
+        "Those who favour this view point to {view}. In their account, {reason}. Evidence for this can be seen in {example}.",
+        "The case for this view rests on {view}. Advocates reason that {reason}, citing {example} as proof."
+      ]
+    },
+    "benefit": {
+      "name": "利处段",
+      "slots": ["claim", "reason", "example"],
+      "labels": {"claim": "主要好处", "reason": "为什么它是好处", "example": "具体例子"},
+      "frames": [
+        "The most obvious benefit is that {claim}. This is because {reason}. {example} illustrates the point.",
+        "One clear advantage lies in {claim}. Since {reason}, {example} shows how this works in practice.",
+        "Advocates point to {claim} as the chief merit. The logic is simple: {reason}. {example} bears this out."
+      ]
+    },
+    "drawback": {
+      "name": "弊处段",
+      "slots": ["claim", "reason", "example"],
+      "labels": {"claim": "主要坏处", "reason": "为什么它是坏处", "example": "具体例子"},
+      "frames": [
+        "The principal drawback is that {claim}. This is largely because {reason}. {example} illustrates the cost.",
+        "A serious limitation is {claim}. Since {reason}, {example} shows the consequences.",
+        "Critics highlight {claim} as the main weakness. The reason is that {reason}, as {example} demonstrates."
+      ]
+    },
+    "weigh": {
+      "name": "权衡段",
+      "slots": ["benefit", "drawback", "judgment"],
+      "labels": {"benefit": "利的一端", "drawback": "弊的一端", "judgment": "你的判断（一句）"},
+      "frames": [
+        "While the benefits — chiefly {benefit} — are considerable, they must be set against {drawback}. On balance, {judgment}.",
+        "The advantages of {benefit} are real, yet they do not cancel out {drawback}. On balance, {judgment}.",
+        "Weighing {benefit} against {drawback}, the former carries more weight, because {judgment}."
+      ]
+    },
+    "cause": {
+      "name": "原因段",
+      "slots": ["cause", "effect"],
+      "labels": {"cause": "根本原因", "effect": "它造成的直接后果"},
+      "frames": [
+        "The root of the problem lies in {cause}. As a result, {effect}.",
+        "This situation stems largely from {cause}, which in turn {effect}.",
+        "A major cause is {cause}; consequently, {effect}."
+      ]
+    },
+    "solution": {
+      "name": "方案段",
+      "slots": ["measure", "effect"],
+      "labels": {"measure": "具体措施（动词开头）", "effect": "它会带来什么改变"},
+      "frames": [
+        "The most practical remedy would be to {measure}, which would in turn {effect}.",
+        "A workable solution is to {measure}. This would {effect}.",
+        "Governments could {measure}, thereby {effect}."
+      ]
+    },
+    "conclusion": {
+      "name": "结论段",
+      "slots": ["other", "stance"],
+      "labels": {"other": "对方的理由（换个说法，别照抄开头）", "stance": "重申你的立场"},
+      "frames": [
+        "To conclude, although {other}, the case for {stance} remains stronger, since the alternative offers no lasting solution.",
+        "In summary, while {other} deserves consideration, I remain convinced that {stance}.",
+        "Ultimately, {other} does not outweigh the argument that {stance}."
+      ]
+    }
+  },
+  "segments": [
+    {"id": "intro", "kind": "intro", "name": "引入"},
+    {"id": "reason1", "kind": "reason", "name": "理由段 1"},
+    {"id": "reason2", "kind": "reason", "name": "理由段 2"},
+    {"id": "viewA", "kind": "view", "name": "A 方观点"},
+    {"id": "viewB", "kind": "view", "name": "B 方观点"},
+    {"id": "myview", "kind": "reason", "name": "我的立场"},
+    {"id": "benefit", "kind": "benefit", "name": "利处"},
+    {"id": "drawback", "kind": "drawback", "name": "弊处"},
+    {"id": "weigh", "kind": "weigh", "name": "权衡"},
+    {"id": "cause", "kind": "cause", "name": "原因"},
+    {"id": "solution", "kind": "solution", "name": "方案"},
+    {"id": "answer1", "kind": "reason", "name": "回答第一问"},
+    {"id": "answer2", "kind": "reason", "name": "回答第二问"},
+    {"id": "conclusion", "kind": "conclusion", "name": "结论"}
+  ]
+}
