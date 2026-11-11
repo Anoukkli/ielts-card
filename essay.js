@@ -1,15 +1,14 @@
 /* 雅思复习 · 成篇套模板
-   一条线：观点（90 秒）→ 框架 → 骨架 → 主体段 1 → 主体段 2
-   每一步可回退，草稿自动存本机（ielts.essay.draft.v1），退出不丢。 */
+   观点（90 秒）→ 判题型 → 按段落逐段填（3 个句式选 1）→ 整篇骨架
+   数据在 essay.json（题型路由 + 段型库），草稿自动存本机。 */
 (function () {
   'use strict';
 
   var KEY = 'ielts.essay.v1';
   var DKEY = 'ielts.essay.draft.v1';
   var STEP_SECONDS = 90;
-  var BODY_SECONDS = 480;
 
-  var ST = null, DATA = null, R = null, T = null;
+  var ST = null, DATA = null, IDEAS = null, R = null, T = null;
 
   function appEl() { return document.getElementById('app'); }
   function $(s, r) { return (r || document).querySelector(s); }
@@ -42,13 +41,10 @@
     if (ST) return;
     try { ST = JSON.parse(localStorage.getItem(KEY) || 'null') || {}; } catch (e) { ST = {}; }
     if (!ST.logs) ST.logs = [];
-    if (!ST.days) ST.days = {};
   }
   function save() {
     try { localStorage.setItem(KEY, JSON.stringify(ST)); } catch (e) { toast('存不进去：检查存储设置'); }
   }
-
-  /* ---------------- 草稿 ---------------- */
   function draftRead() {
     try { return JSON.parse(localStorage.getItem(DKEY) || 'null'); } catch (e) { return null; }
   }
@@ -63,13 +59,15 @@
   async function ensureData() {
     if (DATA) return true;
     try {
-      var r = await fetch('ideas.json?t=' + Date.now());
-      if (!r.ok) throw new Error(r.status);
-      DATA = await r.json();
+      var a = await fetch('essay.json?t=' + Date.now());
+      var b = await fetch('ideas.json?t=' + Date.now());
+      if (!a.ok || !b.ok) throw new Error('load');
+      DATA = await a.json();
+      IDEAS = await b.json();
       return true;
     } catch (e) {
-      appEl().innerHTML = '<div class="e-done"><div class="e-big">📭</div><h2>观点库没加载上</h2>' +
-        '<p>确认 ideas.json 和本页在同一目录</p></div>';
+      appEl().innerHTML = '<div class="e-done"><div class="e-big">📭</div><h2>模板或题目没加载上</h2>' +
+        '<p>确认 essay.json / ideas.json 和本页在同一目录</p></div>';
       return false;
     }
   }
@@ -86,6 +84,33 @@
     if (b) b.onclick = fn;
   }
 
+  function typeById(id) {
+    var t = DATA.types.filter(function (x) { return x.id === id; })[0];
+    return t || DATA.types[0];
+  }
+  function segById(id) {
+    return DATA.segments.filter(function (s) { return s.id === id; })[0];
+  }
+  function kindOf(seg) { return DATA.kinds[seg.kind]; }
+
+  function detect(prompt) {
+    var s = String(prompt || '').toLowerCase();
+    if (/discuss both|both views|both sides/.test(s)) return 'discuss';
+    if (/outweigh|advantages?|disadvantages?|benefits?/.test(s)) return 'advdis';
+    if (/causes?|solutions?|what can be done|measures?|solve/.test(s)) return 'problem';
+    if (/positive or (a )?negative|why (do|are|is)/.test(s)) return 'two';
+    return 'opinion';
+  }
+
+  function nextPrompt() {
+    var done = {};
+    ST.logs.forEach(function (l) { done[l.p] = 1; });
+    var fresh = IDEAS.prompts.filter(function (p) { return !done[p.id]; });
+    if (!fresh.length) fresh = IDEAS.prompts;
+    return fresh[0];
+  }
+
+  /* ---------------- hub ---------------- */
   async function open() {
     load();
     var ok = await ensureData();
@@ -93,25 +118,17 @@
     renderHub();
   }
 
-  function nextPrompt() {
-    var done = {};
-    ST.logs.forEach(function (l) { done[l.p] = 1; });
-    var fresh = DATA.prompts.filter(function (p) { return !done[p.id]; });
-    if (!fresh.length) fresh = DATA.prompts;
-    return fresh[0];
-  }
-
   function stepName(n) {
-    return { 1: '观点', 2: '框架', 3: '主体段 1', 4: '主体段 2' }[n] || '观点';
+    return { 1: '观点', 2: '判题型', 3: '逐段填', 4: '骨架' }[n] || '观点';
   }
 
   function renderHub() {
     clearTimer();
     var p = nextPrompt();
-    var n = ST.logs.length;
     var draft = draftRead();
+    if (draft && (!draft.R || draft.R.v !== 2)) { draftClear(); draft = null; }
     var resume = '';
-    if (draft && draft.R && draft.R.p) {
+    if (draft && draft.R) {
       var ago = Math.round((Date.now() - (draft.t || 0)) / 60000);
       resume = '<div class="e-card" style="border-color:var(--accent)">' +
         '<div class="e-kicker">未完成的草稿</div>' +
@@ -123,22 +140,18 @@
         '</div>';
     }
     appEl().innerHTML = top('成篇套模板') +
-      '<div class="e-intro">先想观点，再搭框架，最后只写两个主体段。每一步都能回退，草稿自动保存。</div>' +
-      '<div class="e-stat"><b>' + n + '</b> 篇已走过</div>' +
+      '<div class="e-intro">先判题型，再按段落填：每段三个句式选一个，只填内容块，不会拼出重复的句子。</div>' +
+      '<div class="e-stat"><b>' + ST.logs.length + '</b> 篇已走过</div>' +
       resume +
       '<div class="e-card">' +
       '<div class="e-kicker">下一篇 · ' + esc(p.topic) + '</div>' +
       '<div class="e-en">' + esc(p.prompt) + '</div>' +
       '<div class="e-zh">' + esc(p.zh) + '</div>' +
       '</div>' +
-      '<button class="e-btn" id="estart">' + (resume ? '开始新的一篇' : '开始：观点 → 框架 → 主体段') + '</button>' +
-      '<div class="e-tip">第 1 步 90 秒想两个论点；第 2 步填立场和对方观点；第 3、4 步各 8 分钟写一段主体。</div>';
-    bindBack(function () {
-      draftSave();
-      if (window.WRITING && window.WRITING.start) window.WRITING.start();
-    });
+      '<button class="e-btn" id="estart">' + (resume ? '开始新的一篇' : '开始：观点 → 判题型 → 逐段填') + '</button>';
+    bindBack(function () { draftSave(); if (window.WRITING) window.WRITING.start(); });
     document.getElementById('estart').onclick = function () {
-      R = { p: p, step: 1, claims: '', kw: '', stance: '', other: '', body1: '', body2: '' };
+      R = { v: 2, p: p, step: 1, claims: '', type: '', sel: {}, vals: {} };
       draftSave();
       renderClaims();
     };
@@ -155,39 +168,27 @@
   function resumeStep() {
     var s = R.step || 1;
     if (s <= 1) return renderClaims();
-    if (s === 2) {
-      if (R.kw && R.stance) return renderSkeleton();
-      return renderFrame();
-    }
-    if (s === 3) return renderBody1();
-    return renderBody2();
+    if (s === 2) return renderType();
+    if (s === 3) return renderSegments();
+    return renderSkeleton();
   }
 
-  function bindDraft(sel, field) {
-    var el = $(sel);
-    if (!el) return;
-    el.addEventListener('input', function () {
-      R[field] = el.value;
-      draftSave();
-    });
-  }
-
-  /* 第 1 步：观点 */
+  /* ---------------- 1 观点 ---------------- */
   function renderClaims() {
     clearTimer();
-    var p = R.p, left = STEP_SECONDS;
     R.step = 1; draftSave();
+    var p = R.p, left = STEP_SECONDS;
     appEl().innerHTML = top(p.topic, '1/4') +
       '<div class="e-card">' +
       '<div class="e-kicker">第 1 步 · 90 秒，先想两个论点</div>' +
       '<div class="e-en">' + esc(p.prompt) + '</div>' +
       '<div class="e-clock" id="eclock">' + fmt(left) + '</div>' +
       '<textarea class="e-ta" id="eclaims" rows="3" placeholder="两个论点，一行一个">' + esc(R.claims) + '</textarea>' +
-      '<button class="e-btn" id="enext">下一步：搭框架</button>' +
+      '<button class="e-btn" id="enext">下一步：判题型</button>' +
       '<button class="e-link" id="eprev">返回</button>' +
       '</div>';
     bindBack(function () { R.claims = ($('#eclaims').value || '').trim(); draftSave(); renderHub(); });
-    bindDraft('#eclaims', 'claims');
+    $('#eclaims').addEventListener('input', function () { R.claims = this.value; draftSave(); });
     T = setInterval(function () {
       var el = document.getElementById('eclock');
       if (!el) { clearTimer(); return; }
@@ -197,164 +198,153 @@
       el.classList.toggle('over', left < 30);
     }, 1000);
     document.getElementById('enext').onclick = function () {
-      var v = (document.getElementById('eclaims').value || '').trim();
-      clearTimer();
-      R.claims = v; R.step = 2; draftSave();
-      renderFrame();
+      R.claims = ($('#eclaims').value || '').trim();
+      if (!R.type) R.type = detect(R.p.prompt);
+      R.step = 2; draftSave(); clearTimer();
+      renderType();
     };
     document.getElementById('eprev').onclick = function () {
       R.claims = ($('#eclaims').value || '').trim(); draftSave(); renderHub();
     };
   }
 
-  /* 第 2 步：框架 */
-  function renderFrame() {
+  /* ---------------- 2 判题型 ---------------- */
+  function renderType() {
     clearTimer();
     R.step = 2; draftSave();
     var p = R.p;
+    var detected = detect(p.prompt);
+    if (!R.type) R.type = detected;
+    var chips = DATA.types.map(function (t) {
+      return '<button class="e-chip' + (t.id === R.type ? ' on' : '') + '" data-type="' + t.id + '">' +
+        esc(t.name) + (t.id === detected ? ' · 系统判断' : '') + '</button>';
+    }).join('');
+    var plan = typeById(R.type).plan.map(function (id, i) {
+      return '<div class="e-plan"><b>' + (i + 1) + '</b>' + esc(segById(id).name) + '</div>';
+    }).join('');
     appEl().innerHTML = top(p.topic, '2/4') +
-      '<div class="e-intro">只填四个空，先让骨架立起来。写不出来就先抄参考论点，改两个词也算。</div>' +
+      '<div class="e-intro">系统从题目关键词判的，你可以改。不同题型段落顺序不一样，这是模板不重复的关键。</div>' +
       '<div class="e-card">' +
-      '<div class="e-kicker">题目关键词（英文，一个短语）</div>' +
-      '<input class="e-in" id="ekw" placeholder="e.g. free university education" value="' + esc(R.kw) + '">' +
-      '<div class="e-kicker" style="margin-top:14px">你的立场（一句英文）</div>' +
-      '<input class="e-in" id="estance" placeholder="I hold the view that ..." value="' + esc(R.stance) + '">' +
-      '<div class="e-kicker" style="margin-top:14px">对方最合理的理由（一句英文）</div>' +
-      '<input class="e-in" id="eother" placeholder="Some people argue that ..." value="' + esc(R.other) + '">' +
-      '<button class="e-btn" id="ebuild">生成骨架</button>' +
+      '<div class="e-kicker">这篇属于</div>' +
+      '<div class="e-chips">' + chips + '</div>' +
+      '<div class="e-kicker" style="margin-top:16px">段落顺序</div>' + plan +
+      '<button class="e-btn" id="enext">下一步：逐段填</button>' +
       '<button class="e-link" id="eprev">上一步：观点</button>' +
       '</div>';
-    bindBack(function () {
-      R.kw = (($('#ekw') || {}).value || '').trim();
-      R.stance = (($('#estance') || {}).value || '').trim();
-      R.other = (($('#eother') || {}).value || '').trim();
-      draftSave(); renderHub();
+    bindBack(function () { draftSave(); renderHub(); });
+    $$('[data-type]').forEach(function (b) {
+      b.onclick = function () {
+        R.type = b.getAttribute('data-type');
+        draftSave();
+        renderType();
+      };
     });
-    bindDraft('#ekw', 'kw');
-    bindDraft('#estance', 'stance');
-    bindDraft('#eother', 'other');
-    document.getElementById('ebuild').onclick = function () {
-      R.kw = (document.getElementById('ekw').value || '').trim();
-      R.stance = (document.getElementById('estance').value || '').trim();
-      R.other = (document.getElementById('eother').value || '').trim();
-      if (!R.stance) { toast('立场先写一句'); return; }
-      R.step = 2; draftSave();
-      renderSkeleton();
-    };
-    document.getElementById('eprev').onclick = function () {
-      R.kw = (($('#ekw') || {}).value || '').trim();
-      R.stance = (($('#estance') || {}).value || '').trim();
-      R.other = (($('#eother') || {}).value || '').trim();
-      draftSave(); renderClaims();
-    };
+    document.getElementById('enext').onclick = function () { R.step = 3; draftSave(); renderSegments(); };
+    document.getElementById('eprev').onclick = function () { draftSave(); renderClaims(); };
   }
 
-  /* 骨架 */
-  function skeletonHTML() {
-    var p = R.p;
-    var a1 = p.args[0], a2 = p.args[1];
-    var opening = 'In recent years, whether ' + (R.kw || '[题目关键词]') +
-      ' has triggered widespread debate. While some people believe that ' + (R.other || '[对方理由]') +
-      ', I hold the view that ' + (R.stance || '[你的立场]') + '.';
-    return '<div class="e-card">' +
-      '<div class="e-kicker">骨架（等会儿照着写）</div>' +
-      '<div class="e-line"><b>开头</b>' + esc(opening) + '</div>' +
-      '<div class="e-line"><b>让步</b>On one side of the discussion, it is understandable that ' + esc(R.other || '[对方理由]') + '. However, this view overlooks the long-term cost.</div>' +
-      '<div class="e-line"><b>主体 1</b>' + esc(a1.claim) + '</div>' +
-      '<div class="e-line"><b>主体 2</b>' + esc(a2.claim) + '</div>' +
-      '<div class="e-line"><b>结尾</b>To summarize, although ' + esc(R.other || '[对方理由]') + ', I believe that ' + esc(R.stance || '[你的立场]') + '.</div>' +
-      '</div>';
+  /* ---------------- 3 逐段填 ---------------- */
+  function fill(tpl, segId) {
+    return String(tpl).replace(/\{(\w+)\}/g, function (m, k) {
+      var v = R.vals[segId + '.' + k];
+      return v && v.trim() ? v.trim() : '___';
+    });
   }
 
+  function renderSegments() {
+    clearTimer();
+    R.step = 3; draftSave();
+    var plan = typeById(R.type).plan;
+    var cards = plan.map(function (id, idx) {
+      var seg = segById(id);
+      if (!seg) return '';
+      var kind = kindOf(seg);
+      var sel = R.sel[id] || 0;
+      var frames = kind.frames.map(function (f, i) {
+        return '<button class="e-opt' + (i === sel ? ' on' : '') + '" data-frame="' + i + '" data-in="' + id + '">' +
+          esc(f) + '</button>';
+      }).join('');
+      var inputs = kind.slots.map(function (s) {
+        var key = id + '.' + s;
+        return '<div class="e-slot"><label>' + esc(kind.labels[s] || s) + '</label>' +
+          '<input class="e-in" data-slot="' + key + '" value="' + esc(R.vals[key] || '') + '"></div>';
+      }).join('');
+      return '<div class="e-card" data-seg="' + id + '">' +
+        '<div class="e-kicker">' + (idx + 1) + '/' + plan.length + ' · ' + esc(seg.name) + '</div>' +
+        '<div class="e-opts">' + frames + '</div>' +
+        inputs +
+        '<div class="e-preview" id="prev-' + id + '">' + esc(fill(kind.frames[sel], id)) + '</div>' +
+        '</div>';
+    }).join('');
+    appEl().innerHTML = top(typeById(R.type).name, '3/4') +
+      '<div class="e-intro">每段先点一个句式，再填空。空格只填内容，不写整句，所以不会拼重。</div>' +
+      cards +
+      '<button class="e-btn" id="enext">生成整篇骨架</button>' +
+      '<button class="e-link" id="eprev">上一步：题型</button>';
+    bindBack(function () { draftSave(); renderHub(); });
+
+    $$('[data-frame]').forEach(function (b) {
+      b.onclick = function () {
+        var segId = b.getAttribute('data-in');
+        R.sel[segId] = +b.getAttribute('data-frame');
+        $$('[data-in="' + segId + '"]').forEach(function (x) { x.classList.toggle('on', x === b); });
+        updatePreview(segId);
+        draftSave();
+      };
+    });
+    $$('[data-slot]').forEach(function (inp) {
+      inp.addEventListener('input', function () {
+        R.vals[inp.getAttribute('data-slot')] = inp.value;
+        updatePreview(inp.getAttribute('data-slot').split('.')[0]);
+        draftSave();
+      });
+    });
+    document.getElementById('enext').onclick = function () {
+      R.step = 4; draftSave(); renderSkeleton();
+    };
+    document.getElementById('eprev').onclick = function () { draftSave(); renderType(); };
+  }
+
+  function updatePreview(segId) {
+    var seg = segById(segId);
+    if (!seg) return;
+    var kind = kindOf(seg);
+    var idx = R.sel[segId] || 0;
+    var box = document.getElementById('prev-' + segId);
+    if (box) box.textContent = fill(kind.frames[idx], segId);
+  }
+
+  /* ---------------- 4 骨架 ---------------- */
   function renderSkeleton() {
     clearTimer();
-    R.step = 2; draftSave();
-    appEl().innerHTML = top(R.p.topic, '2/4') +
-      skeletonHTML() +
-      '<div class="e-intro">骨架立住了再动笔。先写论点 1 那段，下一段写论点 2。</div>' +
-      '<button class="e-btn" id="ebody1">写主体段 1（8 分钟）</button>' +
-      '<button class="e-link" id="eprev">上一步：改框架</button>';
-    bindBack(function () { draftSave(); renderHub(); });
-    document.getElementById('ebody1').onclick = function () { R.step = 3; draftSave(); renderBody1(); };
-    document.getElementById('eprev').onclick = function () { draftSave(); renderFrame(); };
-  }
-
-  function renderBody1() { renderBody(1, R.p.args[0], '3/4'); }
-  function renderBody2() { renderBody(2, R.p.args[1], '4/4'); }
-
-  function renderBody(n, arg, idxLabel) {
-    clearTimer();
-    R.step = n === 1 ? 3 : 4; draftSave();
-    var left = BODY_SECONDS;
-    var saved = n === 1 ? R.body1 : R.body2;
-    appEl().innerHTML = top('主体段 ' + n, idxLabel) +
-      skeletonHTML() +
-      '<div class="e-card">' +
-      '<div class="e-kicker">写主体段 ' + n + '：主题句 → 原因 → 例子 → 回扣</div>' +
-      '<div class="e-arg"><b>论点</b>' + esc(arg.claim) + '</div>' +
-      '<div class="e-arg"><b>原因</b>' + esc(arg.reason) + '</div>' +
-      '<div class="e-arg"><b>例子</b>' + esc(arg.example) + '</div>' +
-      '<div class="e-clock" id="eclock">' + fmt(left) + '</div>' +
-      '<textarea class="e-ta" id="ebody" rows="7" placeholder="先写主题句，再补原因和例子，最后一句回扣立场">' + esc(saved) + '</textarea>' +
-      '<button class="e-btn" id="esave">完成这段</button>' +
-      '<button class="e-link" id="eprev">上一段</button>' +
-      '</div>';
-    bindBack(function () {
-      if (n === 1) R.body1 = ($('#ebody').value || ''); else R.body2 = ($('#ebody').value || '');
-      draftSave(); renderHub();
+    R.step = 4; draftSave();
+    var plan = typeById(R.type).plan;
+    var paras = plan.map(function (id) {
+      var seg = segById(id);
+      var kind = kindOf(seg);
+      var idx = R.sel[id] || 0;
+      return { name: seg.name, text: fill(kind.frames[idx], id) };
     });
-    var ta = document.getElementById('ebody');
-    ta.addEventListener('input', function () {
-      if (n === 1) R.body1 = ta.value; else R.body2 = ta.value;
-      draftSave();
-    });
-    T = setInterval(function () {
-      var el = document.getElementById('eclock');
-      if (!el) { clearTimer(); return; }
-      left--;
-      if (left <= 0) { el.textContent = '时间到'; el.classList.add('over'); clearTimer(); return; }
-      el.textContent = fmt(left);
-      el.classList.toggle('over', left < 60);
-    }, 1000);
-    document.getElementById('esave').onclick = function () {
-      var v = (ta.value || '').trim();
-      if (v.split(/\s+/).length < 30) { toast('至少写 5 句再交'); return; }
-      clearTimer();
-      if (n === 1) { R.body1 = v; R.step = 4; draftSave(); renderBody2(); }
-      else { R.body2 = v; draftSave(); renderDone(); }
-    };
-    document.getElementById('eprev').onclick = function () {
-      if (n === 1) R.body1 = ($('#ebody').value || ''); else R.body2 = ($('#ebody').value || '');
-      draftSave();
-      if (n === 1) renderSkeleton();
-      else { R.step = 3; draftSave(); renderBody1(); }
-    };
-  }
-
-  /* 完成 */
-  function renderDone() {
-    clearTimer();
-    var p = R.p;
-    appEl().innerHTML = top(p.topic, '完成') +
-      '<div class="e-done"><div class="e-big">🧩</div><h2>这篇的骨架立住了</h2>' +
-      '<p>下次同一篇，直接写整篇。</p></div>' +
-      skeletonHTML() +
-      '<div class="e-card"><div class="e-kicker">你写的主体段 1</div><div class="e-ref">' + esc(R.body1) + '</div></div>' +
-      '<div class="e-card"><div class="e-kicker">你写的主体段 2</div><div class="e-ref">' + esc(R.body2) + '</div></div>' +
+    var body = paras.map(function (p) {
+      return '<div class="e-card"><div class="e-kicker">' + esc(p.name) + '</div>' +
+        '<div class="e-ref">' + esc(p.text) + '</div></div>';
+    }).join('');
+    appEl().innerHTML = top('整篇骨架', '4/4') +
+      '<div class="e-intro">' + esc(typeById(R.type).name) + ' · 共 ' + paras.length + ' 段。先读一遍，再保存。</div>' +
+      body +
       '<div class="e-card"><div class="e-kicker">自检</div>' +
-      '<label class="e-check"><input type="checkbox">开头有没有亮立场</label>' +
-      '<label class="e-check"><input type="checkbox">两个主体段各有主题句</label>' +
-      '<label class="e-check"><input type="checkbox">每段都有 because 和例子</label>' +
-      '<label class="e-check"><input type="checkbox">结尾没有引入新观点</label>' +
+      '<label class="e-check"><input type="checkbox">每一段都回答了题目的要求</label>' +
+      '<label class="e-check"><input type="checkbox">开头和结论没有用同一句话</label>' +
+      '<label class="e-check"><input type="checkbox">每个理由段都有 because 和例子</label>' +
       '</div>' +
       '<button class="e-btn" id="efinish">保存这篇</button>' +
-      '<button class="e-link" id="eprev">上一段：改主体段 2</button>';
+      '<button class="e-link" id="eprev">上一步：改某一段</button>';
     bindBack(function () { draftSave(); renderHub(); });
-    document.getElementById('eprev').onclick = function () { R.step = 4; draftSave(); renderBody2(); };
+    document.getElementById('eprev').onclick = function () { draftSave(); renderSegments(); };
     document.getElementById('efinish').onclick = function () {
       ST.logs.push({
-        d: today(), t: Date.now(), p: p.id, kw: R.kw, stance: R.stance, other: R.other,
-        claims: R.claims, body1: R.body1, body2: R.body2
+        d: today(), t: Date.now(), p: R.p.id, type: R.type,
+        claims: R.claims, paras: paras.map(function (x) { return x.text; }).join('\n\n')
       });
       save();
       draftClear();
@@ -364,6 +354,7 @@
     };
   }
 
+  /* ---------------- css ---------------- */
   function injectCSS() {
     if (document.getElementById('e-style')) return;
     var css = [
@@ -381,21 +372,27 @@
       '.e-clock{font-size:13px;color:var(--dim);font-variant-numeric:tabular-nums;margin-top:12px}',
       '.e-clock.over{color:var(--bad)}',
       '.e-ta{width:100%;margin-top:12px;border:1px solid var(--line);border-radius:14px;background:var(--card2);color:var(--fg);padding:12px 13px;font-size:16px;line-height:1.6;font-family:inherit;resize:vertical;outline:none}',
-      '.e-in{width:100%;margin-top:6px;border:1px solid var(--line);border-radius:12px;background:var(--card2);color:var(--fg);padding:10px 12px;font-size:15px;font-family:inherit;outline:none}',
+      '.e-in{width:100%;margin-top:5px;border:1px solid var(--line);border-radius:12px;background:var(--card2);color:var(--fg);padding:10px 12px;font-size:15px;font-family:inherit;outline:none}',
       '.e-btn{width:100%;border:0;border-radius:16px;padding:15px 16px;font-size:15.5px;font-weight:600;background:var(--accent);color:#fff;font-family:inherit;margin-top:12px}',
       '.e-link{width:100%;margin-top:10px;background:none;border:1px solid var(--line);border-radius:12px;padding:11px;color:var(--dim);font-size:12px;font-family:inherit}',
-      '.e-line{font-size:13px;line-height:1.7;margin-top:10px}',
-      '.e-line b{display:inline-block;min-width:44px;color:var(--dim);font-weight:600;font-size:11px;margin-right:6px}',
-      '.e-arg{font-size:13px;line-height:1.7;margin-top:8px}',
-      '.e-arg b{color:var(--dim);font-weight:600;font-size:11px;margin-right:8px}',
+      '.e-chips{display:flex;flex-wrap:wrap;gap:8px}',
+      '.e-chip{border:1px solid var(--line);background:var(--card2);color:var(--fg);border-radius:999px;padding:8px 12px;font-size:12px;font-family:inherit}',
+      '.e-chip.on{background:var(--accent);color:#fff;border-color:transparent}',
+      '.e-plan{font-size:13px;line-height:1.6;color:var(--fg);margin-top:8px;display:flex;gap:10px}',
+      '.e-plan b{color:var(--accent)}',
+      '.e-opts{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}',
+      '.e-opt{text-align:left;font-family:inherit;font-size:11.5px;line-height:1.55;color:var(--dim);background:var(--card2);border:1px solid transparent;border-radius:10px;padding:8px 10px}',
+      '.e-opt.on{color:var(--fg);border-color:var(--accent);background:var(--card)}',
+      '.e-slot{margin-top:10px}',
+      '.e-slot label{font-size:11px;color:var(--dim);display:block;margin-bottom:4px}',
+      '.e-preview{margin-top:12px;padding:11px 13px;border-left:3px solid var(--accent);background:var(--card2);border-radius:0 10px 10px 0;font-size:13px;line-height:1.7;color:var(--fg)}',
       '.e-ref{font-size:13.5px;line-height:1.75;white-space:pre-wrap}',
       '.e-check{display:flex;gap:9px;align-items:flex-start;font-size:13px;line-height:1.6;margin-top:10px}',
       '.e-check input{margin-top:2px;width:18px;height:18px;accent-color:var(--accent)}',
       '.e-done{text-align:center;padding:20px 0 6px}',
       '.e-done .e-big{font-size:52px;line-height:1}',
       '.e-done h2{font-size:21px;margin:10px 0 6px}',
-      '.e-done p{font-size:13px;color:var(--dim)}',
-      '.e-tip{font-size:11px;color:var(--dim);line-height:1.6;margin-top:12px}'
+      '.e-done p{font-size:13px;color:var(--dim)}'
     ].join('\n');
     var st = document.createElement('style');
     st.id = 'e-style';
@@ -405,7 +402,6 @@
 
   injectCSS();
   load();
-
   document.addEventListener('visibilitychange', function () { if (document.hidden) draftSave(); });
   window.addEventListener('beforeunload', function () { draftSave(); });
 
@@ -414,10 +410,10 @@
     summaryText: function () {
       load();
       var d = draftRead();
-      if (d && d.R) return '有草稿 · 第 ' + (d.R.step || 1) + ' 步';
-      return ST.logs.length ? ST.logs.length + ' 篇' : '观点→框架→两段';
+      if (d && d.R && d.R.v === 2) return '有草稿 · 第 ' + (d.R.step || 1) + ' 步';
+      return ST.logs.length ? ST.logs.length + ' 篇' : '观点→题型→逐段';
     },
     _state: function () { return { ST: ST, DATA: DATA, R: R }; },
-    _draft: draftRead
+    _detect: detect
   };
 })();
