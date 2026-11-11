@@ -1,10 +1,11 @@
 /* 雅思复习 · 成篇套模板
-   一条线：观点（90 秒）→ 框架（填立场/对方/论点）→ 主体段 1 → 主体段 2 → 全文骨架
-   由易到多，先搭骨架再写段。数据来自 ideas.json，进度存 ielts.essay.v1。 */
+   一条线：观点（90 秒）→ 框架 → 骨架 → 主体段 1 → 主体段 2
+   每一步可回退，草稿自动存本机（ielts.essay.draft.v1），退出不丢。 */
 (function () {
   'use strict';
 
   var KEY = 'ielts.essay.v1';
+  var DKEY = 'ielts.essay.draft.v1';
   var STEP_SECONDS = 90;
   var BODY_SECONDS = 480;
 
@@ -45,6 +46,18 @@
   }
   function save() {
     try { localStorage.setItem(KEY, JSON.stringify(ST)); } catch (e) { toast('存不进去：检查存储设置'); }
+  }
+
+  /* ---------------- 草稿 ---------------- */
+  function draftRead() {
+    try { return JSON.parse(localStorage.getItem(DKEY) || 'null'); } catch (e) { return null; }
+  }
+  function draftSave() {
+    if (!R) return;
+    try { localStorage.setItem(DKEY, JSON.stringify({ t: Date.now(), R: R })); } catch (e) {}
+  }
+  function draftClear() {
+    try { localStorage.removeItem(DKEY); } catch (e) {}
   }
 
   async function ensureData() {
@@ -88,40 +101,93 @@
     return fresh[0];
   }
 
+  function stepName(n) {
+    return { 1: '观点', 2: '框架', 3: '主体段 1', 4: '主体段 2' }[n] || '观点';
+  }
+
   function renderHub() {
     clearTimer();
     var p = nextPrompt();
     var n = ST.logs.length;
+    var draft = draftRead();
+    var resume = '';
+    if (draft && draft.R && draft.R.p) {
+      var ago = Math.round((Date.now() - (draft.t || 0)) / 60000);
+      resume = '<div class="e-card" style="border-color:var(--accent)">' +
+        '<div class="e-kicker">未完成的草稿</div>' +
+        '<div class="e-en">' + esc(draft.R.p.prompt || '') + '</div>' +
+        '<div class="e-zh">停在「' + stepName(draft.R.step || 1) + '」 · ' +
+        (ago < 1 ? '刚刚' : ago + ' 分钟前') + ' · 退出去也不丢</div>' +
+        '<button class="e-btn" id="eresume">继续上次</button>' +
+        '<button class="e-link" id="edrop">扔掉这篇，重新开始</button>' +
+        '</div>';
+    }
     appEl().innerHTML = top('成篇套模板') +
-      '<div class="e-intro">先想观点，再搭框架，最后只写两个主体段。整篇留到框架熟了再写，一次 25 分钟左右。</div>' +
+      '<div class="e-intro">先想观点，再搭框架，最后只写两个主体段。每一步都能回退，草稿自动保存。</div>' +
       '<div class="e-stat"><b>' + n + '</b> 篇已走过</div>' +
+      resume +
       '<div class="e-card">' +
       '<div class="e-kicker">下一篇 · ' + esc(p.topic) + '</div>' +
       '<div class="e-en">' + esc(p.prompt) + '</div>' +
       '<div class="e-zh">' + esc(p.zh) + '</div>' +
       '</div>' +
-      '<button class="e-btn" id="estart">开始：观点 → 框架 → 主体段</button>' +
+      '<button class="e-btn" id="estart">' + (resume ? '开始新的一篇' : '开始：观点 → 框架 → 主体段') + '</button>' +
       '<div class="e-tip">第 1 步 90 秒想两个论点；第 2 步填立场和对方观点；第 3、4 步各 8 分钟写一段主体。</div>';
-    bindBack(function () { if (window.WRITING && window.WRITING.start) window.WRITING.start(); });
+    bindBack(function () {
+      draftSave();
+      if (window.WRITING && window.WRITING.start) window.WRITING.start();
+    });
     document.getElementById('estart').onclick = function () {
-      R = { p: p, step: 0, claims: '', kw: '', stance: '', other: '', body1: '', body2: '' };
+      R = { p: p, step: 1, claims: '', kw: '', stance: '', other: '', body1: '', body2: '' };
+      draftSave();
       renderClaims();
+    };
+    var rb = document.getElementById('eresume');
+    if (rb) rb.onclick = function () { R = draft.R; resumeStep(); };
+    var db = document.getElementById('edrop');
+    if (db) db.onclick = function () {
+      if (!confirm('扔掉这篇没写完的草稿？')) return;
+      draftClear();
+      renderHub();
     };
   }
 
-  /* 第 1 步：90 秒两个论点 */
+  function resumeStep() {
+    var s = R.step || 1;
+    if (s <= 1) return renderClaims();
+    if (s === 2) {
+      if (R.kw && R.stance) return renderSkeleton();
+      return renderFrame();
+    }
+    if (s === 3) return renderBody1();
+    return renderBody2();
+  }
+
+  function bindDraft(sel, field) {
+    var el = $(sel);
+    if (!el) return;
+    el.addEventListener('input', function () {
+      R[field] = el.value;
+      draftSave();
+    });
+  }
+
+  /* 第 1 步：观点 */
   function renderClaims() {
     clearTimer();
     var p = R.p, left = STEP_SECONDS;
+    R.step = 1; draftSave();
     appEl().innerHTML = top(p.topic, '1/4') +
       '<div class="e-card">' +
       '<div class="e-kicker">第 1 步 · 90 秒，先想两个论点</div>' +
       '<div class="e-en">' + esc(p.prompt) + '</div>' +
       '<div class="e-clock" id="eclock">' + fmt(left) + '</div>' +
-      '<textarea class="e-ta" id="eclaims" rows="3" placeholder="两个论点，一行一个"></textarea>' +
+      '<textarea class="e-ta" id="eclaims" rows="3" placeholder="两个论点，一行一个">' + esc(R.claims) + '</textarea>' +
       '<button class="e-btn" id="enext">下一步：搭框架</button>' +
+      '<button class="e-link" id="eprev">返回</button>' +
       '</div>';
-    bindBack(renderHub);
+    bindBack(function () { R.claims = ($('#eclaims').value || '').trim(); draftSave(); renderHub(); });
+    bindDraft('#eclaims', 'claims');
     T = setInterval(function () {
       var el = document.getElementById('eclock');
       if (!el) { clearTimer(); return; }
@@ -133,13 +199,18 @@
     document.getElementById('enext').onclick = function () {
       var v = (document.getElementById('eclaims').value || '').trim();
       clearTimer();
-      R.claims = v;
+      R.claims = v; R.step = 2; draftSave();
       renderFrame();
+    };
+    document.getElementById('eprev').onclick = function () {
+      R.claims = ($('#eclaims').value || '').trim(); draftSave(); renderHub();
     };
   }
 
   /* 第 2 步：框架 */
   function renderFrame() {
+    clearTimer();
+    R.step = 2; draftSave();
     var p = R.p;
     appEl().innerHTML = top(p.topic, '2/4') +
       '<div class="e-intro">只填四个空，先让骨架立起来。写不出来就先抄参考论点，改两个词也算。</div>' +
@@ -151,18 +222,34 @@
       '<div class="e-kicker" style="margin-top:14px">对方最合理的理由（一句英文）</div>' +
       '<input class="e-in" id="eother" placeholder="Some people argue that ..." value="' + esc(R.other) + '">' +
       '<button class="e-btn" id="ebuild">生成骨架</button>' +
+      '<button class="e-link" id="eprev">上一步：观点</button>' +
       '</div>';
-    bindBack(renderHub);
+    bindBack(function () {
+      R.kw = (($('#ekw') || {}).value || '').trim();
+      R.stance = (($('#estance') || {}).value || '').trim();
+      R.other = (($('#eother') || {}).value || '').trim();
+      draftSave(); renderHub();
+    });
+    bindDraft('#ekw', 'kw');
+    bindDraft('#estance', 'stance');
+    bindDraft('#eother', 'other');
     document.getElementById('ebuild').onclick = function () {
       R.kw = (document.getElementById('ekw').value || '').trim();
       R.stance = (document.getElementById('estance').value || '').trim();
       R.other = (document.getElementById('eother').value || '').trim();
       if (!R.stance) { toast('立场先写一句'); return; }
+      R.step = 2; draftSave();
       renderSkeleton();
+    };
+    document.getElementById('eprev').onclick = function () {
+      R.kw = (($('#ekw') || {}).value || '').trim();
+      R.stance = (($('#estance') || {}).value || '').trim();
+      R.other = (($('#eother') || {}).value || '').trim();
+      draftSave(); renderClaims();
     };
   }
 
-  /* 第 3 步：骨架预览 + 写主体段 1 */
+  /* 骨架 */
   function skeletonHTML() {
     var p = R.p;
     var a1 = p.args[0], a2 = p.args[1];
@@ -180,26 +267,26 @@
   }
 
   function renderSkeleton() {
+    clearTimer();
+    R.step = 2; draftSave();
     appEl().innerHTML = top(R.p.topic, '2/4') +
       skeletonHTML() +
-      '<div class="e-intro">骨架立住了再动笔。主体段先写论点 1，下一段写论点 2。</div>' +
-      '<button class="e-btn" id="ebody1">写主体段 1（8 分钟）</button>';
-    bindBack(renderHub);
-    document.getElementById('ebody1').onclick = renderBody1;
+      '<div class="e-intro">骨架立住了再动笔。先写论点 1 那段，下一段写论点 2。</div>' +
+      '<button class="e-btn" id="ebody1">写主体段 1（8 分钟）</button>' +
+      '<button class="e-link" id="eprev">上一步：改框架</button>';
+    bindBack(function () { draftSave(); renderHub(); });
+    document.getElementById('ebody1').onclick = function () { R.step = 3; draftSave(); renderBody1(); };
+    document.getElementById('eprev').onclick = function () { draftSave(); renderFrame(); };
   }
 
-  function renderBody1() {
-    var p = R.p, a = p.args[0];
-    renderBody(1, a, '3/4');
-  }
-  function renderBody2() {
-    var p = R.p, a = p.args[1];
-    renderBody(2, a, '4/4');
-  }
+  function renderBody1() { renderBody(1, R.p.args[0], '3/4'); }
+  function renderBody2() { renderBody(2, R.p.args[1], '4/4'); }
 
   function renderBody(n, arg, idxLabel) {
     clearTimer();
+    R.step = n === 1 ? 3 : 4; draftSave();
     var left = BODY_SECONDS;
+    var saved = n === 1 ? R.body1 : R.body2;
     appEl().innerHTML = top('主体段 ' + n, idxLabel) +
       skeletonHTML() +
       '<div class="e-card">' +
@@ -208,10 +295,19 @@
       '<div class="e-arg"><b>原因</b>' + esc(arg.reason) + '</div>' +
       '<div class="e-arg"><b>例子</b>' + esc(arg.example) + '</div>' +
       '<div class="e-clock" id="eclock">' + fmt(left) + '</div>' +
-      '<textarea class="e-ta" id="ebody" rows="7" placeholder="先写主题句，再补原因和例子，最后一句回扣立场"></textarea>' +
+      '<textarea class="e-ta" id="ebody" rows="7" placeholder="先写主题句，再补原因和例子，最后一句回扣立场">' + esc(saved) + '</textarea>' +
       '<button class="e-btn" id="esave">完成这段</button>' +
+      '<button class="e-link" id="eprev">上一段</button>' +
       '</div>';
-    bindBack(renderHub);
+    bindBack(function () {
+      if (n === 1) R.body1 = ($('#ebody').value || ''); else R.body2 = ($('#ebody').value || '');
+      draftSave(); renderHub();
+    });
+    var ta = document.getElementById('ebody');
+    ta.addEventListener('input', function () {
+      if (n === 1) R.body1 = ta.value; else R.body2 = ta.value;
+      draftSave();
+    });
     T = setInterval(function () {
       var el = document.getElementById('eclock');
       if (!el) { clearTimer(); return; }
@@ -221,16 +317,23 @@
       el.classList.toggle('over', left < 60);
     }, 1000);
     document.getElementById('esave').onclick = function () {
-      var v = (document.getElementById('ebody').value || '').trim();
+      var v = (ta.value || '').trim();
       if (v.split(/\s+/).length < 30) { toast('至少写 5 句再交'); return; }
       clearTimer();
-      if (n === 1) { R.body1 = v; renderBody2(); }
-      else { R.body2 = v; renderDone(); }
+      if (n === 1) { R.body1 = v; R.step = 4; draftSave(); renderBody2(); }
+      else { R.body2 = v; draftSave(); renderDone(); }
+    };
+    document.getElementById('eprev').onclick = function () {
+      if (n === 1) R.body1 = ($('#ebody').value || ''); else R.body2 = ($('#ebody').value || '');
+      draftSave();
+      if (n === 1) renderSkeleton();
+      else { R.step = 3; draftSave(); renderBody1(); }
     };
   }
 
-  /* 第 4 步：全文骨架 + 收口 */
+  /* 完成 */
   function renderDone() {
+    clearTimer();
     var p = R.p;
     appEl().innerHTML = top(p.topic, '完成') +
       '<div class="e-done"><div class="e-big">🧩</div><h2>这篇的骨架立住了</h2>' +
@@ -244,14 +347,18 @@
       '<label class="e-check"><input type="checkbox">每段都有 because 和例子</label>' +
       '<label class="e-check"><input type="checkbox">结尾没有引入新观点</label>' +
       '</div>' +
-      '<button class="e-btn" id="efinish">保存这篇</button>';
-    bindBack(renderHub);
+      '<button class="e-btn" id="efinish">保存这篇</button>' +
+      '<button class="e-link" id="eprev">上一段：改主体段 2</button>';
+    bindBack(function () { draftSave(); renderHub(); });
+    document.getElementById('eprev').onclick = function () { R.step = 4; draftSave(); renderBody2(); };
     document.getElementById('efinish').onclick = function () {
       ST.logs.push({
         d: today(), t: Date.now(), p: p.id, kw: R.kw, stance: R.stance, other: R.other,
         claims: R.claims, body1: R.body1, body2: R.body2
       });
       save();
+      draftClear();
+      R = null;
       toast('存好了');
       renderHub();
     };
@@ -276,6 +383,7 @@
       '.e-ta{width:100%;margin-top:12px;border:1px solid var(--line);border-radius:14px;background:var(--card2);color:var(--fg);padding:12px 13px;font-size:16px;line-height:1.6;font-family:inherit;resize:vertical;outline:none}',
       '.e-in{width:100%;margin-top:6px;border:1px solid var(--line);border-radius:12px;background:var(--card2);color:var(--fg);padding:10px 12px;font-size:15px;font-family:inherit;outline:none}',
       '.e-btn{width:100%;border:0;border-radius:16px;padding:15px 16px;font-size:15.5px;font-weight:600;background:var(--accent);color:#fff;font-family:inherit;margin-top:12px}',
+      '.e-link{width:100%;margin-top:10px;background:none;border:1px solid var(--line);border-radius:12px;padding:11px;color:var(--dim);font-size:12px;font-family:inherit}',
       '.e-line{font-size:13px;line-height:1.7;margin-top:10px}',
       '.e-line b{display:inline-block;min-width:44px;color:var(--dim);font-weight:600;font-size:11px;margin-right:6px}',
       '.e-arg{font-size:13px;line-height:1.7;margin-top:8px}',
@@ -298,12 +406,18 @@
   injectCSS();
   load();
 
+  document.addEventListener('visibilitychange', function () { if (document.hidden) draftSave(); });
+  window.addEventListener('beforeunload', function () { draftSave(); });
+
   window.ESSAY = {
     start: function () { open(); return false; },
     summaryText: function () {
       load();
+      var d = draftRead();
+      if (d && d.R) return '有草稿 · 第 ' + (d.R.step || 1) + ' 步';
       return ST.logs.length ? ST.logs.length + ' 篇' : '观点→框架→两段';
     },
-    _state: function () { return { ST: ST, DATA: DATA, R: R }; }
+    _state: function () { return { ST: ST, DATA: DATA, R: R }; },
+    _draft: draftRead
   };
 })();
