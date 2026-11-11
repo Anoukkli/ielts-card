@@ -1,8 +1,8 @@
 /* 离线缓存：app shell 缓存优先，deck.json / writing.json 网络优先（拿不到就用缓存） */
-const CACHE = 'ielts-v16';
+const CACHE = 'ielts-v17';
 const SHELL = ['./', './index.html', './writing.js', './patterns.js', './ideas.js', './essay.js', './backup.js', './manifest.webmanifest',
                './icon-192.png', './icon-512.png'];
-const NETFIRST = ['deck.json', 'writing.json', 'patterns.json', 'ideas.json'];
+const NETFIRST = ['deck.json', 'writing.json', 'patterns.json', 'ideas.json', 'essay.json'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
