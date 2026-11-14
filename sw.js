@@ -1,5 +1,5 @@
-/* 离线缓存：app shell 缓存优先，deck.json / writing.json 网络优先（拿不到就用缓存） */
-const CACHE = 'ielts-v17';
+﻿/* 绂荤嚎缂撳瓨锛歛pp shell 缂撳瓨浼樺厛锛宒eck.json / writing.json 缃戠粶浼樺厛锛堟嬁涓嶅埌灏辩敤缂撳瓨锛?*/
+const CACHE = 'ielts-v18';
 const SHELL = ['./', './index.html', './writing.js', './patterns.js', './ideas.js', './essay.js', './backup.js', './manifest.webmanifest',
                './icon-192.png', './icon-512.png'];
 const NETFIRST = ['deck.json', 'writing.json', 'patterns.json', 'ideas.json', 'essay.json'];
@@ -35,3 +35,4 @@ self.addEventListener('fetch', (e) => {
     }).catch(() => caches.match('./index.html')))
   );
 });
+
