@@ -85,6 +85,11 @@
 
   .word{font-size:36px; font-weight:700; letter-spacing:-.02em; line-height:1.2; word-break:break-word;}
   .word.small{font-size:26px;}
+  .tier{font-size:11px; color:var(--dim); letter-spacing:.1em;}
+  .spellrow{display:flex; gap:10px; align-items:center; margin-top:16px;}
+  .spell-in{flex:1; min-width:0; font-size:20px; padding:14px 16px; border-radius:14px;
+            border:1px solid var(--line); background:var(--card2); color:var(--fg); font-family:inherit;}
+  .spell-in:focus{outline:none; border-color:var(--accent);}
   .sub{color:var(--dim); font-size:13px; margin-top:10px;}
   .speak{
     margin-top:auto; align-self:flex-start; border:1px solid var(--line);
@@ -154,7 +159,7 @@ const KEY_SRS = 'ielts.srs.v2';
 const KEY_CFG = 'ielts.cfg.v2';
 const KEY_STAT = 'ielts.stat.v2';
 const INTERVALS = [1, 2, 4, 7, 15, 30, 60];
-const DEFAULTS = { quota: 20 };
+const DEFAULTS = { quota: 40, spell: false };
 
 let DECK = { vocab: [], errors: [] };
 let SRS = {};      // id -> {s,d,r,w,ls}
@@ -199,7 +204,11 @@ function unseen(){
   return DECK.vocab.filter(c => !SRS[c.id]);
 }
 function dueVocab(){
-  return DECK.vocab.filter(isDue).sort((a,b)=> SRS[a.id].d.localeCompare(SRS[b.id].d));
+  return DECK.vocab.filter(isDue).sort((a,b)=>{
+    const sa = SRS[a.id].s, sb = SRS[b.id].s;
+    if(sa !== sb) return sa - sb;                       // 阶段低的优先
+    return SRS[a.id].d.localeCompare(SRS[b.id].d);      // 到期早的优先
+  });
 }
 function dueErrors(){
   return DECK.errors.filter(isDue);
@@ -270,6 +279,8 @@ function home(){
   const q = todayQueue();
   const left = remainingQuota();
   const errs = dueErrors();
+  const dueN = q.filter(c => SRS[c.id]).length;
+  const newN = q.length - dueN;
   const seen = Object.keys(SRS).length;
   const total = DECK.vocab.length;
   const pct = total ? Math.min(100, Math.round(seen / total * 100)) : 0;
@@ -288,7 +299,7 @@ function home(){
     </div>
     <div class="actions">
       <button class="btn primary" id="startVocab" ${q.length? '' : 'disabled'}>
-        <span>开始背单词</span><small>${q.length} 张 · 约 ${Math.ceil(q.length*0.3)} 分钟</small>
+        <span>开始背单词</span><small>${dueN} 复习 · ${newN} 新词</small>
       </button>
       <button class="btn" id="startErr" ${errs.length? '' : 'disabled'}>
         <span>刷错题</span><small>${errs.length} 道待二刷</small>
@@ -302,11 +313,11 @@ function home(){
         <span>句型卡</span><small>${window.PATTERNS ? window.PATTERNS.summaryText() : '1 个句型 × 3 个主题'}</small>
       </button>
       <button class="btn" id="openSettings">
-        <span>设置</span><small>每日 ${CFG.quota} 张</small>
+        <span>设置</span><small>每日 ${CFG.quota} 张${CFG.spell ? ' · 拼写' : ''}</small>
       </button>
     </div>
     <div class="foot">
-      <span>今日 ${doneToday()}/${CFG.quota} · 已学 ${seen}/${total} · v17</span>
+      <span>今日 ${doneToday()}/${CFG.quota} · 已学 ${seen}/${total} · v18</span>
       <a href="#" id="refresh">刷新</a>
     </div>${STORAGE_OK ? '' : `<div style="margin-top:12px;padding:12px 14px;border-radius:14px;
       background:#3a2a00;color:#ffcf6b;font-size:12px;line-height:1.7">
@@ -334,9 +345,14 @@ function settings(){
       <h2 style="font-size:19px;margin:6px 0 18px">设置</h2>
       <div class="block"><div class="k">每日配额（张）</div>
         <div style="display:flex;gap:10px;margin-top:8px">
-          ${[10,20,30,50].map(n=>`<button class="btn" style="flex:1;justify-content:center;padding:13px;
+          ${[20,40,60,80].map(n=>`<button class="btn" style="flex:1;justify-content:center;padding:13px;
             ${n===CFG.quota?'background:var(--accent);color:#fff':''}" data-q="${n}">${n}</button>`).join('')}
         </div>
+      </div>
+      <div class="block"><div class="k">背词方式</div>
+        <button class="btn" id="toggleSpell" style="width:100%;margin-top:8px;justify-content:space-between">
+          <span>拼写模式</span><small>${CFG.spell ? '开 · 看中文写英文' : '关 · 看英文记中文'}</small>
+        </button>
       </div>
       <div class="block"><div class="k">进度</div>
         <div style="font-size:14px;line-height:1.9;color:var(--dim)">
@@ -367,6 +383,7 @@ function settings(){
   document.querySelectorAll('[data-q]').forEach(b => b.onclick = () => {
     CFG.quota = +b.dataset.q; saveCfg(); settings();
   });
+  $('toggleSpell').onclick = () => { CFG.spell = !CFG.spell; saveCfg(); settings(); };
   $('export').onclick = () => {
     const blob = new Blob([JSON.stringify({srs:SRS, stat:STAT, exported: dayStr()}, null, 1)],
       {type:'application/json'});
@@ -445,16 +462,32 @@ function renderCard(){
 
 /* -------- 单词卡 -------- */
 function renderVocab(card){
+  const st = SRS[card.id];
+  const tier = st ? `复习 · ${st.s} 阶` : '新词';
+  const spelling = CFG.spell && card.m;
+
+  const front = spelling ? `
+      <div class="tier">${tier} · 拼写</div>
+      <div class="meaning" style="margin-top:10px">${esc(card.m)}</div>
+      <div class="spellrow">
+        <input id="ans" class="spell-in" autocomplete="off" autocapitalize="none"
+               autocorrect="off" spellcheck="false" placeholder="写出英文">
+        <button class="speak" id="speak" style="margin:0;padding:14px">🔊</button>
+      </div>
+      <button class="btn primary" id="check" style="width:100%;justify-content:center;margin-top:12px">检查</button>
+      <div id="fb" class="hint" style="margin-top:10px"></div>
+      <div class="hint" style="margin-top:auto">想不起来就点卡片看答案</div>` : `
+      <div class="tier">${tier}</div>
+      <div class="word ${card.w.length>18?'small':''}">${esc(card.w)}</div>
+      ${card.phon ? `<div class="sub">${esc(card.phon)}</div>` : ''}
+      <button class="speak" id="speak">🔊 发音</button>
+      <div class="hint">点卡片看释义</div>`;
+
   app.innerHTML = `
     ${progressBar()}
     <div class="scene">
       <div class="card" id="card" data-flip>
-        <div class="face">
-          <div class="word ${card.w.length>18?'small':''}">${esc(card.w)}</div>
-          ${card.phon ? `<div class="sub">${esc(card.phon)}</div>` : ''}
-          <button class="speak" id="speak">🔊 发音</button>
-          <div class="hint">点卡片看释义</div>
-        </div>
+        <div class="face">${front}</div>
         <div class="face back">
           <div class="meaning">${esc(card.m || '（无释义）')}</div>
           ${card.ex ? `<div class="block"><div class="k">原文</div>
@@ -474,7 +507,29 @@ function renderVocab(card){
 
   $('quit').onclick = () => { if(confirm('结束本轮？已答的会保存。')) finish(true); };
   $('speak').onclick = (e) => { e.stopPropagation(); speak(card.w); };
+
+  if(spelling){
+    const check = () => {
+      const v = ($('ans').value || '').trim();
+      if(!v) return;
+      const ok = normalize(v) === normalize(card.w);
+      $('fb').innerHTML = ok
+        ? '<span style="color:var(--good)">✓ 拼对了</span>'
+        : `<span style="color:var(--bad)">✗ 正确拼写：</span><b style="color:var(--good)">${esc(card.w)}</b>`;
+      flip($('card'));
+      if(ok) $('grades').style.visibility = 'visible';
+      $('grades').style.visibility = 'visible';
+    };
+    $('check').onclick = (e) => { e.stopPropagation(); check(); };
+    const inp = $('ans');
+    inp.onkeydown = (e) => { if(e.key === 'Enter'){ e.preventDefault(); check(); } };
+    setTimeout(() => { try{ inp.focus(); }catch(_){ } }, 120);
+  }
   dbg('render vocab: ' + card.w);
+}
+
+function normalize(s){
+  return String(s).toLowerCase().trim().replace(/[.,;:!?'"’]+$/,'').replace(/\s+/g,' ');
 }
 
 /* -------- 错题卡 -------- */
@@ -610,6 +665,7 @@ function onPointer(e){
     handleGrade(btn.dataset.r);
     return;
   }
+  if(t.closest('input') || t.closest('button')) return;   // 输入框/按钮不触发翻面
   const card = t.closest('[data-flip]');
   if(card) flip(card);
 }
