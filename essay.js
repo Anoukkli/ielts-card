@@ -139,17 +139,17 @@
         '<button class="e-link" id="edrop">扔掉这篇，重新开始</button>' +
         '</div>';
     }
-    appEl().innerHTML = top('成篇套模板') +
+    appEl().innerHTML = top('成篇套模板', 'v19') +
       '<div class="e-intro">先判题型，再按段落填：每段三个句式选一个，只填内容块，不会拼出重复的句子。</div>' +
       '<div class="e-stat"><b>' + ST.logs.length + '</b> 篇已走过</div>' +
+      '<button class="e-link" id="erecords" style="margin:0 0 12px;border-color:var(--accent);color:var(--fg)">成篇记录 / 复盘 · ' + ST.logs.length + ' 篇 ›</button>' +
       resume +
       '<div class="e-card">' +
       '<div class="e-kicker">下一篇 · ' + esc(p.topic) + '</div>' +
       '<div class="e-en">' + esc(p.prompt) + '</div>' +
       '<div class="e-zh">' + esc(p.zh) + '</div>' +
       '</div>' +
-      '<button class="e-btn" id="estart">' + (resume ? '开始新的一篇' : '开始：观点 → 判题型 → 逐段填') + '</button>' +
-      '<button class="e-link" id="erecords">成篇记录 / 复盘 · ' + ST.logs.length + ' 篇</button>';
+      '<button class="e-btn" id="estart">' + (resume ? '开始新的一篇' : '开始：观点 → 判题型 → 逐段填') + '</button>';
     bindBack(function () { draftSave(); if (window.WRITING) window.WRITING.start(); });
     document.getElementById('estart').onclick = function () {
       R = { v: 2, p: p, step: 1, claims: '', type: '', sel: {}, vals: {} };
