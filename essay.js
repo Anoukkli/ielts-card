@@ -139,7 +139,7 @@
         '<button class="e-link" id="edrop">扔掉这篇，重新开始</button>' +
         '</div>';
     }
-    appEl().innerHTML = top('成篇套模板', 'v19') +
+    appEl().innerHTML = top('成篇套模板', 'v20') +
       '<div class="e-intro">先判题型，再按段落填：每段三个句式选一个，只填内容块，不会拼出重复的句子。</div>' +
       '<div class="e-stat"><b>' + ST.logs.length + '</b> 篇已走过</div>' +
       '<button class="e-link" id="erecords" style="margin:0 0 12px;border-color:var(--accent);color:var(--fg)">成篇记录 / 复盘 · ' + ST.logs.length + ' 篇 ›</button>' +
@@ -406,6 +406,83 @@
     });
   }
 
+  /* 段落纯文本 + 红色（用户填的）区间 */
+  function plainOf(p, edited) {
+    if (edited) return { text: edited, reds: [] };
+    if (!p.frame || !p.vals) return { text: p.text || '', reds: [] };
+    var out = '', reds = [], last = 0, m, v;
+    var re = /\{(\w+)\}/g;
+    while ((m = re.exec(p.frame))) {
+      out += p.frame.slice(last, m.index);
+      v = p.vals[p.id + '.' + m[1]];
+      v = v && String(v).trim() ? String(v).trim() : '___';
+      if (v !== '___') reds.push([out.length, out.length + v.length]);
+      out += v;
+      last = re.lastIndex;
+    }
+    out += p.frame.slice(last);
+    return { text: out, reds: reds };
+  }
+
+  function renderRich(text, reds, marks) {
+    var n = text.length, i;
+    var cls = new Array(n);
+    for (i = 0; i < n; i++) cls[i] = '';
+    (reds || []).forEach(function (r) {
+      for (var k = Math.max(0, r[0]); k < Math.min(n, r[1]); k++) cls[k] += ' e-fill';
+    });
+    (marks || []).forEach(function (m) {
+      var c = m.type === 'ul' ? ' e-ul' : ' e-hl';
+      for (var k = Math.max(0, m.start); k < Math.min(n, m.end); k++) cls[k] += c;
+    });
+    var out = '', buf = '', cur = null;
+    for (i = 0; i < n; i++) {
+      if (cls[i] !== cur) {
+        if (buf) out += cur ? '<span class="' + cur.trim() + '">' + esc(buf) + '</span>' : esc(buf);
+        cur = cls[i]; buf = text[i];
+      } else buf += text[i];
+    }
+    if (buf) out += cur ? '<span class="' + cur.trim() + '">' + esc(buf) + '</span>' : esc(buf);
+    return out;
+  }
+
+  function normMarks(list) {
+    list = (list || []).slice().sort(function (a, b) { return a.start - b.start || b.end - a.end; });
+    var out = [];
+    list.forEach(function (m) {
+      if (m.end <= m.start) return;
+      var last = out[out.length - 1];
+      if (last && m.start < last.end) return;
+      out.push(m);
+    });
+    return out;
+  }
+
+  var LAST_SEL = null;
+  function trackSelection() {
+    try {
+      var sel = window.getSelection && window.getSelection();
+      if (!sel || !sel.rangeCount) return;
+      var r = sel.getRangeAt(0);
+      if (!r || r.collapsed) return;
+      var node = r.startContainer;
+      var el = node.nodeType === 1 ? node : node.parentElement;
+      var host = el && el.closest ? el.closest('.e-ref') : null;
+      if (!host) return;
+      var pre = document.createRange();
+      pre.selectNodeContents(host);
+      pre.setEnd(r.startContainer, r.startOffset);
+      var start = pre.toString().length;
+      pre.selectNodeContents(host);
+      pre.setEnd(r.endContainer, r.endOffset);
+      var end = pre.toString().length;
+      if (end > start) LAST_SEL = { idx: +host.getAttribute('data-ref'), start: start, end: end };
+    } catch (e) { /* 选区跨节点时忽略 */ }
+  }
+  document.addEventListener('selectionchange', trackSelection);
+  document.addEventListener('mouseup', trackSelection);
+  document.addEventListener('touchend', trackSelection);
+
   function renderRecord(idx) {
     clearTimer();
     var log = ST.logs[idx];
@@ -416,25 +493,34 @@
           return { name: '第 ' + (i + 1) + ' 段', text: t };
         });
     var edits = log.edits || {};
+    var marksAll = log.marks || {};
+    var notes = log.notes || {};
     var blocks = paras.map(function (p, i) {
       var edited = edits[i];
-      var main = edited
-        ? esc(edited)
-        : (p.frame && p.vals ? fillHTML(p.frame, p.id, p.vals) : esc(p.text || ''));
+      var plain = plainOf(p, edited);
       return '<div class="e-card">' +
         '<div class="e-kicker">' + (i + 1) + ' · ' + esc(p.name || '') +
         (edited ? ' <span class="e-tag">已改写</span>' : '') + '</div>' +
         '<div class="e-para">' +
-        '<div class="e-ref">' + main + '</div>' +
+        '<div class="e-ref" data-ref="' + i + '">' + renderRich(plain.text, plain.reds, marksAll[i]) + '</div>' +
         '<div class="e-edit"><label>改这一段</label>' +
-        '<textarea class="e-ta sm" data-edit="' + i + '" rows="4">' + esc(edited || p.text || '') + '</textarea>' +
+        '<textarea class="e-ta sm" data-edit="' + i + '" rows="4">' + esc(edited || plain.text) + '</textarea>' +
         '<button class="e-link" data-save="' + i + '">保存修改</button>' +
-        '</div></div></div>';
+        '</div></div>' +
+        '<div class="e-tools"><span>选中上面的文字，再点：</span>' +
+        '<button class="e-tool" data-hl="' + i + '">高亮</button>' +
+        '<button class="e-tool" data-ul="' + i + '">划线</button>' +
+        '<button class="e-tool" data-clr="' + i + '">清除</button></div>' +
+        '<div class="e-note"><label>思路笔记（这段为什么这么写 / 下一步改什么）</label>' +
+        '<textarea class="e-ta sm" data-note="' + i + '" rows="2" placeholder="例：立场句太抽象，改成具体政策名。">' + esc(notes[i] || '') + '</textarea>' +
+        '</div></div>';
     }).join('');
     appEl().innerHTML = top('成篇复盘', log.d || '') +
-      '<div class="e-intro">' + esc(typeName(log.type)) + ' · ' + esc(promptOf(log)) + '</div>' +
+      '<div class="e-intro">' + esc(typeName(log.type)) + ' · ' + esc(promptOf(log)) +
+      '<br>红色是你当时填的；黄色高亮和划线可以自己标，下面写这段的思路笔记。</div>' +
       blocks;
     bindBack(renderRecords);
+
     $$('[data-save]').forEach(function (b) {
       b.onclick = function () {
         var i = +b.getAttribute('data-save');
@@ -445,6 +531,44 @@
         toast('已保存第 ' + (i + 1) + ' 段');
         renderRecord(idx);
       };
+    });
+
+    function addMark(i, type) {
+      if (!LAST_SEL || LAST_SEL.idx !== i) { toast('先在左边选中一段文字'); return; }
+      log.marks = log.marks || {};
+      var list = (log.marks[i] || []).filter(function (m) {
+        return m.end <= LAST_SEL.start || m.start >= LAST_SEL.end;
+      });
+      list.push({ start: LAST_SEL.start, end: LAST_SEL.end, type: type });
+      log.marks[i] = normMarks(list);
+      save();
+      renderRecord(idx);
+    }
+
+    $$('[data-hl]').forEach(function (b) {
+      b.onclick = function () { addMark(+b.getAttribute('data-hl'), 'hl'); };
+    });
+    $$('[data-ul]').forEach(function (b) {
+      b.onclick = function () { addMark(+b.getAttribute('data-ul'), 'ul'); };
+    });
+    $$('[data-clr]').forEach(function (b) {
+      b.onclick = function () {
+        var i = +b.getAttribute('data-clr');
+        log.marks = log.marks || {};
+        log.marks[i] = [];
+        save();
+        renderRecord(idx);
+      };
+    });
+    var noteTimer = null;
+    $$('[data-note]').forEach(function (ta) {
+      ta.addEventListener('input', function () {
+        var i = +ta.getAttribute('data-note');
+        log.notes = log.notes || {};
+        log.notes[i] = ta.value;
+        clearTimeout(noteTimer);
+        noteTimer = setTimeout(save, 400);
+      });
     });
   }
 
@@ -487,7 +611,13 @@
       '.e-ta.sm{margin-top:0;font-size:14px;min-height:84px}',
       '.e-tag{font-size:10px;color:var(--good);border:1px solid var(--line);border-radius:6px;padding:1px 6px;margin-left:6px}',
       '.e-rec{width:100%;text-align:left;font-family:inherit;color:var(--fg);display:block}',
-      '.e-ref{font-size:13.5px;line-height:1.75;white-space:pre-wrap}',
+      '.e-ref{font-size:13.5px;line-height:1.75;white-space:pre-wrap;user-select:text;-webkit-user-select:text}',
+      '.e-hl{background:#fff3a3;color:inherit;border-radius:2px}',
+      '.e-ul{text-decoration:underline;text-decoration-color:#e0a800;text-decoration-thickness:2px;color:inherit}',
+      '.e-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px;font-size:11px;color:var(--dim)}',
+      '.e-tool{border:1px solid var(--line);background:var(--card2);color:var(--fg);border-radius:8px;padding:6px 10px;font-size:12px;font-family:inherit}',
+      '.e-note{margin-top:12px}',
+      '.e-note label{display:block;font-size:11px;color:var(--dim);margin-bottom:4px}',
       '.e-check{display:flex;gap:9px;align-items:flex-start;font-size:13px;line-height:1.6;margin-top:10px}',
       '.e-check input{margin-top:2px;width:18px;height:18px;accent-color:var(--accent)}',
       '.e-done{text-align:center;padding:20px 0 6px}',
@@ -516,6 +646,13 @@
     },
     _state: function () { return { ST: ST, DATA: DATA, R: R }; },
     review: function () { open().then(function () { renderRecords(); }); },
+    _mark: function (li, pi, s, e, type) {
+      var log = ST.logs[li];
+      log.marks = log.marks || {};
+      log.marks[pi] = normMarks((log.marks[pi] || []).concat([{ start: s, end: e, type: type }]));
+      save();
+      renderRecord(li);
+    },
     _detect: detect
   };
 })();
