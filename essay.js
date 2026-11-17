@@ -148,7 +148,8 @@
       '<div class="e-en">' + esc(p.prompt) + '</div>' +
       '<div class="e-zh">' + esc(p.zh) + '</div>' +
       '</div>' +
-      '<button class="e-btn" id="estart">' + (resume ? '开始新的一篇' : '开始：观点 → 判题型 → 逐段填') + '</button>';
+      '<button class="e-btn" id="estart">' + (resume ? '开始新的一篇' : '开始：观点 → 判题型 → 逐段填') + '</button>' +
+      '<button class="e-link" id="erecords">成篇记录 / 复盘 · ' + ST.logs.length + ' 篇</button>';
     bindBack(function () { draftSave(); if (window.WRITING) window.WRITING.start(); });
     document.getElementById('estart').onclick = function () {
       R = { v: 2, p: p, step: 1, claims: '', type: '', sel: {}, vals: {} };
@@ -157,6 +158,7 @@
     };
     var rb = document.getElementById('eresume');
     if (rb) rb.onclick = function () { R = draft.R; resumeStep(); };
+    document.getElementById('erecords').onclick = renderRecords;
     var db = document.getElementById('edrop');
     if (db) db.onclick = function () {
       if (!confirm('扔掉这篇没写完的草稿？')) return;
@@ -251,6 +253,17 @@
     });
   }
 
+  /* 填进去的部分标红；vals 可传已保存的段落数据 */
+  function fillHTML(tpl, segId, vals) {
+    vals = vals || R.vals;
+    return String(tpl).replace(/\{(\w+)\}/g, function (m, k) {
+      var v = vals[segId + '.' + k];
+      return v && v.trim()
+        ? '<span class="e-fill">' + esc(v.trim()) + '</span>'
+        : '___';
+    });
+  }
+
   function renderSegments() {
     clearTimer();
     R.step = 3; draftSave();
@@ -273,7 +286,7 @@
         '<div class="e-kicker">' + (idx + 1) + '/' + plan.length + ' · ' + esc(seg.name) + '</div>' +
         '<div class="e-opts">' + frames + '</div>' +
         inputs +
-        '<div class="e-preview" id="prev-' + id + '">' + esc(fill(kind.frames[sel], id)) + '</div>' +
+        '<div class="e-preview" id="prev-' + id + '">' + fillHTML(kind.frames[sel], id) + '</div>' +
         '</div>';
     }).join('');
     appEl().innerHTML = top(typeById(R.type).name, '3/4') +
@@ -311,7 +324,7 @@
     var kind = kindOf(seg);
     var idx = R.sel[segId] || 0;
     var box = document.getElementById('prev-' + segId);
-    if (box) box.textContent = fill(kind.frames[idx], segId);
+    if (box) box.innerHTML = fillHTML(kind.frames[idx], segId);
   }
 
   /* ---------------- 4 骨架 ---------------- */
@@ -323,14 +336,17 @@
       var seg = segById(id);
       var kind = kindOf(seg);
       var idx = R.sel[id] || 0;
-      return { name: seg.name, text: fill(kind.frames[idx], id) };
+      var vals = {};
+      kind.slots.forEach(function (s) { vals[id + '.' + s] = R.vals[id + '.' + s] || ''; });
+      return { id: id, name: seg.name, frame: kind.frames[idx], vals: vals, text: fill(kind.frames[idx], id) };
     });
     var body = paras.map(function (p) {
       return '<div class="e-card"><div class="e-kicker">' + esc(p.name) + '</div>' +
-        '<div class="e-ref">' + esc(p.text) + '</div></div>';
+        '<div class="e-ref">' + fillHTML(p.frame, p.id, p.vals) + '</div></div>';
     }).join('');
     appEl().innerHTML = top('整篇骨架', '4/4') +
-      '<div class="e-intro">' + esc(typeById(R.type).name) + ' · 共 ' + paras.length + ' 段。先读一遍，再保存。</div>' +
+      '<div class="e-intro">' + esc(typeById(R.type).name) + ' · 共 ' + paras.length + ' 段。' +
+      '<span style="color:var(--bad)">红色</span>是你填进去的内容。先读一遍，再保存。</div>' +
       body +
       '<div class="e-card"><div class="e-kicker">自检</div>' +
       '<label class="e-check"><input type="checkbox">每一段都回答了题目的要求</label>' +
@@ -343,8 +359,9 @@
     document.getElementById('eprev').onclick = function () { draftSave(); renderSegments(); };
     document.getElementById('efinish').onclick = function () {
       ST.logs.push({
-        d: today(), t: Date.now(), p: R.p.id, type: R.type,
-        claims: R.claims, paras: paras.map(function (x) { return x.text; }).join('\n\n')
+        v: 2, d: today(), t: Date.now(), p: R.p.id, type: R.type,
+        topic: R.p.topic, prompt: R.p.prompt,
+        claims: R.claims, paras: paras, edits: {}
       });
       save();
       draftClear();
@@ -352,6 +369,83 @@
       toast('存好了');
       renderHub();
     };
+  }
+
+  /* ---------------- 记录与复盘 ---------------- */
+  function typeName(id) {
+    var t = DATA.types.filter(function (x) { return x.id === id; })[0];
+    return t ? t.name : '';
+  }
+
+  /* 老记录没有 prompt 字段，用题目 id 反查 */
+  function promptOf(l) {
+    if (l.prompt) return l.prompt;
+    var hit = IDEAS && IDEAS.prompts.filter(function (x) { return x.id === l.p; })[0];
+    return hit ? hit.prompt : (l.topic || '');
+  }
+
+  function renderRecords() {
+    clearTimer();
+    var logs = ST.logs.slice().reverse();
+    var rows = logs.length ? logs.map(function (l) {
+      var idx = ST.logs.indexOf(l);
+      var paras = Array.isArray(l.paras) ? l.paras : String(l.paras || '').split('\n\n');
+      var edited = l.edits ? Object.keys(l.edits).length : 0;
+      return '<button class="e-card e-rec" data-rec="' + idx + '">' +
+        '<div class="e-kicker">' + esc(l.d || '') + ' · ' + esc(typeName(l.type)) + '</div>' +
+        '<div class="e-en">' + esc(promptOf(l)) + '</div>' +
+        '<div class="e-zh">' + paras.length + ' 段' + (edited ? ' · 已改 ' + edited + ' 段' : '') + '</div>' +
+        '</button>';
+    }).join('') : '<div class="e-done"><div class="e-big">📄</div><p>还没有保存的成篇。先走一遍四步。</p></div>';
+    appEl().innerHTML = top('成篇记录', ST.logs.length + ' 篇') +
+      '<div class="e-intro">点进去可以逐段复盘：左边是骨架原文（红色是你填的），右边可以改写再存。</div>' +
+      rows;
+    bindBack(renderHub);
+    $$('[data-rec]').forEach(function (b) {
+      b.onclick = function () { renderRecord(+b.getAttribute('data-rec')); };
+    });
+  }
+
+  function renderRecord(idx) {
+    clearTimer();
+    var log = ST.logs[idx];
+    if (!log) return renderRecords();
+    var paras = Array.isArray(log.paras)
+      ? log.paras
+      : String(log.paras || '').split('\n\n').map(function (t, i) {
+          return { name: '第 ' + (i + 1) + ' 段', text: t };
+        });
+    var edits = log.edits || {};
+    var blocks = paras.map(function (p, i) {
+      var edited = edits[i];
+      var main = edited
+        ? esc(edited)
+        : (p.frame && p.vals ? fillHTML(p.frame, p.id, p.vals) : esc(p.text || ''));
+      return '<div class="e-card">' +
+        '<div class="e-kicker">' + (i + 1) + ' · ' + esc(p.name || '') +
+        (edited ? ' <span class="e-tag">已改写</span>' : '') + '</div>' +
+        '<div class="e-para">' +
+        '<div class="e-ref">' + main + '</div>' +
+        '<div class="e-edit"><label>改这一段</label>' +
+        '<textarea class="e-ta sm" data-edit="' + i + '" rows="4">' + esc(edited || p.text || '') + '</textarea>' +
+        '<button class="e-link" data-save="' + i + '">保存修改</button>' +
+        '</div></div></div>';
+    }).join('');
+    appEl().innerHTML = top('成篇复盘', log.d || '') +
+      '<div class="e-intro">' + esc(typeName(log.type)) + ' · ' + esc(promptOf(log)) + '</div>' +
+      blocks;
+    bindBack(renderRecords);
+    $$('[data-save]').forEach(function (b) {
+      b.onclick = function () {
+        var i = +b.getAttribute('data-save');
+        var ta = $('[data-edit="' + i + '"]');
+        log.edits = log.edits || {};
+        log.edits[i] = (ta.value || '').trim();
+        save();
+        toast('已保存第 ' + (i + 1) + ' 段');
+        renderRecord(idx);
+      };
+    });
   }
 
   /* ---------------- css ---------------- */
@@ -386,6 +480,13 @@
       '.e-slot{margin-top:10px}',
       '.e-slot label{font-size:11px;color:var(--dim);display:block;margin-bottom:4px}',
       '.e-preview{margin-top:12px;padding:11px 13px;border-left:3px solid var(--accent);background:var(--card2);border-radius:0 10px 10px 0;font-size:13px;line-height:1.7;color:var(--fg)}',
+      '.e-fill{color:var(--bad);font-weight:600}',
+      '.e-para{display:grid;grid-template-columns:1fr;gap:12px}',
+      '@media(min-width:720px){.e-para{grid-template-columns:1.15fr 1fr;align-items:start}}',
+      '.e-edit label{display:block;font-size:11px;color:var(--dim);margin-bottom:4px}',
+      '.e-ta.sm{margin-top:0;font-size:14px;min-height:84px}',
+      '.e-tag{font-size:10px;color:var(--good);border:1px solid var(--line);border-radius:6px;padding:1px 6px;margin-left:6px}',
+      '.e-rec{width:100%;text-align:left;font-family:inherit;color:var(--fg);display:block}',
       '.e-ref{font-size:13.5px;line-height:1.75;white-space:pre-wrap}',
       '.e-check{display:flex;gap:9px;align-items:flex-start;font-size:13px;line-height:1.6;margin-top:10px}',
       '.e-check input{margin-top:2px;width:18px;height:18px;accent-color:var(--accent)}',
@@ -414,6 +515,7 @@
       return ST.logs.length ? ST.logs.length + ' 篇' : '观点→题型→逐段';
     },
     _state: function () { return { ST: ST, DATA: DATA, R: R }; },
+    review: function () { open().then(function () { renderRecords(); }); },
     _detect: detect
   };
 })();
