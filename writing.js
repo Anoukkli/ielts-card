@@ -719,6 +719,8 @@
       rows +
       '<button class="w-blk" id="wreviewIdea"><div class="w-blk-main"><div class="w-blk-t">观点复盘</div>' +
       '<div class="w-blk-s">看过的题 + 你写的两个论点 + 参考</div></div><div class="w-blk-r">›</div></button>' +
+      '<button class="w-blk" id="wreviewEssay"><div class="w-blk-main"><div class="w-blk-t">成篇复盘</div>' +
+      '<div class="w-blk-s">存过的成篇 · 逐段改写</div></div><div class="w-blk-r">›</div></button>' +
       '<button class="w-link" id="wreviewAll" style="width:100%;margin-top:6px">全部记录（旧版混排）</button>';
     bindBack(renderHub);
     $$('[data-rv]').forEach(function (b) {
@@ -727,6 +729,10 @@
     document.getElementById('wreviewIdea').onclick = function () {
       if (window.IDEAS && window.IDEAS.review) window.IDEAS.review();
       else toast('观点库没加载上');
+    };
+    document.getElementById('wreviewEssay').onclick = function () {
+      if (window.ESSAY && window.ESSAY.review) window.ESSAY.review();
+      else toast('成篇模块没加载上');
     };
     document.getElementById('wreviewAll').onclick = renderRev;
     startClock();
