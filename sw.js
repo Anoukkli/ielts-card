@@ -1,5 +1,5 @@
 ﻿/* 绂荤嚎缂撳瓨锛歛pp shell 缂撳瓨浼樺厛锛宒eck.json / writing.json 缃戠粶浼樺厛锛堟嬁涓嶅埌灏辩敤缂撳瓨锛?*/
-const CACHE = 'ielts-v19';
+const CACHE = 'ielts-v20';
 const SHELL = ['./', './index.html', './writing.js', './patterns.js', './ideas.js', './essay.js', './backup.js', './manifest.webmanifest',
                './icon-192.png', './icon-512.png'];
 const NETFIRST = ['deck.json', 'writing.json', 'patterns.json', 'ideas.json', 'essay.json'];
