@@ -139,7 +139,7 @@
         '<button class="e-link" id="edrop">扔掉这篇，重新开始</button>' +
         '</div>';
     }
-    appEl().innerHTML = top('成篇套模板', 'v20') +
+    appEl().innerHTML = top('成篇套模板', 'v21') +
       '<div class="e-intro">先判题型，再按段落填：每段三个句式选一个，只填内容块，不会拼出重复的句子。</div>' +
       '<div class="e-stat"><b>' + ST.logs.length + '</b> 篇已走过</div>' +
       '<button class="e-link" id="erecords" style="margin:0 0 12px;border-color:var(--accent);color:var(--fg)">成篇记录 / 复盘 · ' + ST.logs.length + ' 篇 ›</button>' +
@@ -518,8 +518,10 @@
     appEl().innerHTML = top('成篇复盘', log.d || '') +
       '<div class="e-intro">' + esc(typeName(log.type)) + ' · ' + esc(promptOf(log)) +
       '<br>红色是你当时填的；黄色高亮和划线可以自己标，下面写这段的思路笔记。</div>' +
+      '<button class="e-link" id="efullview" style="margin:0 0 12px;border-color:var(--accent);color:var(--fg)">看整篇（保留高亮和改写） ›</button>' +
       blocks;
     bindBack(renderRecords);
+    document.getElementById('efullview').onclick = function () { renderFull(idx); };
 
     $$('[data-save]').forEach(function (b) {
       b.onclick = function () {
@@ -572,6 +574,31 @@
     });
   }
 
+  /* 整篇视图：改写 + 标记连起来看 */
+  function renderFull(idx) {
+    clearTimer();
+    var log = ST.logs[idx];
+    if (!log) return renderRecords();
+    var paras = Array.isArray(log.paras)
+      ? log.paras
+      : String(log.paras || '').split('\n\n').map(function (t, i) {
+          return { name: '第 ' + (i + 1) + ' 段', text: t };
+        });
+    var edits = log.edits || {};
+    var marksAll = log.marks || {};
+    var html = paras.map(function (p, i) {
+      var plain = plainOf(p, edits[i]);
+      return '<div class="e-full-para">' + renderRich(plain.text, plain.reds, marksAll[i]) + '</div>';
+    }).join('');
+    appEl().innerHTML = top('整篇 · 复盘版', log.d || '') +
+      '<div class="e-intro">' + esc(typeName(log.type)) + ' · ' + esc(promptOf(log)) +
+      '<br>按段落连起来，红色是当时填的，黄色是你标的高亮/划线。</div>' +
+      '<div class="e-card e-full">' + html + '</div>' +
+      '<button class="e-link" id="ebackreview">回到逐段复盘</button>';
+    bindBack(function () { renderRecord(idx); });
+    document.getElementById('ebackreview').onclick = function () { renderRecord(idx); };
+  }
+
   /* ---------------- css ---------------- */
   function injectCSS() {
     if (document.getElementById('e-style')) return;
@@ -618,6 +645,9 @@
       '.e-tool{border:1px solid var(--line);background:var(--card2);color:var(--fg);border-radius:8px;padding:6px 10px;font-size:12px;font-family:inherit}',
       '.e-note{margin-top:12px}',
       '.e-note label{display:block;font-size:11px;color:var(--dim);margin-bottom:4px}',
+      '.e-full{font-size:14.5px;line-height:1.95;padding:18px 16px}',
+      '.e-full-para{white-space:pre-wrap;margin-bottom:18px}',
+      '.e-full-para:last-child{margin-bottom:0}',
       '.e-check{display:flex;gap:9px;align-items:flex-start;font-size:13px;line-height:1.6;margin-top:10px}',
       '.e-check input{margin-top:2px;width:18px;height:18px;accent-color:var(--accent)}',
       '.e-done{text-align:center;padding:20px 0 6px}',
@@ -653,6 +683,7 @@
       save();
       renderRecord(li);
     },
+    _full: renderFull,
     _detect: detect
   };
 })();
