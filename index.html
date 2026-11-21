@@ -705,6 +705,10 @@ async function boot(){
   }
   home();
   if(location.hash === '#write' && window.WRITING) window.WRITING.start();
+  if(location.hash.indexOf('#cloze') === 0 && window.ESSAY){
+    var __c = location.hash.slice(6).replace(/^=/, '').split('/');
+    window.ESSAY.cloze(__c[0] || '', __c[1] || '');
+  }
   if('serviceWorker' in navigator){
     navigator.serviceWorker.register('sw.js').catch(()=>{});
   }

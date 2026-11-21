@@ -1,0 +1,128 @@
+{
+  "version": 1,
+  "flow": [
+    { "n": "精批", "d": "六类标签找病因：搭配 / 中式 / 逻辑 / 任务 / 句法 / 语域" },
+    { "n": "骨架", "d": "重排段落，把断掉的论证补上" },
+    { "n": "填空", "d": "橙红是句式，黑字是你填的内容" },
+    { "n": "对照", "d": "看为什么这么写，不判对错" },
+    { "n": "存档", "d": "三天后盲测：只看中文提示再填一遍" }
+  ],
+  "items": [
+    {
+      "id": "plastic-ban-75",
+      "tag": "7.5 版 · 观点类",
+      "topic": "塑料包装全面禁止",
+      "prompt": "Plastic packaging should be banned completely. To what extent do you agree or disagree?",
+      "type": "opinion",
+      "why": "同一篇四步改法：立场加程度 → 补一段「禁令为什么不可行」→ 让步之后立刻反驳 → 结论用对举收口。",
+      "paras": [
+        {
+          "role": "第 1 段 · 立场带程度（别只说 impractical）",
+          "segs": [
+            { "t": "f", "v": "Few proposals attract as much " },
+            { "t": "b", "k": "p1b1", "h": "什么样的支持（带一点贬义）", "a": "uncritical public approval",
+              "w": "加 uncritical 一个词，就把「大家都赞成但没人细想」写进去了，比 popular support 精确得多。" },
+            { "t": "f", "v": " as the call to ban plastic packaging outright. While I accept that " },
+            { "t": "b", "k": "p1b2", "h": "承认对方最硬的那一点", "a": "the environmental damage is real and worsening",
+              "w": "让步要给足。只写 real 显得敷衍，加 and worsening 才算认真对待反方。" },
+            { "t": "f", "v": ", I would argue that " },
+            { "t": "b", "k": "p1b3", "h": "你要否定的那个做法", "a": "an outright ban" },
+            { "t": "f", "v": " is at best " },
+            { "t": "b", "k": "p1b4", "h": "一个比喻：手段太粗", "a": "a blunt instrument",
+              "w": "blunt instrument 是政策类固定说法，等于中文「一刀切」，比 not practical 有分量。" },
+            { "t": "f", "v": ", and that " },
+            { "t": "b", "k": "p1b5", "h": "你主张的组合方案（三样）", "a": "a phased mix of charges, recycling and material substitution",
+              "w": "phased 一出现，立场就从「反对」变成「反对这种手段」，程度感立刻有了。" },
+            { "t": "f", "v": " would serve the same purpose more reliably." }
+          ]
+        },
+        {
+          "role": "第 2 段 · 为什么禁令不可行（这一段是原稿缺的）",
+          "segs": [
+            { "t": "f", "v": "The most immediate objection is " },
+            { "t": "b", "k": "p2b1", "h": "一句话点明是哪种问题（分配）", "a": "distributive",
+              "w": "用形容词作表语，是名词化写法，比 The first problem is that... 干净。" },
+            { "t": "f", "v": ". A blanket prohibition would fall hardest on " },
+            { "t": "b", "k": "p2b2", "h": "受影响最大的人群", "a": "low-income households",
+              "w": "不要写 poor people。政策话题的标准说法是 low-income households，没有标签感。" },
+            { "t": "f", "v": ", for whom plastic remains " },
+            { "t": "b", "k": "p2b3", "h": "为什么他们离不开（最便宜的方式）", "a": "the cheapest way to carry groceries home" },
+            { "t": "f", "v": "; it would also be " },
+            { "t": "b", "k": "p2b4", "h": "执行上做不到（在哪做不到）", "a": "almost impossible to police at the point of sale",
+              "w": "police 作动词是「监管」，比 enforce 具体；at the point of sale 是收银端的固定说法。" },
+            { "t": "f", "v": ", where small retailers already operate on " },
+            { "t": "b", "k": "p2b5", "h": "利润极薄（固定搭配）", "a": "razor-thin margins",
+              "w": "razor-thin margins 是商业报道常用搭配，比 make little money 高一个档。" },
+            { "t": "f", "v": ". Nor are the alternatives ready: biodegradable substitutes remain " },
+            { "t": "b", "k": "p2b6", "h": "还是小众、偏贵的东西", "a": "a niche, premium product",
+              "w": "Nor are… 是倒装，接上句的否定；niche / premium 两个词就说明了「还没普及」。" },
+            { "t": "f", "v": ", so a sudden ban would " },
+            { "t": "b", "k": "p2b7", "h": "把人推回什么", "a": "push shoppers back to paper and cloth" },
+            { "t": "f", "v": " long before those materials could be " },
+            { "t": "b", "k": "p2b8", "h": "规模化生产", "a": "produced at scale",
+              "w": "at scale 是「上规模」的地道说法，写作里替代 in large quantities。" },
+            { "t": "f", "v": "." }
+          ]
+        },
+        {
+          "role": "第 3 段 · 让步 + 立刻反驳（让步段不是投降段）",
+          "segs": [
+            { "t": "f", "v": "None of this is to deny that " },
+            { "t": "b", "k": "p3b1", "h": "承认污染是真的，给足分量", "a": "plastic pollution imposes a genuine and growing cost",
+              "w": "None of this is to deny that… 是标准让步句头，比 Although 更能显出你在权衡。" },
+            { "t": "f", "v": ". What it does deny is that " },
+            { "t": "b", "k": "p3b2", "h": "你反对的那个做法", "a": "prohibition" },
+            { "t": "f", "v": " is " },
+            { "t": "b", "k": "p3b3", "h": "最可靠的那条路", "a": "the most reliable route to lower consumption",
+              "w": "What it does deny is that… 用假拟分裂句把焦点压到论点本身，是 7.5 的典型句式。" },
+            { "t": "f", "v": ". Jurisdictions that have " },
+            { "t": "b", "k": "p3b4", "h": "收一点钱（在哪收）", "a": "levied a modest charge at the till" },
+            { "t": "f", "v": " have cut " },
+            { "t": "b", "k": "p3b5", "h": "减掉的是什么", "a": "single-use bag use" },
+            { "t": "f", "v": " sharply without " },
+            { "t": "b", "k": "p3b6", "h": "两个代价（人 + 厂）", "a": "criminalising shoppers or closing factories",
+              "w": "把禁令的隐性代价具体成两件事，反驳才落地；criminalise 是政策类高频动词。" },
+            { "t": "f", "v": "; the same revenue, spent on " },
+            { "t": "b", "k": "p3b7", "h": "钱该花在哪", "a": "collection and reprocessing" },
+            { "t": "f", "v": ", would remove more plastic from the sea than " },
+            { "t": "b", "k": "p3b8", "h": "一句收口的对比（纸面上的禁令）", "a": "a ban that exists only on paper",
+              "w": "on paper 是「纸面上、实际没发生」的地道说法，收尾很脆。" },
+            { "t": "f", "v": "." }
+          ]
+        },
+        {
+          "role": "第 4 段 · 结论用对举收口（不重复开头的话）",
+          "segs": [
+            { "t": "f", "v": "On balance, then, " },
+            { "t": "b", "k": "p4b1", "h": "一句判断：目标对，手段错", "a": "the goal is right but the instrument is wrong",
+              "w": "instrument 指政策工具，和 goal 对举，比 method 精确。" },
+            { "t": "f", "v": ". Plastic packaging should be " },
+            { "t": "b", "k": "p4b2", "h": "三件事：收税、回收、替代", "a": "taxed, collected and progressively replaced" },
+            { "t": "f", "v": ", not " },
+            { "t": "b", "k": "p4b3", "h": "不是一夜之间宣布非法", "a": "declared illegal overnight",
+              "w": "overnight 直接回应原稿的 abandon them overnight，同一个词收口。" },
+            { "t": "f", "v": "; only when " },
+            { "t": "b", "k": "p4b4", "h": "条件：买得到、也买得起", "a": "affordable alternatives sit on the shelf" },
+            { "t": "f", "v": " will consumers change " },
+            { "t": "b", "k": "p4b5", "h": "改变的是什么", "a": "what they carry home",
+              "w": "only when 开头，主句要倒装 will consumers，这是高分句式，别漏 will。" },
+            { "t": "f", "v": ". A ban would " },
+            { "t": "b", "k": "p4b6", "h": "禁令给的是虚的什么", "a": "signal virtue" },
+            { "t": "f", "v": "; a phased policy would " },
+            { "t": "b", "k": "p4b7", "h": "渐进政策给的是实的什么", "a": "actually reduce waste",
+              "w": "signal virtue 对 actually reduce waste，一句对比收全文，记忆点全在这一句。" },
+            { "t": "f", "v": "." }
+          ]
+        }
+      ],
+      "chunks": [
+        { "p": "a blunt instrument", "cn": "粗放的手段（一刀切）", "ex": "An outright ban is at best a blunt instrument." },
+        { "p": "fall hardest on", "cn": "冲击最大的是…", "ex": "A blanket prohibition would fall hardest on low-income households." },
+        { "p": "razor-thin margins", "cn": "利润极薄", "ex": "Small retailers already operate on razor-thin margins." },
+        { "p": "at scale", "cn": "规模化", "ex": "…before those materials could be produced at scale." },
+        { "p": "on paper", "cn": "纸面上（实际没发生）", "ex": "…than a ban that exists only on paper." },
+        { "p": "signal virtue", "cn": "只是表个态", "ex": "A ban would signal virtue; a phased policy would actually reduce waste." }
+      ]
+    }
+  ]
+}
