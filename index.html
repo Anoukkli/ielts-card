@@ -698,15 +698,28 @@ async function boot(){
     if(!r.ok) throw new Error(r.status);
     DECK = await r.json();
   }catch(e){
+    const why = location.protocol === 'file:'
+      ? '这个页面不能双击打开，要先用网址访问（本地预览或 GitHub Pages 都行）'
+      : (navigator.onLine === false
+        ? '现在是断网状态，deck.json 又没进离线缓存，连上网再重试'
+        : '页面是从缓存里打开的，但 deck.json 没拿到：本地预览服务可能已经关了，或者文件不在同一目录');
     app.innerHTML = `<div class="done"><div class="big">📭</div>
-      <h2>词库没加载上</h2><p>检查 deck.json 是否和本页在同一目录</p>
+      <h2>词库没加载上</h2><p>${why}</p>
       <button class="btn" onclick="location.reload()" style="margin-top:20px">重试</button></div>`;
     return;
   }
   home();
   if(location.hash === '#write' && window.WRITING) window.WRITING.start();
+  if(location.hash.indexOf('#cloze') === 0 && window.ESSAY){
+    var __c = location.hash.slice(6).replace(/^=/, '').split('/');
+    window.ESSAY.cloze(__c[0] || '', __c[1] || '');
+  }
   if('serviceWorker' in navigator){
-    navigator.serviceWorker.register('sw.js').catch(()=>{});
+    let __swReloaded = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if(__swReloaded) return; __swReloaded = true; location.reload();
+    });
+    navigator.serviceWorker.register('sw.js').then(reg => { if(reg.update) reg.update(); }).catch(()=>{});
   }
 }
 boot();

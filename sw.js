@@ -1,8 +1,10 @@
-﻿/* 绂荤嚎缂撳瓨锛歛pp shell 缂撳瓨浼樺厛锛宒eck.json / writing.json 缃戠粶浼樺厛锛堟嬁涓嶅埌灏辩敤缂撳瓨锛?*/
-const CACHE = 'ielts-v21';
+﻿/* 雅思复习 · 离线缓存
+   页面导航走「网络优先」：在线时永远拿最新 HTML，离线才用缓存；
+   题库 json 也走网络优先；其余静态资源缓存优先。 */
+const CACHE = 'ielts-v24';
 const SHELL = ['./', './index.html', './writing.js', './patterns.js', './ideas.js', './essay.js', './backup.js', './manifest.webmanifest',
                './icon-192.png', './icon-512.png'];
-const NETFIRST = ['deck.json', 'writing.json', 'patterns.json', 'ideas.json', 'essay.json'];
+const NETFIRST = ['deck.json', 'writing.json', 'patterns.json', 'ideas.json', 'essay.json', 'cloze.json'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
@@ -16,23 +18,40 @@ self.addEventListener('activate', (e) => {
 });
 
 self.addEventListener('fetch', (e) => {
-  const url = new URL(e.request.url);
-  if (NETFIRST.some(f => url.pathname.endsWith(f))) {
+  const req = e.request;
+  if (req.method !== 'GET') return;
+  const url = new URL(req.url);
+
+  /* 1. 页面本身：先要新的，拿不到才退回缓存（离线仍能打开） */
+  if (req.mode === 'navigate') {
     e.respondWith(
-      fetch(e.request).then(res => {
+      fetch(req).then(res => {
         const copy = res.clone();
-        caches.open(CACHE).then(c => c.put(e.request, copy));
+        caches.open(CACHE).then(c => c.put('./index.html', copy));
         return res;
-      }).catch(() => caches.match(e.request))
+      }).catch(() => caches.match('./index.html').then(hit => hit || caches.match('./')))
     );
     return;
   }
+
+  /* 2. 题库 json：网络优先，拿不到用缓存 */
+  if (NETFIRST.some(f => url.pathname.endsWith(f))) {
+    e.respondWith(
+      fetch(req).then(res => {
+        const copy = res.clone();
+        caches.open(CACHE).then(c => c.put(req, copy));
+        return res;
+      }).catch(() => caches.match(req))
+    );
+    return;
+  }
+
+  /* 3. 其余静态资源：缓存优先 */
   e.respondWith(
-    caches.match(e.request).then(hit => hit || fetch(e.request).then(res => {
+    caches.match(req).then(hit => hit || fetch(req).then(res => {
       const copy = res.clone();
-      caches.open(CACHE).then(c => c.put(e.request, copy));
+      caches.open(CACHE).then(c => c.put(req, copy));
       return res;
     }).catch(() => caches.match('./index.html')))
   );
 });
-

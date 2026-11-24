@@ -64,6 +64,7 @@
       if (!a.ok || !b.ok) throw new Error('load');
       DATA = await a.json();
       IDEAS = await b.json();
+      await ensureCloze();    // 填空素材拿不到也不影响主流程（内部已捕获）
       return true;
     } catch (e) {
       appEl().innerHTML = '<div class="e-done"><div class="e-big">📭</div><h2>模板或题目没加载上</h2>' +
@@ -143,6 +144,7 @@
       '<div class="e-intro">先判题型，再按段落填：每段三个句式选一个，只填内容块，不会拼出重复的句子。</div>' +
       '<div class="e-stat"><b>' + ST.logs.length + '</b> 篇已走过</div>' +
       '<button class="e-link" id="erecords" style="margin:0 0 12px;border-color:var(--accent);color:var(--fg)">成篇记录 / 复盘 · ' + ST.logs.length + ' 篇 ›</button>' +
+      '<button class="e-link" id="eclozelist" style="margin:0 0 12px;border-color:var(--cl-frame);color:var(--cl-frame)">二次填空 · 把成篇改成高分版 ›</button>' +
       resume +
       '<div class="e-card">' +
       '<div class="e-kicker">下一篇 · ' + esc(p.topic) + '</div>' +
@@ -159,6 +161,7 @@
     var rb = document.getElementById('eresume');
     if (rb) rb.onclick = function () { R = draft.R; resumeStep(); };
     document.getElementById('erecords').onclick = renderRecords;
+    document.getElementById('eclozelist').onclick = renderClozeList;
     var db = document.getElementById('edrop');
     if (db) db.onclick = function () {
       if (!confirm('扔掉这篇没写完的草稿？')) return;
@@ -345,6 +348,7 @@
         '<div class="e-ref">' + fillHTML(p.frame, p.id, p.vals) + '</div></div>';
     }).join('');
     appEl().innerHTML = top('整篇骨架', '4/4') +
+      stepper(2) +
       '<div class="e-intro">' + esc(typeById(R.type).name) + ' · 共 ' + paras.length + ' 段。' +
       '<span style="color:var(--bad)">红色</span>是你填进去的内容。先读一遍，再保存。</div>' +
       body +
@@ -398,9 +402,12 @@
         '</button>';
     }).join('') : '<div class="e-done"><div class="e-big">📄</div><p>还没有保存的成篇。先走一遍四步。</p></div>';
     appEl().innerHTML = top('成篇记录', ST.logs.length + ' 篇') +
+      stepper(5) +
       '<div class="e-intro">点进去可以逐段复盘：左边是骨架原文（红色是你填的），右边可以改写再存。</div>' +
+      '<button class="e-link" id="ecloze2" style="margin:0 0 12px;border-color:var(--cl-frame);color:var(--cl-frame)">二次填空 · 参照高分版重写这一段 ›</button>' +
       rows;
     bindBack(renderHub);
+    document.getElementById('ecloze2').onclick = renderClozeList;
     $$('[data-rec]').forEach(function (b) {
       b.onclick = function () { renderRecord(+b.getAttribute('data-rec')); };
     });
@@ -519,9 +526,11 @@
       '<div class="e-intro">' + esc(typeName(log.type)) + ' · ' + esc(promptOf(log)) +
       '<br>红色是你当时填的；黄色高亮和划线可以自己标，下面写这段的思路笔记。</div>' +
       '<button class="e-link" id="efullview" style="margin:0 0 12px;border-color:var(--accent);color:var(--fg)">看整篇（保留高亮和改写） ›</button>' +
+      '<button class="e-link" id="ecloze3" style="margin:0 0 12px;border-color:var(--cl-frame);color:var(--cl-frame)">二次填空 · 把这篇改成高分版 ›</button>' +
       blocks;
     bindBack(renderRecords);
     document.getElementById('efullview').onclick = function () { renderFull(idx); };
+    document.getElementById('ecloze3').onclick = renderClozeList;
 
     $$('[data-save]').forEach(function (b) {
       b.onclick = function () {
@@ -599,6 +608,287 @@
     document.getElementById('ebackreview').onclick = function () { renderRecord(idx); };
   }
 
+  /* ============ 二次填空：复盘里把成篇改成高分版 ============
+     橙红色 = 句式（题给），黑色 = 你填的内容。
+     流程：精批 → 骨架 → 填空 → 对照 → 存档（三天后盲测） */
+  var CKEY = 'ielts.essay.cloze.v1';
+  var CCN = 'ielts.essay.cloze.cn';
+  var CLOZE = null, CST = null;
+
+  async function ensureCloze() {
+    if (CLOZE) return true;
+    try {
+      var r = await fetch('cloze.json?t=' + Date.now());
+      if (!r.ok) throw new Error('load');
+      CLOZE = await r.json();
+      if (!CLOZE.items) CLOZE.items = [];
+      if (!CLOZE.flow) CLOZE.flow = [];
+      return true;
+    } catch (e) { return false; }
+  }
+
+  function cLoad() {
+    if (CST) return CST;
+    try { CST = JSON.parse(localStorage.getItem(CKEY) || '{}') || {}; } catch (e) { CST = {}; }
+    return CST;
+  }
+  function cSave() {
+    try { localStorage.setItem(CKEY, JSON.stringify(CST || {})); } catch (e) { toast('存不进去：检查存储设置'); }
+  }
+  function cRec(id) {
+    cLoad();
+    if (!CST[id]) CST[id] = { v: {}, t: 0, done: 0 };
+    if (!CST[id].v) CST[id].v = {};
+    return CST[id];
+  }
+  function blanksOf(it) {
+    var out = [];
+    (it.paras || []).forEach(function (p) {
+      (p.segs || []).forEach(function (s) { if (s.t === 'b') out.push(s); });
+    });
+    return out;
+  }
+  function blankMap(it) {
+    var m = {};
+    blanksOf(it).forEach(function (b) { m[b.k] = b; });
+    return m;
+  }
+  /* 整段中文译文：空位和英文共用同一个 k，所以能一一对上、能互相跳转 */
+  function cnOn() {
+    try { return localStorage.getItem(CCN) !== '0'; } catch (e) { return true; }
+  }
+  function cnSet(on) { try { localStorage.setItem(CCN, on ? '1' : '0'); } catch (e) { } }
+  function cnBlock(p, live) {
+    if (!p || !p.cn || !p.cn.length) return '';
+    var inner = p.cn.map(function (s) {
+      if (s.t === 'b') return '<span class="cl-cnb"' + (live ? ' data-to="' + esc(s.k) + '"' : '') + '></span>';
+      return esc(s.v);
+    }).join('');
+    return '<div class="cl-cn"><span class="cl-cnlab">中文</span>' + inner + '</div>';
+  }
+  function itemById(id) {
+    return ((CLOZE && CLOZE.items) || []).filter(function (x) { return x.id === id; })[0];
+  }
+  function norm2(s) {
+    return String(s || '').toLowerCase().replace(/[^a-z0-9\u4e00-\u9fa5 ]+/g, ' ')
+      .replace(/\s+/g, ' ').trim();
+  }
+  function stepper(at) {
+    var flow = (CLOZE && CLOZE.flow) || [];
+    if (!flow.length) return '';
+    return '<div class="cl-step">' + flow.map(function (f, i) {
+      return '<span class="cl-s' + (i + 1 <= at ? ' on' : '') + '"><b>' + (i + 1) + '</b>' + esc(f.n) + '</span>';
+    }).join('<i>›</i>') + '</div>';
+  }
+
+  async function renderClozeList() {
+    clearTimer();
+    var ok = await ensureCloze();
+    if (!ok || !(CLOZE.items || []).length) {
+      appEl().innerHTML = top('二次填空', '') +
+        '<div class="e-done"><div class="e-big">🧩</div><h2>填空素材没加载上</h2>' +
+        '<p>确认 cloze.json 和本页放在同一目录，然后刷新</p>' +
+        '<button class="e-btn" id="ecagain" style="margin-top:18px">重试</button></div>';
+      bindBack(renderRecords);
+      var g = document.getElementById('ecagain');
+      if (g) g.onclick = renderClozeList;
+      return;
+    }
+    var rows = CLOZE.items.map(function (it) {
+      var rec = cRec(it.id), bs = blanksOf(it);
+      var n = bs.filter(function (b) { return String(rec.v[b.k] || '').trim(); }).length;
+      var tag = rec.done ? '已对照过 · 可以再来一遍' : (n ? '填了 ' + n + '/' + bs.length : '还没开始');
+      return '<button class="e-card e-rec" data-cl="' + esc(it.id) + '">' +
+        '<div class="e-kicker">' + esc(it.tag || '') + ' · ' + bs.length + ' 空</div>' +
+        '<div class="e-en">' + esc(it.prompt || '') + '</div>' +
+        '<div class="e-zh">' + esc(it.why || '') + '</div>' +
+        '<div class="e-zh cl-go">' + esc(tag) + ' ›</div>' +
+        '</button>';
+    }).join('');
+    appEl().innerHTML = top('二次填空 · 升级重写', CLOZE.items.length + ' 篇') +
+      '<div class="e-intro">每段先给整段中文，照着中文写英文，写完再对照——记得最牢的是这一步。' +
+      '<span class="cl-f">橙红色</span>是句式（题给的），<b>黑色</b>空格是你填的内容；只填短语，不写整句。</div>' +
+      stepper(3) + rows +
+      '<div class="e-card"><div class="e-kicker">这五步就是复盘流程</div>' +
+      (CLOZE.flow || []).map(function (f, i) {
+        return '<div class="cl-flowrow"><b>' + (i + 1) + '</b><span>' + esc(f.n) + '</span>' + esc(f.d || '') + '</div>';
+      }).join('') +
+      '</div>';
+    bindBack(renderRecords);
+    $$('[data-cl]').forEach(function (b) {
+      b.onclick = function () { renderClozeFill(b.getAttribute('data-cl')); };
+    });
+  }
+
+  function renderClozeFill(id) {
+    clearTimer();
+    var it = itemById(id);
+    if (!it) return renderClozeList();
+    var rec = cRec(id), bs = blanksOf(it), total = bs.length;
+
+    function nFilled() {
+      return bs.filter(function (b) { return String(rec.v[b.k] || '').trim(); }).length;
+    }
+
+    var body = (it.paras || []).map(function (p) {
+      var inner = (p.segs || []).map(function (s) {
+        if (s.t === 'b') {
+          return '<span class="cl-b" contenteditable="true" spellcheck="false" data-k="' + esc(s.k) +
+            '" data-ph="' + esc(s.h ? '「' + s.h + '」' : '写英文') + '">' + esc(rec.v[s.k] || '') + '</span>';
+        }
+        return '<span class="cl-f">' + esc(s.v) + '</span>';
+      }).join('');
+      return '<div class="cl-para">' + cnBlock(p, true) +
+        '<div class="cl-role">' + esc(p.role || '') + '</div>' +
+        '<p class="cl-text">' + inner + '</p></div>';
+    }).join('');
+
+    appEl().innerHTML = top('二次填空', '') +
+      stepper(3) +
+      '<div class="cl-head"><span class="cl-count" id="clcount">' + nFilled() + '/' + total + '</span>' +
+      '<span class="cl-hintline">先读上面的中文，照着它在下面写英文；点空格直接输入，写完再对照</span></div>' +
+      '<div class="cl-bar"><button class="cl-toggle" id="clcn">' + (cnOn() ? '收起中文' : '显示中文') + '</button>' +
+      '<span class="cl-tip">中文里的横线就是你要填的位置</span></div>' +
+      '<div class="e-card cl-paper' + (cnOn() ? '' : ' nocn') + '" id="clpaper">' + body + '</div>' +
+      '<button class="e-btn" id="clcheck">对照参考</button>' +
+      '<button class="e-link" id="clclear">清空重填</button>' +
+      '<button class="e-link" id="clback">返回列表</button>';
+    bindBack(function () { cSave(); renderClozeList(); });
+
+    var cnBtn = document.getElementById('clcn');
+    var paper = document.getElementById('clpaper');
+    if (cnBtn) cnBtn.onclick = function () {
+      var on = !cnOn();
+      cnSet(on);
+      if (paper) paper.classList.toggle('nocn', !on);
+      cnBtn.textContent = on ? '收起中文' : '显示中文';
+    };
+
+    var btn = document.getElementById('clcheck');
+    var cnt = document.getElementById('clcount');
+    function sync() {
+      var n = nFilled();
+      if (cnt) cnt.textContent = n + '/' + total;
+      if (btn) btn.textContent = n >= total ? '全部填完 · 对照参考' : '对照参考（还差 ' + (total - n) + ' 空）';
+      $$('.cl-cnb').forEach(function (e) {
+        var k = e.getAttribute('data-to');
+        if (!k) return;
+        if (String(rec.v[k] || '').trim()) e.classList.add('on');
+        else e.classList.remove('on');
+      });
+    }
+
+    /* 点中文里的横线，直接跳到对应英文空，不用上下找 */
+    $$('.cl-cnb').forEach(function (e) {
+      e.onclick = function () {
+        var k = e.getAttribute('data-to');
+        var t = document.querySelector('.cl-b[data-k="' + k + '"]');
+        if (!t) return;
+        t.focus();
+        if (t.scrollIntoView) t.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      };
+    });
+
+    $$('.cl-b').forEach(function (el) {
+      el.addEventListener('input', function () {
+        var k = el.getAttribute('data-k');
+        var t = String(el.textContent || '').replace(/\u00a0/g, ' ').replace(/[\r\n]+/g, ' ');
+        if (!t.trim()) el.innerHTML = '';
+        rec.v[k] = t;
+        rec.t = Date.now();
+        clearTimeout(sync._d);
+        sync._d = setTimeout(cSave, 600);
+        sync();
+      });
+      el.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); el.blur(); }
+      });
+      el.addEventListener('paste', function (e) {
+        e.preventDefault();
+        var t = '';
+        try { t = (e.clipboardData || window.clipboardData).getData('text') || ''; } catch (_) { }
+        try { document.execCommand('insertText', false, String(t).replace(/\s+/g, ' ')); } catch (_) { }
+      });
+      el.addEventListener('blur', function () {
+        var k = el.getAttribute('data-k');
+        var t = String(el.textContent || '').replace(/\s+/g, ' ').trim();
+        if (!t) el.innerHTML = '';
+        else if (t !== el.textContent) el.textContent = t;
+        rec.v[k] = t;
+        cSave();
+        sync();
+      });
+    });
+
+    sync();
+
+    btn.onclick = function () { cSave(); renderClozeCheck(id); };
+    document.getElementById('clclear').onclick = function () {
+      if (!confirm('清空这篇已经填的内容？')) return;
+      rec.v = {}; cSave();
+      renderClozeFill(id);
+    };
+    document.getElementById('clback').onclick = function () { cSave(); renderClozeList(); };
+  }
+
+  function renderClozeCheck(id) {
+    clearTimer();
+    var it = itemById(id);
+    if (!it) return renderClozeList();
+    var rec = cRec(id), bs = blanksOf(it);
+    var diff = {}, same = 0, filled = 0, blank = 0;
+    bs.forEach(function (b) {
+      var mine = String(rec.v[b.k] || '').trim();
+      if (!mine) { blank++; return; }
+      filled++;
+      if (norm2(mine) === norm2(b.a)) same++;
+      else diff[b.k] = true;
+    });
+    var body = (it.paras || []).map(function (p) {
+      var inner = (p.segs || []).map(function (s) {
+        if (s.t === 'b') {
+          return '<span class="cl-ref' + (diff[s.k] ? ' diff' : '') + '">' + esc(s.a) + '</span>';
+        }
+        return '<span class="cl-f">' + esc(s.v) + '</span>';
+      }).join('');
+      var rows = (p.segs || []).filter(function (s) { return s.t === 'b' && diff[s.k]; }).map(function (s) {
+        var mine = String(rec.v[s.k] || '').trim();
+        return '<div class="cl-diff">' +
+          '<div class="cl-dl">你写' + (s.h ? ' <span class="cl-dlh">「' + esc(s.h) + '」</span>' : '') + '</div>' +
+          '<div class="cl-dm">' + (mine ? esc(mine) : '<span class="cl-empty">（这里空着）</span>') + '</div>' +
+          '<div class="cl-da">' + esc(s.a) + '</div>' +
+          (s.w ? '<div class="cl-dw">' + esc(s.w) + '</div>' : '') +
+          '</div>';
+      }).join('');
+      return '<div class="cl-para">' + cnBlock(p, false) +
+        '<div class="cl-role">' + esc(p.role || '') + '</div>' +
+        '<p class="cl-text">' + inner + '</p>' +
+        (rows ? '<div class="cl-diffs">' + rows + '</div>' : '') + '</div>';
+    }).join('');
+    var chunks = (it.chunks || []).map(function (c) {
+      return '<div class="cl-chunk"><b>' + esc(c.p) + '</b> <span>' + esc(c.cn) + '</span>' +
+        '<div class="cl-ex">' + esc(c.ex) + '</div></div>';
+    }).join('');
+    appEl().innerHTML = top('对照参考', same + '/' + bs.length) +
+      stepper(4) +
+      '<div class="e-intro">和你一致 <b>' + same + '</b> 空，措辞不同 <b>' + (filled - same) + '</b> 空' +
+      (blank ? '，还没填 <b>' + blank + '</b> 空' : '') + '。' +
+      '这里不判对错，只告诉你每一处为什么这么写；没填的空不算错，回去补完再对一次。</div>' +
+      '<div class="e-card cl-paper">' + body + '</div>' +
+      (chunks ? '<div class="e-card"><div class="e-kicker">本篇带走的语块</div>' + chunks + '</div>' : '') +
+      '<button class="e-btn" id="cldone">存为「已对照」</button>' +
+      '<button class="e-link" id="clrefill">回去再填一遍</button>' +
+      '<button class="e-link" id="clback2">返回列表</button>';
+    bindBack(renderClozeList);
+    document.getElementById('cldone').onclick = function () {
+      rec.done = 1; rec.doneAt = Date.now(); cSave();
+      toast('存好了，三天后再来盲测');
+      renderClozeList();
+    };
+    document.getElementById('clrefill').onclick = function () { renderClozeFill(id); };
+    document.getElementById('clback2').onclick = renderClozeList;
+  }
+
   /* ---------------- css ---------------- */
   function injectCSS() {
     if (document.getElementById('e-style')) return;
@@ -653,7 +943,57 @@
       '.e-done{text-align:center;padding:20px 0 6px}',
       '.e-done .e-big{font-size:52px;line-height:1}',
       '.e-done h2{font-size:21px;margin:10px 0 6px}',
-      '.e-done p{font-size:13px;color:var(--dim)}'
+      '.e-done p{font-size:13px;color:var(--dim)}',
+      /* ---- 二次填空 ---- */
+      ':root{--cl-frame:#d9482a}',
+      '@media (prefers-color-scheme: dark){:root{--cl-frame:#ff8a63}}',
+      '.cl-step{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:0 0 12px;font-size:11px;color:var(--dim)}',
+      '.cl-step i{font-style:normal;opacity:.45;padding:0 1px}',
+      '.cl-s{border:1px solid var(--line);border-radius:999px;padding:4px 9px;display:inline-flex;gap:5px;align-items:center}',
+      '.cl-s b{font-weight:600;opacity:.55}',
+      '.cl-s.on{border-color:var(--cl-frame);color:var(--cl-frame)}',
+      '.cl-s.on b{opacity:1}',
+      '.cl-flowrow{font-size:12px;line-height:1.75;color:var(--dim);display:flex;gap:8px;margin-top:6px}',
+      '.cl-flowrow b{color:var(--cl-frame);flex:none;width:12px}',
+      '.cl-flowrow span{color:var(--fg);flex:none;min-width:34px}',
+      '.cl-head{display:flex;align-items:baseline;gap:10px;margin-bottom:10px}',
+      '.cl-count{font-size:22px;font-weight:700;color:var(--cl-frame);font-variant-numeric:tabular-nums}',
+      '.cl-hintline{font-size:11.5px;color:var(--dim);line-height:1.5}',
+      '.cl-paper{padding:18px 16px}',
+      '.cl-para{margin-bottom:18px}',
+      '.cl-para:last-child{margin-bottom:0}',
+      '.cl-role{font-size:10.5px;color:var(--dim);letter-spacing:.03em;margin-bottom:7px}',
+      '.cl-text{margin:0;font-size:14.5px;line-height:2.1;user-select:text;-webkit-user-select:text}',
+      '.cl-f{color:var(--cl-frame)}',
+      '.cl-b{display:inline;color:var(--fg);font-weight:600;border-bottom:1.5px dashed rgba(217,72,42,.5);padding:0 2px;border-radius:3px;outline:none;-webkit-user-select:text;user-select:text}',
+      '.cl-b:focus{background:rgba(217,72,42,.1);border-bottom-style:solid}',
+      '.cl-b:empty::before{content:attr(data-ph);color:#8e7d74;font-weight:400;font-size:12.5px}',
+      '@media (prefers-color-scheme: dark){.cl-b:empty::before{color:#a89a91}}',
+      /* 整段中文（空位与英文一一对应） */
+      '.cl-bar{display:flex;align-items:center;gap:9px;margin:0 0 9px;flex-wrap:wrap}',
+      '.cl-toggle{background:none;border:1px solid var(--line);color:var(--dim);font-size:11.5px;padding:4px 11px;border-radius:999px;font-family:inherit}',
+      '.cl-tip{font-size:11px;color:var(--dim);opacity:.85}',
+      '.cl-cn{font-size:13px;line-height:2;color:var(--dim);background:rgba(120,90,70,.06);border-radius:9px;padding:9px 12px 10px;margin-bottom:8px;user-select:text;-webkit-user-select:text}',
+      '.cl-cnlab{display:block;font-size:9.5px;letter-spacing:.08em;color:var(--cl-frame);opacity:.8;margin-bottom:2px}',
+      '.cl-cnb{display:inline-block;min-width:40px;height:1.05em;vertical-align:-.15em;margin:0 3px;border-bottom:1.5px dashed rgba(217,72,42,.5);cursor:pointer}',
+      '.cl-cnb.on{border-bottom:1.5px solid var(--cl-frame);background:rgba(217,72,42,.09)}',
+      '.cl-paper.nocn .cl-cn{display:none}',
+      '@media (prefers-color-scheme: dark){.cl-cn{background:rgba(255,255,255,.055)}.cl-cnb{border-bottom-color:rgba(255,138,99,.55)}}',
+      '.cl-ref{color:var(--good);font-weight:600}',
+      '.cl-ref.diff{border-bottom:1.5px dotted var(--meh)}',
+      '.cl-diffs{margin-top:10px;border-left:2px solid var(--line);padding-left:11px}',
+      '.cl-diff{margin-bottom:10px;font-size:12.5px;line-height:1.6}',
+      '.cl-dl{font-size:10px;color:var(--dim);letter-spacing:.04em}',
+      '.cl-dlh{letter-spacing:0;opacity:.85}',
+      '.cl-dm{color:var(--dim);text-decoration:line-through;text-decoration-color:rgba(255,69,58,.55)}',
+      '.cl-da{color:var(--good);font-weight:600}',
+      '.cl-empty{color:var(--bad);text-decoration:none}',
+      '.cl-dw{color:var(--dim);font-size:11.5px;line-height:1.65;margin-top:3px}',
+      '.cl-chunk{font-size:13px;line-height:1.6;margin-top:11px}',
+      '.cl-chunk b{color:var(--cl-frame)}',
+      '.cl-chunk span{color:var(--dim);font-size:12px}',
+      '.cl-ex{color:var(--dim);font-size:11.5px;line-height:1.6;margin-top:2px}',
+      '.cl-go{margin-top:8px;color:var(--accent)}'
     ].join('\n');
     var st = document.createElement('style');
     st.id = 'e-style';
@@ -676,6 +1016,19 @@
     },
     _state: function () { return { ST: ST, DATA: DATA, R: R }; },
     review: function () { open().then(function () { renderRecords(); }); },
+    cloze: function (id, view) {
+      open().then(function () {
+        ensureCloze().then(function (ok) {
+          if (ok && id && itemById(id)) {
+            if (view === 'ref') renderClozeCheck(id);
+            else renderClozeFill(id);
+          } else {
+            renderClozeList();
+          }
+        });
+      });
+    },
+    _cloze: function () { return { data: CLOZE, st: cLoad() }; },
     _mark: function (li, pi, s, e, type) {
       var log = ST.logs[li];
       log.marks = log.marks || {};
