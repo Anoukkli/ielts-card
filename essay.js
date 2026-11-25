@@ -694,7 +694,7 @@
       if (g) g.onclick = renderClozeList;
       return;
     }
-    await ensureKw();          // 关键词素材拿不到也不影响填空
+    await ensureUp();          // 升级素材拿不到也不影响填空
     var rows = CLOZE.items.map(function (it) {
       var rec = cRec(it.id), bs = blanksOf(it);
       var n = bs.filter(function (b) { return String(rec.v[b.k] || '').trim(); }).length;
@@ -706,24 +706,23 @@
         '<div class="e-zh cl-go">' + esc(tag) + ' ›</div>' +
         '</button>';
     }).join('');
-    var kwN = 0;
-    ((KW && KW.sets) || []).forEach(function (s) { kwN += (s.words || []).length; });
-    var kwRow = '<button class="e-card e-rec" id="kwentry">' +
-      '<div class="e-kicker">第三个视图 · ' + ((KW && KW.sets) || []).length + ' 组 · ' + kwN + ' 个词</div>' +
-      '<div class="e-en">关键词成句</div>' +
-      '<div class="e-zh">一次给 5 个词，各写一句，写完看搭配和介词</div>' +
-      '<div class="e-zh cl-go">进去写 ›</div></button>';
+    var upN = uAll().length;
+    var upRow = '<button class="e-card e-rec" id="upentry">' +
+      '<div class="e-kicker">第三个视图 · ' + ((UP && UP.sets) || []).length + ' 个主题 · ' + upN + ' 题</div>' +
+      '<div class="e-en">词组升级</div>' +
+      '<div class="e-zh">一句平淡原句 + 三个必用词组，把它重写成一句好句</div>' +
+      '<div class="e-zh cl-go">进去练 ›</div></button>';
     appEl().innerHTML = top('二次填空 · 升级重写', CLOZE.items.length + ' 篇') +
       '<div class="e-intro">每段先给整段中文，照着中文写英文，写完再对照——记得最牢的是这一步。' +
       '<span class="cl-f">橙红色</span>是句式（题给的），<b>黑色</b>空格是你填的内容；只填短语，不写整句。</div>' +
-      stepper(3) + kwRow + rows +
+      stepper(3) + upRow + rows +
       '<div class="e-card"><div class="e-kicker">这五步就是复盘流程</div>' +
       (CLOZE.flow || []).map(function (f, i) {
         return '<div class="cl-flowrow"><b>' + (i + 1) + '</b><span>' + esc(f.n) + '</span>' + esc(f.d || '') + '</div>';
       }).join('') +
       '</div>';
     bindBack(renderRecords);
-    document.getElementById('kwentry').onclick = renderKwList;
+    document.getElementById('upentry').onclick = renderUpList;
     $$('[data-cl]').forEach(function (b) {
       b.onclick = function () { renderClozeFill(b.getAttribute('data-cl')); };
     });
@@ -898,142 +897,252 @@
     document.getElementById('clback2').onclick = renderClozeList;
   }
 
-  /* ============ 关键词成句：给 5 个词，各写一句，再看参考 ============
-     第三个视图，和「填空 / 对照」并列。不判对错，只看搭配和介词。 */
-  var KKEY = 'ielts.essay.kw.v1';
-  var KW = null, KST = null;
+  /* ============ 词组升级：一句平淡原句 + 三个必用词组 ============
+     第三个视图，和「填空 / 对照」并列。不是凭空造句：先给一句平淡但正确的原句，
+     再用三个动不了的词组把它升级。考的是句子怎么组织，以及搭配、介词对不对。 */
+  var UKEY = 'ielts.essay.up.v1';
+  var UP = null, UST = null, UROUND = null;
+  var UPLAN = 8;
 
-  async function ensureKw() {
-    if (KW) return true;
+  async function ensureUp() {
+    if (UP) return true;
     try {
-      var r = await fetch('keywords.json?t=' + Date.now());
+      var r = await fetch('upgrade.json?t=' + Date.now());
       if (!r.ok) throw new Error('load');
-      KW = await r.json();
-      if (!KW.sets) KW.sets = [];
+      UP = await r.json();
+      if (!UP.sets) UP.sets = [];
       return true;
     } catch (e) { return false; }
   }
-  function kLoad() {
-    if (KST) return KST;
-    try { KST = JSON.parse(localStorage.getItem(KKEY) || '{}') || {}; } catch (e) { KST = {}; }
-    return KST;
+  function uLoad() {
+    if (UST) return UST;
+    try { UST = JSON.parse(localStorage.getItem(UKEY) || '{}') || {}; } catch (e) { UST = {}; }
+    if (!UST.v) UST.v = {};
+    return UST;
   }
-  function kSave() {
-    try { localStorage.setItem(KKEY, JSON.stringify(KST || {})); } catch (e) { toast('存不进去：检查存储设置'); }
+  function uSave() {
+    uLoad();
+    try { localStorage.setItem(UKEY, JSON.stringify(UST)); } catch (e) { toast('存不进去：检查存储设置'); }
   }
-  function kRec(setId) {
-    kLoad();
-    if (!KST[setId]) KST[setId] = { v: {}, seen: {} };
-    if (!KST[setId].v) KST[setId].v = {};
-    if (!KST[setId].seen) KST[setId].seen = {};
-    return KST[setId];
+  function uAll() {
+    var out = [];
+    ((UP && UP.sets) || []).forEach(function (s) {
+      (s.items || []).forEach(function (it) { it._set = s.id; out.push(it); });
+    });
+    return out;
   }
-  function kwSetById(id) {
-    return ((KW && KW.sets) || []).filter(function (x) { return x.id === id; })[0];
+  function uById(id) { return uAll().filter(function (x) { return x.id === id; })[0]; }
+  function uSetById(id) { return ((UP && UP.sets) || []).filter(function (x) { return x.id === id; })[0]; }
+  function uState(id) { uLoad(); return UST.v[id] || {}; }
+
+  /* ---- 判定：词组有没有用上 + 词级重合 ---- */
+  function normTxt(s) {
+    return String(s || '').toLowerCase().replace(/[\u2019\u2018]/g, "'").replace(/[\u201c\u201d]/g, '"')
+      .replace(/[^a-z0-9' ]+/g, ' ').replace(/\s+/g, ' ').trim();
+  }
+  function usedPhrase(sentence, need) {
+    var hay = ' ' + normTxt(sentence) + ' ';
+    var cands = [need.w].concat(need.alts || []);
+    for (var i = 0; i < cands.length; i++) {
+      var c = normTxt(cands[i]);
+      if (c && hay.indexOf(' ' + c + ' ') >= 0) return true;
+    }
+    return false;
+  }
+  function uTok(s) { return String(s || '').split(/\s+/).filter(Boolean); }
+  function uNm(w) { return w.toLowerCase().replace(/^[^a-z0-9']+|[^a-z0-9']+$/g, ''); }
+  function uCompare(ref, mine) {
+    var a = uTok(ref), b = uTok(mine);
+    var an = a.map(uNm), bn = b.map(uNm);
+    var n = an.length, m = bn.length, i, j;
+    var dp = [];
+    for (i = 0; i <= n; i++) dp.push(new Int32Array(m + 1));
+    for (i = n - 1; i >= 0; i--) {
+      for (j = m - 1; j >= 0; j--) {
+        dp[i][j] = an[i] === bn[j] ? dp[i + 1][j + 1] + 1 : Math.max(dp[i + 1][j], dp[i][j + 1]);
+      }
+    }
+    var marks = new Array(n).fill(false), same = 0;
+    i = 0; j = 0;
+    while (i < n && j < m) {
+      if (an[i] === bn[j]) { same++; i++; j++; }
+      else if (dp[i + 1][j] >= dp[i][j + 1]) { marks[i] = true; i++; }
+      else { j++; }
+    }
+    while (i < n) { marks[i] = true; i++; }
+    return { score: n ? Math.round(same / n * 100) : 0, marks: marks, words: a };
+  }
+  function uMarkRef(r) {
+    return r.words.map(function (w, i) {
+      return r.marks[i] ? '<u class="up-miss">' + esc(w) + '</u>' : esc(w);
+    }).join(' ');
   }
 
-  async function renderKwList() {
+  /* ---- 选题：先补上次标「不会」的，再补没做过的，最后是已过关的 ---- */
+  function pickUp(setId) {
+    var pool = setId ? ((uSetById(setId) || {}).items || []) : uAll();
+    var weak = [], fresh = [], passed = [];
+    pool.forEach(function (it) {
+      var st = uState(it.id);
+      if (st.grade === 'bad') weak.push(it);
+      else if (!st.grade) fresh.push(it);
+      else passed.push(it);
+    });
+    return weak.concat(fresh).concat(passed).slice(0, UPLAN).map(function (x) { return x.id; });
+  }
+
+  function upDoneCount() {
+    var n = 0;
+    uAll().forEach(function (it) { var st = uState(it.id); if (st.grade) n++; });
+    return n;
+  }
+
+  async function renderUpList() {
     clearTimer();
-    var ok = await ensureKw();
-    if (!ok || !(KW.sets || []).length) {
-      appEl().innerHTML = top('关键词成句', '') +
-        '<div class="e-done"><div class="e-big">🔑</div><h2>关键词没加载上</h2>' +
-        '<p>确认 keywords.json 和本页放在同一目录，然后刷新</p>' +
-        '<button class="e-btn" id="kwagain" style="margin-top:18px">重试</button></div>';
+    var ok = await ensureUp();
+    if (!ok || !uAll().length) {
+      appEl().innerHTML = top('词组升级', '') +
+        '<div class="e-done"><div class="e-big">🔧</div><h2>升级素材没加载上</h2>' +
+        '<p>确认 upgrade.json 和本页放在同一目录，然后刷新</p>' +
+        '<button class="e-btn" id="upagain" style="margin-top:18px">重试</button></div>';
       bindBack(renderClozeList);
-      document.getElementById('kwagain').onclick = function () { KW = null; renderKwList(); };
+      var r = document.getElementById('upagain');
+      if (r) r.onclick = function () { UP = null; renderUpList(); };
       return;
     }
-    var rows = KW.sets.map(function (s) {
-      var rec = kRec(s.id);
-      var n = (s.words || []).filter(function (w) { return String(rec.v[w.w] || '').trim(); }).length;
-      return '<button class="e-card e-rec" data-kw="' + esc(s.id) + '">' +
-        '<div class="e-kicker">' + (s.words || []).length + ' 个词 · ' + (s.d || '') + '</div>' +
+    var total = uAll().length, done = upDoneCount();
+    var rows = (UP.sets || []).map(function (s) {
+      var its = s.items || [];
+      var dn = its.filter(function (it) { return uState(it.id).grade; }).length;
+      return '<button class="e-card e-rec" data-upset="' + esc(s.id) + '">' +
+        '<div class="e-kicker">' + its.length + ' 题 · ' + esc(s.d || '') + '</div>' +
         '<div class="e-en">' + esc(s.n) + '</div>' +
-        '<div class="e-zh cl-go">' + (n ? '写了 ' + n + '/' + (s.words || []).length : '还没开始') + ' ›</div>' +
+        '<div class="e-zh cl-go">' + (dn ? dn + '/' + its.length + ' 练过' : '还没开始') + ' ›</div>' +
         '</button>';
     }).join('');
-    appEl().innerHTML = top('关键词成句', KW.sets.length + ' 组') +
-      '<div class="e-intro">一次给 5 个词。每个词写一句和雅思写作有关的句子，写完点「看参考」，' +
-      '对一下搭配和介词。不判对错，只要句子说得通就算练到。</div>' +
+    appEl().innerHTML = top('词组升级', done + '/' + total) +
+      '<div class="e-intro">每题先给一句<b>平淡但正确</b>的原句，再给三个<b>必须用上</b>的词组。' +
+      '你要做的是把这三处升级，重新组织成一句更像考官写的话——不是凭空造句，也不是逐词翻译。' +
+      '写完看：三个词组有没有用上、搭配对不对、句子结构顺不顺。</div>' +
+      '<button class="e-btn" id="upstart">今天 8 题 · 混合练</button>' +
+      '<div class="e-label">或者只练一个主题</div>' +
       rows +
-      '<button class="e-link" id="kwback">返回二次填空</button>';
+      '<button class="e-link" id="upback">返回二次填空</button>';
     bindBack(renderClozeList);
-    document.getElementById('kwback').onclick = renderClozeList;
-    $$('[data-kw]').forEach(function (b) {
-      b.onclick = function () { renderKwSet(b.getAttribute('data-kw')); };
+    document.getElementById('upback').onclick = renderClozeList;
+    document.getElementById('upstart').onclick = function () { startUpRound(null); };
+    $$('[data-upset]').forEach(function (b) {
+      b.onclick = function () { startUpRound(b.getAttribute('data-upset')); };
     });
   }
 
-  function renderKwSet(id) {
+  function startUpRound(setId) {
+    var ids = pickUp(setId);
+    if (!ids.length) { toast('这一组还没有题'); return; }
+    UROUND = { ids: ids, i: 0, set: setId || null, stat: { good: 0, meh: 0, bad: 0 } };
+    renderUpItem();
+  }
+
+  function renderUpItem() {
     clearTimer();
-    var set = kwSetById(id);
-    if (!set) return renderKwList();
-    var rec = kRec(id);
-    var words = set.words || [];
-
-    function cards() {
-      return words.map(function (w, i) {
-        var v = String(rec.v[w.w] || '');
-        var seen = !!rec.seen[w.w];
-        return '<div class="e-card kw-card" data-w="' + esc(w.w) + '">' +
-          '<div class="kw-head"><span class="kw-num">' + (i + 1) + '</span>' +
-          '<b class="kw-w">' + esc(w.w) + '</b><span class="kw-pos">' + esc(w.pos || '') + '</span>' +
-          '<span class="kw-zh">' + esc(w.zh || '') + '</span></div>' +
-          '<textarea class="kw-ta" rows="3" spellcheck="false" autocapitalize="sentences" placeholder="用 ' + esc(w.w) + ' 写一句…">' + esc(v) + '</textarea>' +
-          '<button class="e-link kw-see" data-see="' + esc(w.w) + '">' + (seen ? '收起参考' : '看参考') + '</button>' +
-          '<div class="kw-ref"' + (seen ? '' : ' hidden') + '>' +
-          '<div class="kw-sec">模型句</div>' +
-          (w.models || []).map(function (m) { return '<div class="kw-model">' + esc(m) + '</div>'; }).join('') +
-          '<div class="kw-sec">固定搭配</div>' +
-          '<div class="kw-cols">' + (w.coll || []).map(function (c) { return '<span class="kw-col">' + esc(c) + '</span>'; }).join('') + '</div>' +
-          '<div class="kw-sec">常见错法</div>' +
-          (w.pit || []).map(function (p) { return '<div class="kw-pit">· ' + esc(p) + '</div>'; }).join('') +
-          '</div></div>';
-      }).join('');
-    }
-
-    function count() {
-      return words.filter(function (w) { return String(rec.v[w.w] || '').trim(); }).length;
-    }
-
-    appEl().innerHTML = top(set.n + ' · 关键词', count() + '/' + words.length) +
-      '<div class="e-intro">先自己写，写完再看参考。参考句不是唯一答案，看的是搭配对不对。</div>' +
-      '<div class="kw-list" id="kwlist">' + cards() + '</div>' +
-      '<button class="e-link" id="kwclear">清空重写</button>' +
-      '<button class="e-link" id="kwback2">返回关键词列表</button>';
-    bindBack(renderKwList);
-
-    function sync() {
-      var c = document.getElementById('kwc');
-      var top2 = document.querySelector('.e-count');
-      if (top2) top2.textContent = count() + '/' + words.length;
-    }
-
-    $$('.kw-ta').forEach(function (ta) {
-      ta.addEventListener('input', function () {
-        var card = ta.closest('.kw-card');
-        rec.v[card.getAttribute('data-w')] = ta.value;
-        kSave();
-        sync();
-      });
+    if (!UROUND || UROUND.i >= UROUND.ids.length) return renderUpDone();
+    var it = uById(UROUND.ids[UROUND.i]);
+    if (!it) { UROUND.i++; return renderUpItem(); }
+    var st = uState(it.id);
+    var setN = (uSetById(it._set) || {}).n || '';
+    var needs = (it.need || []).map(function (n, i) {
+      return '<div class="up-need"><b class="up-num">' + (i + 1) + '</b>' +
+        '<span class="up-w">' + esc(n.w) + '</span>' +
+        '<span class="up-pos">' + esc(n.pos || '') + '</span>' +
+        '<span class="up-zh">' + esc(n.zh || '') + '</span></div>';
+    }).join('');
+    appEl().innerHTML = top('词组升级', (UROUND.i + 1) + '/' + UROUND.ids.length) +
+      '<div class="e-card up-card">' +
+      '<div class="up-kicker"><span class="up-theme">' + esc(setN) + '</span>' + esc(it.scene || '') + '</div>' +
+      '<div class="e-label">原句（平淡，但正确）</div>' +
+      '<div class="up-base">' + esc(it.base || '') + '</div>' +
+      '<div class="e-label">把这三处升级，重写成一句</div>' +
+      '<div class="up-needs">' + needs + '</div>' +
+      '<textarea class="up-ta" id="upans" rows="4" spellcheck="false" autocapitalize="sentences" placeholder="一句话把三个词组都用上…">' + esc(st.ans || '') + '</textarea>' +
+      '<button class="e-btn" id="upcheck">对照参考</button>' +
+      '<button class="e-link" id="upskip">这题先跳过</button>' +
+      '</div><div id="uppanel"></div>';
+    bindBack(function () { renderUpList(); });
+    var ta = document.getElementById('upans');
+    ta.addEventListener('input', function () {
+      var cur = uState(it.id); cur.ans = ta.value; UST.v[it.id] = cur; uSave();
     });
-    $$('[data-see]').forEach(function (b) {
+    document.getElementById('upskip').onclick = function () { UROUND.i++; renderUpItem(); };
+    document.getElementById('upcheck').onclick = function () {
+      var v = (ta.value || '').trim();
+      if (!v) { toast('先写一句再对照'); ta.focus(); return; }
+      var cur = uState(it.id); cur.ans = v; UST.v[it.id] = cur; uSave();
+      renderUpPanel(it, v);
+    };
+  }
+
+  function renderUpPanel(it, mine) {
+    var needs = it.need || [];
+    var hit = needs.filter(function (n) { return usedPhrase(mine, n); }).length;
+    var cmp = uCompare(it.en || '', mine);
+    var rows = needs.map(function (n, i) {
+      var ok = usedPhrase(mine, n);
+      return '<div class="up-check' + (ok ? ' on' : '') + '">' +
+        '<div class="up-check-h"><b>' + (ok ? '✓' : '✗') + '</b>' + esc(n.w) +
+        '<span class="up-pos">' + esc(n.pos || '') + '</span>' +
+        '<span class="up-tag">' + (ok ? '用上了' : '这句里没找到') + '</span></div>' +
+        '<div class="up-note">' + esc(n.note || '') + '</div></div>';
+    }).join('');
+    var dead = needs.length - hit;
+    document.getElementById('uppanel').innerHTML =
+      '<div class="e-card up-panel">' +
+      '<div class="up-score"><b>' + hit + '/' + needs.length + '</b> 个词组用上' +
+      '<span class="up-dot">·</span>词重合 ' + cmp.score + '%</div>' +
+      '<div class="e-label">参考升级句</div>' +
+      '<div class="up-en">' + uMarkRef(cmp) + '</div>' +
+      '<div class="e-label">三个词组，逐个核对</div>' + rows +
+      '<div class="e-label">为什么这样组织</div>' +
+      '<div class="up-why">' + esc(it.why || '') + '</div>' +
+      (dead ? '<div class="up-warn">还有 ' + dead + ' 个词组没用上。不用重写整句，先想着把缺的那个塞进合适的位置，再读一遍。</div>' : '') +
+      '<div class="e-label">这一题你写对了吗</div>' +
+      '<div class="up-grades">' +
+      '<button class="grade bad" data-g="bad">不会<small>明天再来</small></button>' +
+      '<button class="grade meh" data-g="meh">差一点<small>搭配 / 小错</small></button>' +
+      '<button class="grade good" data-g="good">写对了<small>下次不再出</small></button>' +
+      '</div></div>';
+    document.getElementById('uppanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    $$('#uppanel [data-g]').forEach(function (b) {
       b.onclick = function () {
-        var k = b.getAttribute('data-see');
-        var card = b.closest('.kw-card');
-        var box = card.querySelector('.kw-ref');
-        var willShow = box.hasAttribute('hidden');
-        if (willShow) box.removeAttribute('hidden'); else box.setAttribute('hidden', '');
-        rec.seen[k] = willShow ? 1 : 0;
-        b.textContent = willShow ? '收起参考' : '看参考';
-        kSave();
+        var g = b.getAttribute('data-g');
+        var cur = uState(it.id);
+        cur.grade = g; cur.ans = mine; cur.t = Date.now();
+        UST.v[it.id] = cur; uSave();
+        UROUND.stat[g] = (UROUND.stat[g] || 0) + 1;
+        UROUND.i++;
+        renderUpItem();
       };
     });
-    document.getElementById('kwclear').onclick = function () {
-      rec.v = {}; rec.seen = {}; kSave(); renderKwSet(id);
-    };
-    document.getElementById('kwback2').onclick = renderKwList;
+  }
+
+  function renderUpDone() {
+    clearTimer();
+    var s = (UROUND && UROUND.stat) || { good: 0, meh: 0, bad: 0 };
+    var total = (UROUND && UROUND.ids.length) || 0;
+    var list = (UROUND && UROUND.ids) || [];
+    var weak = list.filter(function (id) { return uState(id).grade === 'bad'; }).map(function (id) {
+      var it = uById(id);
+      return it ? '<div class="cl-flowrow"><b>·</b><span>' + esc((it.need || [])[0] ? it.need[0].w : id) + '</span>' + esc(it.scene || '') + '</div>' : '';
+    }).join('');
+    appEl().innerHTML = top('词组升级', '本轮完成') +
+      '<div class="e-done" style="flex:none;padding:22px 0 6px"><div class="e-big">✅</div>' +
+      '<h2>' + total + ' 题做完了</h2>' +
+      '<p>写对 ' + s.good + ' 题 · 差一点 ' + s.meh + ' 题 · 不会 ' + s.bad + ' 题</p></div>' +
+      (weak ? '<div class="e-card"><div class="e-kicker">明天会先出这几题</div>' + weak + '</div>' : '') +
+      '<button class="e-btn" id="upmore">再来一轮</button>' +
+      '<button class="e-link" id="upback2">返回词组升级</button>';
+    bindBack(renderUpList);
+    document.getElementById('upback2').onclick = renderUpList;
+    document.getElementById('upmore').onclick = function () { startUpRound(UROUND ? UROUND.set : null); };
   }
 
   /* ---------------- css ---------------- */
@@ -1141,24 +1250,36 @@
       '.cl-chunk span{color:var(--dim);font-size:12px}',
       '.cl-ex{color:var(--dim);font-size:11.5px;line-height:1.6;margin-top:2px}',
       '.cl-go{margin-top:8px;color:var(--accent)}',
-      '.kw-card{margin-bottom:12px}',
-      '.kw-head{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}',
-      '.kw-num{font-size:11px;color:var(--dim);font-variant-numeric:tabular-nums;min-width:12px}',
-      '.kw-w{font-size:19px;letter-spacing:.01em}',
-      '.kw-pos{font-size:11px;color:var(--dim)}',
-      '.kw-zh{font-size:12.5px;color:var(--dim)}',
-      '.kw-ta{width:100%;margin-top:10px;border:1px solid var(--line);border-radius:12px;background:var(--card2);',
-      'color:var(--fg);padding:11px 12px;font-size:15px;line-height:1.6;font-family:inherit;resize:vertical;outline:none}',
-      '.kw-ta:focus{border-color:var(--accent)}',
-      '.kw-see{width:auto;margin:10px 0 0;padding:6px 0;border:0;text-align:left;color:var(--accent)}',
-      '.kw-ref{border-top:1px solid var(--line);margin-top:8px;padding-top:10px}',
-      '.kw-ref[hidden]{display:none}',
-      '.kw-sec{font-size:10px;letter-spacing:.06em;color:var(--dim);margin:10px 0 4px}',
-      '.kw-sec:first-child{margin-top:0}',
-      '.kw-model{font-size:14px;line-height:1.65;padding:6px 0 6px 10px;border-left:2px solid var(--good);margin-bottom:4px}',
-      '.kw-cols{display:flex;flex-wrap:wrap;gap:6px}',
-      '.kw-col{font-size:12px;background:var(--card2);border-radius:7px;padding:3px 8px;color:var(--fg)}',
-      '.kw-pit{font-size:12px;line-height:1.7;color:var(--dim)}'
+      '.e-label{font-size:10.5px;letter-spacing:.06em;color:var(--dim);margin:16px 0 6px}',
+      '.up-card{margin-bottom:12px}',
+      '.up-kicker{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--dim);margin-bottom:14px}',
+      '.up-theme{background:var(--card2);border-radius:7px;padding:2px 8px;color:var(--fg);font-size:11px}',
+      '.up-base{font-size:15.5px;line-height:1.7;padding:9px 12px;border-left:2px solid var(--line);color:var(--dim);margin-bottom:14px}',
+      '.up-needs{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}',
+      '.up-need{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;background:var(--card2);border-radius:10px;padding:8px 10px}',
+      '.up-num{font-size:11px;color:var(--cl-frame);min-width:12px;font-variant-numeric:tabular-nums}',
+      '.up-w{font-size:15px;font-weight:600;color:var(--cl-frame)}',
+      '.up-pos{font-size:11px;color:var(--dim)}',
+      '.up-zh{font-size:12.5px;color:var(--dim)}',
+      '.up-ta{width:100%;border:1px solid var(--line);border-radius:12px;background:var(--card2);',
+      'color:var(--fg);padding:11px 12px;font-size:15px;line-height:1.65;font-family:inherit;resize:vertical;outline:none}',
+      '.up-ta:focus{border-color:var(--accent)}',
+      '.up-panel{margin-top:14px}',
+      '.up-score{font-size:13px;color:var(--dim);margin-bottom:12px}',
+      '.up-score b{font-size:19px;color:var(--fg);font-variant-numeric:tabular-nums}',
+      '.up-dot{margin:0 6px}',
+      '.up-en{font-size:15.5px;line-height:1.75;padding:8px 0}',
+      '.up-miss{text-decoration:none;border-bottom:2px solid var(--bad);color:var(--bad)}',
+      '.up-check{border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin-bottom:8px}',
+      '.up-check.on{border-color:var(--good)}',
+      '.up-check-h{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;font-size:14px}',
+      '.up-check-h b{color:var(--bad)}',
+      '.up-check.on .up-check-h b{color:var(--good)}',
+      '.up-tag{font-size:11px;color:var(--dim);margin-left:auto}',
+      '.up-note{font-size:12.5px;line-height:1.7;color:var(--dim);margin-top:4px}',
+      '.up-why{font-size:13px;line-height:1.8;color:var(--fg)}',
+      '.up-warn{font-size:12.5px;line-height:1.7;color:var(--dim);background:var(--card2);border-radius:10px;padding:9px 11px;margin-top:12px}',
+      '.up-grades{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px}'
     ].join('\n');
     var st = document.createElement('style');
     st.id = 'e-style';
@@ -1183,10 +1304,15 @@
     review: function () { open().then(function () { renderRecords(); }); },
     cloze: function (id, view) {
       open().then(function () {
-        if (id === 'kw') {
-          ensureKw().then(function (ok) {
-            if (ok && view && kwSetById(view)) renderKwSet(view);
-            else renderKwList();
+        if (id === 'up' || id === 'kw') {
+          ensureUp().then(function (ok) {
+            if (!ok) { renderUpList(); return; }
+            if (view && uById(view)) {
+              UROUND = { ids: [view], i: 0, stat: { good: 0, meh: 0, bad: 0 } };
+              renderUpItem();
+            } else {
+              renderUpList();
+            }
           });
           return;
         }

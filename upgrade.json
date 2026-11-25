@@ -1,0 +1,335 @@
+{
+  "note": "词组升级：给一句平淡的原句 + 三个必须用上的词组，你把它们串成一句更像考官写的话。note 只讲搭配和介词，why 讲句子怎么组织。",
+  "sets": [
+    {
+      "id": "up-env",
+      "n": "环境",
+      "d": "垃圾、污染、禁令这类题的主体段和结论段",
+      "items": [
+        {
+          "id": "up-env1",
+          "scene": "第二段：说不禁令的副作用，先讲塑料袋的危害",
+          "base": "Plastic bags are very bad for the environment.",
+          "need": [
+            { "w": "do considerable harm to", "alts": ["cause considerable harm to", "do serious harm to"], "pos": "v. phr.", "zh": "对…造成相当大的伤害", "note": "harm 前可加 considerable / serious；介词固定用 to，不能写 harm for。" },
+            { "w": "end up in", "alts": [], "pos": "v. phr.", "zh": "最后落到…里", "note": "end up in + 地点，in 不能换成 on；它强调「结局」，不是「过程」。" },
+            { "w": "take centuries to break down", "alts": ["break down over centuries"], "pos": "v. phr.", "zh": "要几百年才能降解", "note": "take + 时间 + to do 是固定结构；break down 才表示「降解」，decompose 多用于有机物。" }
+          ],
+          "en": "Single-use plastic bags do considerable harm to the environment and end up in landfill, where they take centuries to break down.",
+          "why": "先用 and 把「伤害」和「去向」并列，再接 where 从句补「多久」。三个词组各占一个位置：谓语 → 并列谓语 → 从句谓语，句子就不会散。"
+        },
+        {
+          "id": "up-env2",
+          "scene": "第三段：承认污染确实严重（让步段开头）",
+          "base": "Plastic waste is a big problem in the ocean.",
+          "need": [
+            { "w": "pose a serious threat to", "alts": ["poses a serious threat to"], "pos": "v. phr.", "zh": "对…构成严重威胁", "note": "threat 前用 serious / major；to 是介词，后面接被威胁的对象。" },
+            { "w": "marine life", "alts": [], "pos": "n.", "zh": "海洋生物", "note": "life 在这里不可数，不加 s；修饰语用 marine，不用 sea。" },
+            { "w": "be ingested by", "alts": ["are ingested by", "ingested by"], "pos": "v. phr.", "zh": "被…吞食", "note": "被动语态；ingest 是「吞下」，比 eat 书面，动物误食塑料常用这个词。" }
+          ],
+          "en": "Plastic waste in the ocean poses a serious threat to marine life, as small fragments are easily ingested by fish and birds.",
+          "why": "主句先给判断（pose a threat），as 从句再给机制（被吞食）。中文习惯「因为…所以…」，英文写作更常见的是结论在前、原因在后。"
+        },
+        {
+          "id": "up-env3",
+          "scene": "第二段：说禁令为什么执行不了",
+          "base": "It is hard for the government to stop shops from using bags.",
+          "need": [
+            { "w": "at the point of sale", "alts": ["at the point of sales"], "pos": "prep. phr.", "zh": "在销售环节", "note": "固定说法，sale 用单数；写作里用它代替 in the shop。" },
+            { "w": "almost impossible to monitor", "alts": ["hard to monitor", "difficult to monitor"], "pos": "adj. phr.", "zh": "几乎无法监管", "note": "monitor 直接接宾语，不加 on；impossible to do 用不定式。" },
+            { "w": "particularly in", "alts": ["especially in"], "pos": "adv. phr.", "zh": "尤其是在", "note": "particularly 修饰介词短语，比 very much in 自然；书面语里比 especially 略正式。" }
+          ],
+          "en": "Enforcing such a rule is almost impossible to monitor at the point of sale, particularly in small shops and street markets.",
+          "why": "主语用动名词短语 Enforcing such a rule，谓语用 is——一句话里不要再用 it is hard to 这种形式主语，两个 it 会打架。"
+        },
+        {
+          "id": "up-env4",
+          "scene": "结论段：给替代方案，收全文",
+          "base": "Charging for bags works better than banning them.",
+          "need": [
+            { "w": "a modest charge", "alts": ["a small charge"], "pos": "n. phr.", "zh": "一小笔费用", "note": "charge 可数，要加 a；modest 表示「不高」，比 small 正式。" },
+            { "w": "curb consumption", "alts": ["curb the consumption"], "pos": "v. phr.", "zh": "抑制消费量", "note": "curb 直接接宾语，不加 of；consumption 不可数，不加 s。" },
+            { "w": "at source", "alts": ["at the source"], "pos": "prep. phr.", "zh": "从源头", "note": "固定短语 at source 不加 the，指「在产生的地方就处理」。" }
+          ],
+          "en": "A modest charge on bags is more likely to curb consumption at source than an outright ban is.",
+          "why": "比较结构 more likely to do ... than ... 两边要同类：左边是不定式，右边用 than an outright ban is 补齐谓语，比较才站得住。"
+        }
+      ]
+    },
+    {
+      "id": "up-edu",
+      "n": "教育",
+      "d": "上大学、选专业、学习方式这类题",
+      "items": [
+        {
+          "id": "up-edu1",
+          "scene": "第二段：说上大学的好处",
+          "base": "Going to university helps you get a better job.",
+          "need": [
+            { "w": "have access to", "alts": ["has access to", "gain access to"], "pos": "v. phr.", "zh": "有机会得到", "note": "to 是介词，后面接名词，不是动词原形。" },
+            { "w": "job opportunities", "alts": ["job opportunity"], "pos": "n. phr.", "zh": "工作机会", "note": "opportunity 可数，泛指要复数。" },
+            { "w": "a wider range of", "alts": ["a wide range of"], "pos": "det. phr.", "zh": "更多种类的", "note": "range of 后面接复数名词；wider 是比较级，和 than 呼应。" }
+          ],
+          "en": "Graduates have access to a wider range of job opportunities than those who leave school early.",
+          "why": "比较对象必须同类：graduates 对 those who leave school early，不能写成 than leaving school early，那是拿人比动作。"
+        },
+        {
+          "id": "up-edu2",
+          "scene": "第三段：说学历是硬门槛",
+          "base": "You cannot be a doctor without a degree.",
+          "need": [
+            { "w": "it is impossible to", "alts": ["it would be impossible to"], "pos": "句式", "zh": "不可能", "note": "it 是形式主语，真正的主语是后面的不定式；后面再接 become 原形。" },
+            { "w": "without having", "alts": ["without a", "without obtaining"], "pos": "prep. phr.", "zh": "没有…的话", "note": "without 后面接动名词，不接动词原形。" },
+            { "w": "the relevant degree", "alts": ["a relevant degree"], "pos": "n. phr.", "zh": "相应的学位", "note": "relevant 前加 the，表示「该专业对应的那个」。" }
+          ],
+          "en": "It is impossible to become a doctor, teacher or lawyer without having the relevant degree.",
+          "why": "it is + 形容词 + to do 是英语里最常用的「评价句」骨架，比 You cannot 客观得多，作文里优先用这个。"
+        },
+        {
+          "id": "up-edu3",
+          "scene": "第四段：说就业竞争，给背景",
+          "base": "The job market is very competitive now.",
+          "need": [
+            { "w": "increasingly", "alts": [], "pos": "adv.", "zh": "越来越", "note": "修饰形容词，比 more and more 书面，也不用加 very。" },
+            { "w": "competitive", "alts": [], "pos": "adj.", "zh": "竞争激烈的", "note": "形容市场、行业、人；名词是 competition，competitor 是「竞争者」。" },
+            { "w": "hundreds of applicants", "alts": ["hundreds of applicants for"], "pos": "n. phr.", "zh": "成百上千的申请者", "note": "applicants 复数；applicant 是「申请人」，apply 是动词。" }
+          ],
+          "en": "The job market is becoming increasingly competitive, with hundreds of applicants for a single position.",
+          "why": "with + 名词 是补背景的常用尾巴，把「竞争激烈」具体成一个可数的画面，比另起一句 there are many people 省字。"
+        },
+        {
+          "id": "up-edu4",
+          "scene": "第二段：说学生应该能自由选专业",
+          "base": "Students should study what they like.",
+          "need": [
+            { "w": "be free to choose", "alts": ["are free to choose", "should be free to choose"], "pos": "v. phr.", "zh": "可以自由选择", "note": "free to do 用不定式；be free to 不是 be free of。" },
+            { "w": "preferred areas of study", "alts": ["preferred area of study"], "pos": "n. phr.", "zh": "自己喜欢的学科领域", "note": "areas 复数；area of study 是「学科领域」的固定说法。" },
+            { "w": "be passionate about", "alts": ["are passionate about"], "pos": "v. phr.", "zh": "对…有热情", "note": "about 是介词，后面接名词或 what 从句，不接动词原形。" }
+          ],
+          "en": "Students should be free to choose their preferred areas of study, because people learn better when they are passionate about the subject.",
+          "why": "because 从句里再套 when 从句，是两个层级的从属：主句 → 原因 → 条件。写完要检查每个从句是不是都有主语和谓语。"
+        }
+      ]
+    },
+    {
+      "id": "up-tech",
+      "n": "科技与媒体",
+      "d": "手机、网络、游戏、社交媒体这类题",
+      "items": [
+        {
+          "id": "up-tech1",
+          "scene": "第二段：说科技改变了交流方式",
+          "base": "Technology has changed how people talk to each other.",
+          "need": [
+            { "w": "have an impact on", "alts": ["has an impact on", "have had an impact on"], "pos": "v. phr.", "zh": "对…有影响", "note": "impact 前用 an；介词 on，不能写 impact to。" },
+            { "w": "the way people communicate", "alts": ["the way in which people communicate"], "pos": "n. phr.", "zh": "人们交流的方式", "note": "the way 后面不加 how，这是最常见的多余词。" },
+            { "w": "in various ways", "alts": ["in a variety of ways"], "pos": "prep. phr.", "zh": "以多种方式", "note": "ways 复数；various 前不加 very。" }
+          ],
+          "en": "Technology has had an impact on the way people communicate in various ways, both at work and in social life.",
+          "why": "have had 用现在完成，表示影响从过去延续到现在；the way people communicate 是省略 that 的同位语结构，比 how people communicate 更正式。"
+        },
+        {
+          "id": "up-tech2",
+          "scene": "第三段：说负面影响",
+          "base": "Phones make people less social.",
+          "need": [
+            { "w": "isolate", "alts": ["isolates"], "pos": "v.", "zh": "使孤立", "note": "及物动词，直接接人，不加 from 也可以，但常写 isolate sb from sth。" },
+            { "w": "discourage", "alts": ["discourages"], "pos": "v.", "zh": "使不愿", "note": "discourage sb from doing sth；反义词 encourage。" },
+            { "w": "real interaction", "alts": ["real interactions"], "pos": "n. phr.", "zh": "真实的交往", "note": "interaction 不可数；修饰语用 real，不用 true。" }
+          ],
+          "en": "Constant use of phones can isolate people and discourage real interaction with those around them.",
+          "why": "两个动词用 and 并列，共用一个主语 constant use of phones——比写成两句话紧凑，也是高分作文常见的并列谓语写法。"
+        },
+        {
+          "id": "up-tech3",
+          "scene": "第四段：说游戏为什么让人停不下来",
+          "base": "Many children play games for too long.",
+          "need": [
+            { "w": "be addictive", "alts": ["are addictive", "is addictive"], "pos": "adj. phr.", "zh": "让人上瘾", "note": "形容事物；人上瘾要用 be addicted to，两个词不能混。" },
+            { "w": "constantly", "alts": ["constantly be"], "pos": "adv.", "zh": "不断地", "note": "修饰动词，位置在 be 动词后、实义动词前。" },
+            { "w": "sacrifice A for B", "alts": ["sacrifice homework for"], "pos": "v. phr.", "zh": "为 B 牺牲 A", "note": "sacrifice sth for sth，for 后面是被换来的东西，不是被牺牲的。" }
+          ],
+          "en": "Games are highly addictive because users are constantly given new targets, and many children sacrifice homework for a few more hours of play.",
+          "why": "because 从句里用被动 are given，把「谁给的」隐去，重点落在「不断有新目标」这件事上——该省的主语就省掉。"
+        },
+        {
+          "id": "up-tech4",
+          "scene": "结论段：权衡利弊，给立场",
+          "base": "The problems are bigger than the good points.",
+          "need": [
+            { "w": "outweigh", "alts": ["outweighs"], "pos": "v.", "zh": "超过、大于", "note": "及物动词，本身含比较义，后面不能再加 than。" },
+            { "w": "potential dangers", "alts": ["potential danger"], "pos": "n. phr.", "zh": "潜在危害", "note": "dangers 复数；potential 前不加 very。" },
+            { "w": "significant", "alts": [], "pos": "adj.", "zh": "显著的", "note": "修饰抽象名词，比 big 正式；副词是 significantly。" }
+          ],
+          "en": "In my view, the potential dangers of gaming outweigh its benefits, and the difference is significant.",
+          "why": "outweigh 后面直接接宾语，不要再加 than；如果要写 than，就得换成 are greater than。这一句是「优缺点类」最省力的结论句。"
+        }
+      ]
+    },
+    {
+      "id": "up-gov",
+      "n": "政府与公共资金",
+      "d": "该不该出钱、钱花在哪、城市治理这类题",
+      "items": [
+        {
+          "id": "up-gov1",
+          "scene": "第二段：说政府应该支持艺术",
+          "base": "Governments should give money to art.",
+          "need": [
+            { "w": "provide financial support for", "alts": ["provide financial support to"], "pos": "v. phr.", "zh": "为…提供资金支持", "note": "for 是介词；support 在这里不可数，不加 a。" },
+            { "w": "the arts", "alts": ["art"], "pos": "n.", "zh": "艺术（整体）", "note": "指门类整体时用 the arts，指「艺术」这个概念时用不可数的 art。" },
+            { "w": "public spaces", "alts": ["public space"], "pos": "n. phr.", "zh": "公共空间", "note": "spaces 复数指多处；space 不可数时是「空间」这个概念。" }
+          ],
+          "en": "Governments should provide financial support for the arts, especially for works displayed in public spaces.",
+          "why": "两处都用 for，第二处用 especially for 补范围，比另起一句 In addition 更省字，也让句子有层次。"
+        },
+        {
+          "id": "up-gov2",
+          "scene": "第三段：说钱更该花在哪",
+          "base": "The money should be spent on things people need.",
+          "need": [
+            { "w": "be spent on", "alts": ["is spent on", "should be spent on"], "pos": "v. phr.", "zh": "花在…上", "note": "spend money on sth 的被动；on 不能换成 in。" },
+            { "w": "basic services", "alts": ["basic service"], "pos": "n. phr.", "zh": "基本服务", "note": "services 复数；healthcare、transport 都算 basic services。" },
+            { "w": "rather than", "alts": [], "pos": "conj.", "zh": "而不是", "note": "两边要接同类成分；前后都是名词短语或都是动名词。" }
+          ],
+          "en": "Public money should be spent on basic services such as healthcare and transport rather than on statues.",
+          "why": "rather than 两边要平行：on basic services 对 on statues，第二个 on 不能省，否则读者会以为 statues 是服务的一种。"
+        },
+        {
+          "id": "up-gov3",
+          "scene": "第四段：说保护环境不是浪费钱",
+          "base": "Protecting animals is not a waste of money.",
+          "need": [
+            { "w": "far outweigh", "alts": ["far outweighs", "would far outweigh"], "pos": "v. phr.", "zh": "远远超过", "note": "far 修饰比较级或 outweigh，不用 very；very outweigh 是错的。" },
+            { "w": "the cost of conservation", "alts": ["the costs of conservation"], "pos": "n. phr.", "zh": "保护的成本", "note": "conservation 不可数；cost 可数，指具体开支时常用复数。" },
+            { "w": "for the benefit of", "alts": [], "pos": "prep. phr.", "zh": "为了…的利益", "note": "for the benefit of sb，benefit 前用 the。" }
+          ],
+          "en": "The cost of managing environmental change would far outweigh the cost of conservation, which is why protecting habitats is for the benefit of humans too.",
+          "why": "which is why 把「结果」接成从句，比另起一句 Therefore 更连贯；Therefore 一篇里用两次就显得生硬。"
+        },
+        {
+          "id": "up-gov4",
+          "scene": "第二段：说城市生活的问题",
+          "base": "Living in a city is expensive and stressful.",
+          "need": [
+            { "w": "the cost of living", "alts": [], "pos": "n. phr.", "zh": "生活成本", "note": "固定搭配，living 不加 ly，也不说 living cost。" },
+            { "w": "tend to", "alts": ["tends to"], "pos": "v. phr.", "zh": "往往", "note": "后接动词原形；比 usually 更适合客观陈述。" },
+            { "w": "overcrowded", "alts": [], "pos": "adj.", "zh": "过度拥挤的", "note": "一个词就够，不要写 very crowded；crowded 只是「挤」，overcrowded 是「挤到成问题」。" }
+          ],
+          "en": "The cost of living in large cities is high, and public transport tends to be overcrowded, which makes city life stressful.",
+          "why": "主语换成事物（cost / transport）时，谓语用单数 is / tends——中国学生最容易在这里误用 are。"
+        }
+      ]
+    },
+    {
+      "id": "up-work",
+      "n": "工作与职业",
+      "d": "选工作、薪水、职业满意度这类题",
+      "items": [
+        {
+          "id": "up-work1",
+          "scene": "第二段：说薪水确实重要（让步）",
+          "base": "Money is important when you choose a job.",
+          "need": [
+            { "w": "meet basic needs", "alts": ["meet their basic needs", "meet these needs"], "pos": "v. phr.", "zh": "满足基本需求", "note": "needs 复数；meet 在这里是「满足」，不是「遇见」。" },
+            { "w": "a reasonable quality of life", "alts": ["a good quality of life"], "pos": "n. phr.", "zh": "尚可的生活质量", "note": "quality of life 前用 a；of 不能换成 for。" },
+            { "w": "cover", "alts": ["covers"], "pos": "v.", "zh": "支付得起", "note": "cover the cost / the bills；这个用法比 pay for 更书面。" }
+          ],
+          "en": "Most people need a salary that allows them to meet their basic needs and have a reasonable quality of life.",
+          "why": "that allows them to 后面接两个动词原形 meet / have，共用一个 to——不要写成 to meet and to have，重复 to 反而累赘。"
+        },
+        {
+          "id": "up-work2",
+          "scene": "第三段：说同事和氛围同样重要",
+          "base": "The people you work with are also important.",
+          "need": [
+            { "w": "be just as important as", "alts": ["are just as important as", "is just as important as"], "pos": "句式", "zh": "和…一样重要", "note": "as ... as 中间用形容词原级，不能写 as more important as。" },
+            { "w": "the atmosphere in a workplace", "alts": ["the atmosphere at work"], "pos": "n. phr.", "zh": "工作场所的氛围", "note": "atmosphere 前用 the；介词用 in。" },
+            { "w": "make a difference to", "alts": ["makes a difference to", "make a huge difference to"], "pos": "v. phr.", "zh": "对…有影响", "note": "to 是介词，后面接名词或 how 从句。" }
+          ],
+          "en": "Friendly colleagues are just as important as the salary, because the atmosphere in a workplace can make a huge difference to how people feel.",
+          "why": "just as ... as 用来「拉平」两个因素，是讨论类作文里表「同样重要」最省事的句式，比 also very important 清楚得多。"
+        },
+        {
+          "id": "up-work3",
+          "scene": "第四段：说成就感来自哪里",
+          "base": "People also want to feel good about their work.",
+          "need": [
+            { "w": "job satisfaction", "alts": [], "pos": "n. phr.", "zh": "工作满意度", "note": "不可数，不加 a，也不加 s。" },
+            { "w": "come from", "alts": ["comes from"], "pos": "v. phr.", "zh": "来自", "note": "from 是介词；主语是单数时用 comes。" },
+            { "w": "professional achievements", "alts": ["professional achievement"], "pos": "n. phr.", "zh": "职业成就", "note": "achievements 复数；professional 修饰人时是「专业的」，修饰事时是「职业上的」。" }
+          ],
+          "en": "For many people, job satisfaction comes from professional achievements and the skills they learn rather than from the money they earn.",
+          "why": "come from A rather than from B，第二个 from 要保留，比较才清楚；they learn / they earn 是省略 that 的定语从句。"
+        },
+        {
+          "id": "up-work4",
+          "scene": "结论段：给最终判断",
+          "base": "Money is not the only thing.",
+          "need": [
+            { "w": "outweigh", "alts": ["outweighs"], "pos": "v.", "zh": "压过、大于", "note": "及物动词，直接接宾语，不加 than。" },
+            { "w": "motivators", "alts": ["motivator"], "pos": "n.", "zh": "激励因素", "note": "复数是 motivators；动词是 motivate，形容词是 motivated。" },
+            { "w": "while", "alts": ["although"], "pos": "conj.", "zh": "虽然", "note": "放句首引导让步从句，主句要给相反判断；while 后面不加 but。" }
+          ],
+          "en": "While salaries certainly affect people's choice of profession, money does not outweigh all other motivators.",
+          "why": "while 放句首表让步，主句必须转折；这是让步段最常见的开头。注意 while 从句里不能再用 but，中文的「虽然…但是」在英文里只能留一个。"
+        }
+      ]
+    },
+    {
+      "id": "up-ad",
+      "n": "广告与商业",
+      "d": "广告、消费、企业责任这类题",
+      "items": [
+        {
+          "id": "up-ad1",
+          "scene": "第二段：说广告的正向作用",
+          "base": "Ads tell people what they can buy.",
+          "need": [
+            { "w": "inform sb about", "alts": ["inform us about", "inform people about"], "pos": "v. phr.", "zh": "告知某人某事", "note": "inform sb about / of sth，不能写 inform us the choices（漏掉介词）。" },
+            { "w": "the choices available", "alts": ["the choices that are available"], "pos": "n. phr.", "zh": "可选的东西", "note": "available 后置修饰名词；放名词前意思会变。" },
+            { "w": "a key part of", "alts": ["a key part in"], "pos": "n. phr.", "zh": "…的重要组成部分", "note": "part 前用 a；part of 后面接整体。" }
+          ],
+          "en": "Advertisements inform us about the choices available and remain a key part of modern business.",
+          "why": "choices available 是「名词 + 后置形容词」，等于 the choices that are available，省掉从句更利落。两个谓语 inform / remain 共用一个主语。"
+        },
+        {
+          "id": "up-ad2",
+          "scene": "第三段：说广告在操控人",
+          "base": "Ads make people want things they do not need.",
+          "need": [
+            { "w": "persuade sb that", "alts": ["persuade us that", "persuade people that"], "pos": "v. phr.", "zh": "使某人相信", "note": "persuade sb that + 完整从句；persuade sb to do 是「说服某人做」。" },
+            { "w": "brand image", "alts": ["a brand image"], "pos": "n. phr.", "zh": "品牌形象", "note": "泛指时不加 s；具体某个品牌用 a brand image。" },
+            { "w": "a consumer culture", "alts": ["consumer culture"], "pos": "n. phr.", "zh": "消费文化", "note": "加 a 表示「一种」；consumer 作定语用单数。" }
+          ],
+          "en": "Advertisers try to persuade us that buying a product will make us happier, and in this way they strengthen a consumer culture.",
+          "why": "persuade sb that 后面是完整句子；in this way 回指前半句的手段，是把两句连起来最轻的连接词。"
+        },
+        {
+          "id": "up-ad3",
+          "scene": "第四段：说企业该承担社会责任",
+          "base": "Companies should do more than make money.",
+          "need": [
+            { "w": "social responsibilities", "alts": ["social responsibility"], "pos": "n. phr.", "zh": "社会责任", "note": "泛指多项时用复数；作不可数概念时用单数。" },
+            { "w": "treat employees well", "alts": ["treat their employees well"], "pos": "v. phr.", "zh": "善待员工", "note": "well 是副词，不能写 good；employees 复数。" },
+            { "w": "rather than exploiting", "alts": ["rather than exploit"], "pos": "conj. phr.", "zh": "而不是剥削", "note": "rather than 后面接动名词，和前面的动词保持平行。" }
+          ],
+          "en": "Companies have social responsibilities: they should treat their employees well rather than exploiting them to cut costs.",
+          "why": "冒号后面解释冒号前面的名词，是写作里最省力的展开方式；rather than 后面接动名词，和前面的 treat 呼应。"
+        },
+        {
+          "id": "up-ad4",
+          "scene": "结论段：收全文",
+          "base": "Companies should care about society, not only profit.",
+          "need": [
+            { "w": "place importance on", "alts": ["place as much importance on"], "pos": "v. phr.", "zh": "重视", "note": "on 是介词；place 在这里不是「地方」。" },
+            { "w": "as much ... as", "alts": [], "pos": "句式", "zh": "和…一样多", "note": "中间用不可数名词或原级形容词，不能用 more。" },
+            { "w": "financial objectives", "alts": ["financial objective"], "pos": "n. phr.", "zh": "财务目标", "note": "objectives 复数；比 money goals 正式。" }
+          ],
+          "en": "Companies should place as much importance on their social responsibilities as they do on their financial objectives.",
+          "why": "as much importance on A as they do on B：第二个 on 不能省，do 代替 place 避免重复动词。这是「两者并重」最工整的一句。"
+        }
+      ]
+    }
+  ]
+}
