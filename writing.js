@@ -830,7 +830,9 @@
   }
 
   function renderBlockReview(k) {
-    var logs = ST.logs.filter(function (l) { return l.block === k; }).slice(-20).reverse();
+    // 大作文以前记在 't2' 下，改名后旧记录也要能翻出来
+    var keys = k === 'logic' ? ['logic', 't2'] : [k];
+    var logs = ST.logs.filter(function (l) { return keys.indexOf(l.block) > -1; }).slice(-20).reverse();
     var rows = logs.length ? logs.map(function (l) {
       var idx = ST.logs.indexOf(l);
       return '<div class="w-card" style="margin-bottom:10px">' +
