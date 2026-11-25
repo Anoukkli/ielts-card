@@ -1,23 +1,24 @@
 /* 雅思复习 · 写作模块
-   四块：语法中译英 / 小作文骨架 / 大作文逻辑 / 复盘
-   数据写在 writing.json，进度存在本机 localStorage（ielts.write.v1）
+   四块：语法中译英 / 小作文骨架 / 主题翻译 / 复盘
+   大作文逻辑（四步）挪到「加练」里，不计入每日四块。
+   数据写在 writing.json + translate.json，进度存在本机 localStorage（ielts.write.v1）
    不联网、不花 API 费用；导出 JSON 后可交给 DSH 批改。 */
 (function () {
   'use strict';
 
   var KEY = 'ielts.write.v1';
   var INTERVALS = [1, 2, 4, 7, 15, 30, 60];
-  var PLAN = { g: 8, t1: 2, t2: 1 };
+  var PLAN = { g: 8, t1: 2, tr: 8 };
   var TARGET_MIN = 45;
-  var LABEL = { g: '语法中译英', t1: '小作文骨架', t2: '大作文逻辑', rev: '复盘与错句' };
+  var LABEL = { g: '语法中译英', t1: '小作文骨架', tr: '主题翻译', rev: '复盘与错句', logic: '大作文逻辑' };
   var META = {
     g: '8 句 · 约 15 分钟',
     t1: '2 条骨架 · 约 10 分钟',
-    t2: '1 题 · 约 15 分钟',
+    tr: '8 句 · 约 20 分钟',
     rev: '整理错句 · 约 5 分钟'
   };
 
-  var ST = null, DATA = null, ROUND = null, clock = null;
+  var ST = null, DATA = null, TR = null, ROUND = null, clock = null;
 
   function appEl() { return document.getElementById('app'); }
   function $(s, r) { return (r || document).querySelector(s); }
@@ -60,9 +61,10 @@
   function peekDay() { return ST.days[today()] || null; }
   function day() {
     var t = today();
-    if (!ST.days[t]) ST.days[t] = { started: Date.now(), done: { g: 0, t1: 0, t2: 0 }, rev: false, items: {} };
+    if (!ST.days[t]) ST.days[t] = { started: Date.now(), done: { g: 0, t1: 0, tr: 0 }, rev: false, items: {} };
     var d = ST.days[t];
-    d.done = d.done || { g: 0, t1: 0, t2: 0 };
+    d.done = d.done || { g: 0, t1: 0, tr: 0 };
+    if (d.done.tr == null) d.done.tr = 0;
     d.items = d.items || {};
     return d;
   }
@@ -79,7 +81,7 @@
   }
   function doneCount() {
     var n = 0;
-    ['g', 't1', 't2'].forEach(function (k) { if (blockDone(k)) n++; });
+    ['g', 't1', 'tr'].forEach(function (k) { if (blockDone(k)) n++; });
     if (blockDone('rev')) n++;
     return n;
   }
@@ -91,6 +93,7 @@
       var r = await fetch('writing.json?t=' + Date.now());
       if (!r.ok) throw new Error(r.status);
       DATA = await r.json();
+      ensureTR();            // 翻译素材拿不到也不影响其它三块
       return true;
     } catch (e) {
       appEl().innerHTML = '<div class="done"><div class="big">📭</div><h2>写作数据没加载上</h2>' +
@@ -100,6 +103,20 @@
       if (b) b.onclick = function () { DATA = null; openHub(); };
       return false;
     }
+  }
+
+  async function ensureTR() {
+    if (TR) return true;
+    try {
+      var r = await fetch('translate.json?t=' + Date.now());
+      if (!r.ok) throw new Error('load');
+      TR = await r.json();
+      if (!TR.sentences) TR.sentences = [];
+      return true;
+    } catch (e) { TR = { sentences: [] }; return false; }
+  }
+  function trById(id) {
+    return ((TR && TR.sentences) || []).filter(function (x) { return x.id === id; })[0];
   }
 
   /* ---------------- pick ---------------- */
@@ -142,6 +159,29 @@
     if (k === 't1') {
       var n = DATA.task1.length, dn = epochDay();
       return [DATA.task1[dn % n].id, DATA.task1[(dn + 5) % n].id];
+    }
+    if (k === 'tr') {
+      var pool2 = (TR && TR.sentences) || [];
+      if (!pool2.length) return [];
+      var due2 = [], new2 = [], later2 = [];
+      pool2.forEach(function (x) {
+        var st = ST.srs[x.id];
+        if (!st) new2.push(x);
+        else if (st.d <= t) due2.push(x);
+        else later2.push(x);
+      });
+      later2.sort(function (a, b) { return (ST.srs[a.id].s || 0) - (ST.srs[b.id].s || 0); });
+      var picked = seeded(due2, seed).concat(seeded(new2, seed + 11)).concat(later2);
+      // 先每类主题各取一句，再回头补满，避免一轮全是同一个话题
+      var out = [], seen = {};
+      picked.forEach(function (x) {
+        if (out.length >= PLAN.tr || seen[x.theme]) return;
+        seen[x.theme] = 1; out.push(x);
+      });
+      picked.forEach(function (x) {
+        if (out.length < PLAN.tr && out.indexOf(x) < 0) out.push(x);
+      });
+      return out.slice(0, PLAN.tr).map(function (x) { return x.id; });
     }
     var m = DATA.task2.length;
     return [DATA.task2[epochDay() % m].id];
@@ -206,10 +246,10 @@
     var d = peekDay();
     var elapsed = elapsedSec();
     var dots = '';
-    ['g', 't1', 't2', 'rev'].forEach(function (k) {
+    ['g', 't1', 'tr', 'rev'].forEach(function (k) {
       dots += '<div class="w-dot' + (blockDone(k) ? ' on' : '') + '"></div>';
     });
-    var rows = ['g', 't1', 't2', 'rev'].map(function (k) {
+    var rows = ['g', 't1', 'tr', 'rev'].map(function (k) {
       var st = blockDone(k) ? 'done' : 'todo';
       var n = k === 'rev' ? '' : (Math.min(d.done[k] || 0, blockTotal(k)) + '/' + blockTotal(k));
       var right = st === 'done' ? '✓ 完成' : (n || '待做');
@@ -223,7 +263,7 @@
 
     appEl().innerHTML =
       top('写作 · 今日') +
-      '<div class="w-intro">四块按顺序做，语法先热身，框架后收口。对照不是判卷，是让你看见差在哪。</div>' +
+      '<div class="w-intro">四块按顺序做，语法先热身，翻译后练手，框架最后收口。对照不是判卷，是让你看见差在哪。</div>' +
       '<div class="w-dots">' + dots + '</div>' +
       '<div class="w-timebar"><span>今日已用 <b>' + fmt(elapsed) + '</b> / 45:00</span>' +
       '<span class="' + (elapsed > TARGET_MIN * 60 ? 'w-over' : '') + '">' + (doneCount() === 4 ? '收工' : '') + '</span></div>' +
@@ -237,6 +277,10 @@
       '<div class="w-blk-main"><div class="w-blk-t">观点速练</div>' +
       '<div class="w-blk-s">90 秒想两个论点 · 3 题 · 治没话讲</div></div>' +
       '<div class="w-blk-r">' + (window.IDEAS ? window.IDEAS.summaryText() : '3 题') + '</div></button>' +
+      '<button class="w-blk" id="wstartLogic">' +
+      '<div class="w-blk-main"><div class="w-blk-t">大作文逻辑</div>' +
+      '<div class="w-blk-s">审题 → 论点 → 展开 → 参考 · 1 题 · 约 15 分钟</div></div>' +
+      '<div class="w-blk-r">4 步</div></button>' +
       '<div class="w-links">' +
       '<button class="w-link" id="wbank">错句库 · ' + bad + ' 条</button>' +
       '<button class="w-link" id="wexport">导出写作记录</button>' +
@@ -256,6 +300,7 @@
     $('#wstartIdea').onclick = function () {
       if (window.IDEAS) window.IDEAS.start(); else toast('观点库没加载上');
     };
+    $('#wstartLogic').onclick = function () { startLogic(); };
   }
 
   /* ---------------- 主体段专项 ---------------- */
@@ -342,12 +387,36 @@
   function startBlock(k) {
     var d = day();
     if (k === 'rev') { renderReviewMenu(); return; }
+    if (k === 'tr' && !TR) { ensureTR().then(function () { startBlock('tr'); }); return; }
+    if (k === 'tr' && !((TR && TR.sentences) || []).length) { renderTRFail(); return; }
     if (!d.items[k]) { d.items[k] = pickItems(k); save(); }
     var ids = d.items[k];
+    if (!ids.length) { renderTRFail(); return; }
     var i = d.done[k] || 0;
     if (i >= ids.length) { renderBlockDone(k); return; }
     ROUND = { k: k, ids: ids, i: i, step: 0, ans: {} };
     renderItem();
+  }
+
+  /* 大作文逻辑（四步）：只从加练进，不占每日四块 */
+  function startLogic() {
+    if (!DATA || !DATA.task2 || !DATA.task2.length) { toast('写作数据没加载上'); return; }
+    var item = DATA.task2[epochDay() % DATA.task2.length];
+    ROUND = { k: 'logic', ids: [item.id], i: 0, step: 0, ans: {} };
+    renderT2();
+  }
+
+  function renderTRFail() {
+    appEl().innerHTML = top(LABEL.tr, '') +
+      '<div class="done" style="flex:none;padding:22px 0 6px">' +
+      '<div class="big">📄</div><h2>翻译素材没加载上</h2>' +
+      '<p>确认 translate.json 和本页在同一目录</p></div>' +
+      '<button class="btn primary" id="wtrretry" style="margin-top:18px;justify-content:center">重试</button>';
+    bindBack(renderHub);
+    document.getElementById('wtrretry').onclick = function () {
+      TR = null;
+      ensureTR().then(function (ok) { if (ok) startBlock('tr'); else toast('还是没拿到 translate.json'); });
+    };
   }
 
   function renderBlockDone(k) {
@@ -356,7 +425,9 @@
     appEl().innerHTML = top(LABEL[k], '完成') +
       '<div class="done" style="flex:none;padding:22px 0 6px">' +
       '<div class="big">✅</div><h2>这块今天完成了</h2>' +
-      '<p>' + (k === 'g' ? '明天会按间隔把弱的再推回来' : '明天换新题') + '</p></div>' +
+      '<p>' + (k === 'g' ? '明天会按间隔把弱的再推回来'
+        : k === 'tr' ? '明天会换一批句子，错过的隔天再回来'
+          : '明天换新题') + '</p></div>' +
       (rows ? '<div class="w-k">今天写的</div>' + rows : '') +
       '<button class="btn primary" id="wbackhome" style="margin-top:22px;justify-content:center">回到今日</button>' +
       '<button class="btn" id="wreviewblock" style="margin-top:10px;width:100%;justify-content:center">复盘这块</button>';
@@ -383,6 +454,7 @@
   function renderItem() {
     if (ROUND.k === 'g') return renderG();
     if (ROUND.k === 't1') return renderT1();
+    if (ROUND.k === 'tr') return renderTR();
     return renderT2();
   }
 
@@ -429,6 +501,27 @@
       '</div><div id="wpanel"></div>';
     bindBack(renderHub);
     wireCheck(item, 't1');
+    startClock();
+  }
+
+  /* -------- 主题翻译 -------- */
+  function renderTR() {
+    var item = trById(ROUND.ids[ROUND.i]);
+    if (!item) return renderBlockDone('tr');
+    var chips = String(item.hint || '').split('/').map(function (h) {
+      return '<span class="w-chip">' + esc(h.trim()) + '</span>';
+    }).join('');
+    appEl().innerHTML =
+      head('tr', ROUND.i + 1, ROUND.ids.length, item.theme) +
+      '<div class="w-card">' +
+      '<div class="w-kicker"><span class="w-theme">' + esc(item.theme) + '</span></div>' +
+      '<div class="w-zh">' + esc(item.zh) + '</div>' +
+      '<div class="w-hint">关键词（顺序不用一致）' + chips + '</div>' +
+      '<textarea class="w-ta" id="wans" rows="3" autocapitalize="sentences" autocorrect="off" spellcheck="false" placeholder="用英文写一遍…"></textarea>' +
+      '<button class="btn primary" id="wcheck">对照参考</button>' +
+      '</div><div id="wpanel"></div>';
+    bindBack(renderHub);
+    wireCheck(item, 'tr');
     startClock();
   }
 
@@ -479,7 +572,7 @@
   }
 
   function gradesHTML(kind) {
-    if (kind === 'g' || kind === 't1') {
+    if (kind === 'g' || kind === 't1' || kind === 'tr') {
       return '<div class="w-grades">' +
         '<button class="grade bad" data-wr="bad">不会<small>明天再来</small></button>' +
         '<button class="grade meh" data-wr="meh">差一点<small>拼写 / 小错</small></button>' +
@@ -549,11 +642,11 @@
   /* ---------------- 大作文 ---------------- */
   function renderT2() {
     var item = DATA.task2.filter(function (x) { return x.id === ROUND.ids[0]; })[0];
-    if (!item) return renderBlockDone('t2');
+    if (!item) return renderBlockDone('logic');
     var step = ROUND.step;
 
     if (step === 0) {
-      appEl().innerHTML = head('t2', 1, 1, item.typeName) +
+      appEl().innerHTML = head('logic', 1, 1, item.typeName) +
         '<div class="w-card">' +
         '<div class="w-kicker">' + esc(item.typeName) + ' · 第 1 步：审题 + 立场</div>' +
         '<div class="w-en">' + esc(item.prompt) + '</div>' +
@@ -575,7 +668,7 @@
     }
 
     if (step === 1) {
-      appEl().innerHTML = head('t2', 1, 1, item.typeName) +
+      appEl().innerHTML = head('logic', 1, 1, item.typeName) +
         '<div class="w-card">' +
         '<div class="w-kicker">第 2 步：两个分论点</div>' +
         '<div class="w-hint">一行一个，只写论点句，不展开。两个论点要能撑住你刚才的立场。</div>' +
@@ -594,7 +687,7 @@
     }
 
     if (step === 2) {
-      appEl().innerHTML = head('t2', 1, 1, item.typeName) +
+      appEl().innerHTML = head('logic', 1, 1, item.typeName) +
         '<div class="w-card">' +
         '<div class="w-kicker">第 3 步：把第一个论点展开</div>' +
         '<div class="w-quote">' + esc(ROUND.ans.first) + '</div>' +
@@ -636,7 +729,7 @@
       '<div class="w-mine"><b>展开</b>' + esc(ROUND.ans.reason || '') + ' / ' + esc(ROUND.ans.example || '') +
       (ROUND.ans.link ? ' / ' + esc(ROUND.ans.link) : '') + '</div></div>';
 
-    appEl().innerHTML = head('t2', 1, 1, item.typeName) +
+    appEl().innerHTML = head('logic', 1, 1, item.typeName) +
       mineHTML +
       '<div class="w-card">' +
       '<div class="w-kicker">参考思路 · 参考立场：' + esc(item.stance || '') + '</div>' +
@@ -659,13 +752,11 @@
       var mine = ['立场：' + (ROUND.ans.stance || ''), '论点：' + (ROUND.ans.claims || ''),
         '展开：' + (ROUND.ans.reason || '') + ' / ' + (ROUND.ans.example || '') + ' / ' + (ROUND.ans.link || '')].join('\n');
       ST.logs.push({
-        d: today(), t: Date.now(), block: 't2', id: item.id,
+        d: today(), t: Date.now(), block: 'logic', id: item.id,
         zh: item.zh, mine: mine, ref: item.chain && item.chain[0] ? item.chain[0].claim : '', grade: 'done', score: null
       });
-      var d = day();
-      d.done.t2 = (d.done.t2 || 0) + 1;
       save();
-      renderBlockDone('t2');
+      renderBlockDone('logic');
     };
   }
 
@@ -706,7 +797,7 @@
 
   /* ---------------- 分块复盘 ---------------- */
   function renderReviewMenu() {
-    var blocks = [['g', '语法'], ['t1', '小作文'], ['t2', '大作文']];
+    var blocks = [['g', '语法'], ['t1', '小作文'], ['tr', '主题翻译'], ['logic', '大作文']];
     var rows = blocks.map(function (b) {
       var n = ST.logs.filter(function (l) { return l.block === b[0]; }).length;
       return '<button class="w-blk" data-rv="' + b[0] + '">' +
@@ -808,7 +899,7 @@
   function summaryText() {
     load();
     var d = peekDay();
-    if (!d) return '语法 · 小作文 · 大作文 · 复盘';
+    if (!d) return '语法 · 小作文 · 主题翻译 · 复盘';
     var n = doneCount();
     if (n >= 4) return '今日已完成 ✓';
     var mins = Math.floor(elapsedSec() / 60);
@@ -848,6 +939,8 @@
       '.w-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:12px}',
       '.w-kicker{font-size:11px;color:var(--dim);letter-spacing:.04em;margin-bottom:10px}',
       '.w-zh{font-size:16.5px;line-height:1.75;font-weight:600}',
+      '.w-theme{display:inline-block;background:var(--card2);border:1px solid var(--line);border-radius:7px;',
+      'padding:2px 9px;font-size:11px;color:var(--accent);letter-spacing:.02em}',
       '.w-en{font-size:15px;line-height:1.7;margin-top:2px}',
       '.w-hint{font-size:12px;color:var(--dim);line-height:1.9;margin-top:12px}',
       '.w-chip{display:inline-block;background:var(--card2);border-radius:7px;padding:2px 8px;margin:3px 5px 0 0;font-size:12px;color:var(--fg)}',

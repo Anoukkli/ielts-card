@@ -694,6 +694,7 @@
       if (g) g.onclick = renderClozeList;
       return;
     }
+    await ensureKw();          // 关键词素材拿不到也不影响填空
     var rows = CLOZE.items.map(function (it) {
       var rec = cRec(it.id), bs = blanksOf(it);
       var n = bs.filter(function (b) { return String(rec.v[b.k] || '').trim(); }).length;
@@ -705,16 +706,24 @@
         '<div class="e-zh cl-go">' + esc(tag) + ' ›</div>' +
         '</button>';
     }).join('');
+    var kwN = 0;
+    ((KW && KW.sets) || []).forEach(function (s) { kwN += (s.words || []).length; });
+    var kwRow = '<button class="e-card e-rec" id="kwentry">' +
+      '<div class="e-kicker">第三个视图 · ' + ((KW && KW.sets) || []).length + ' 组 · ' + kwN + ' 个词</div>' +
+      '<div class="e-en">关键词成句</div>' +
+      '<div class="e-zh">一次给 5 个词，各写一句，写完看搭配和介词</div>' +
+      '<div class="e-zh cl-go">进去写 ›</div></button>';
     appEl().innerHTML = top('二次填空 · 升级重写', CLOZE.items.length + ' 篇') +
       '<div class="e-intro">每段先给整段中文，照着中文写英文，写完再对照——记得最牢的是这一步。' +
       '<span class="cl-f">橙红色</span>是句式（题给的），<b>黑色</b>空格是你填的内容；只填短语，不写整句。</div>' +
-      stepper(3) + rows +
+      stepper(3) + kwRow + rows +
       '<div class="e-card"><div class="e-kicker">这五步就是复盘流程</div>' +
       (CLOZE.flow || []).map(function (f, i) {
         return '<div class="cl-flowrow"><b>' + (i + 1) + '</b><span>' + esc(f.n) + '</span>' + esc(f.d || '') + '</div>';
       }).join('') +
       '</div>';
     bindBack(renderRecords);
+    document.getElementById('kwentry').onclick = renderKwList;
     $$('[data-cl]').forEach(function (b) {
       b.onclick = function () { renderClozeFill(b.getAttribute('data-cl')); };
     });
@@ -889,6 +898,144 @@
     document.getElementById('clback2').onclick = renderClozeList;
   }
 
+  /* ============ 关键词成句：给 5 个词，各写一句，再看参考 ============
+     第三个视图，和「填空 / 对照」并列。不判对错，只看搭配和介词。 */
+  var KKEY = 'ielts.essay.kw.v1';
+  var KW = null, KST = null;
+
+  async function ensureKw() {
+    if (KW) return true;
+    try {
+      var r = await fetch('keywords.json?t=' + Date.now());
+      if (!r.ok) throw new Error('load');
+      KW = await r.json();
+      if (!KW.sets) KW.sets = [];
+      return true;
+    } catch (e) { return false; }
+  }
+  function kLoad() {
+    if (KST) return KST;
+    try { KST = JSON.parse(localStorage.getItem(KKEY) || '{}') || {}; } catch (e) { KST = {}; }
+    return KST;
+  }
+  function kSave() {
+    try { localStorage.setItem(KKEY, JSON.stringify(KST || {})); } catch (e) { toast('存不进去：检查存储设置'); }
+  }
+  function kRec(setId) {
+    kLoad();
+    if (!KST[setId]) KST[setId] = { v: {}, seen: {} };
+    if (!KST[setId].v) KST[setId].v = {};
+    if (!KST[setId].seen) KST[setId].seen = {};
+    return KST[setId];
+  }
+  function kwSetById(id) {
+    return ((KW && KW.sets) || []).filter(function (x) { return x.id === id; })[0];
+  }
+
+  async function renderKwList() {
+    clearTimer();
+    var ok = await ensureKw();
+    if (!ok || !(KW.sets || []).length) {
+      appEl().innerHTML = top('关键词成句', '') +
+        '<div class="e-done"><div class="e-big">🔑</div><h2>关键词没加载上</h2>' +
+        '<p>确认 keywords.json 和本页放在同一目录，然后刷新</p>' +
+        '<button class="e-btn" id="kwagain" style="margin-top:18px">重试</button></div>';
+      bindBack(renderClozeList);
+      document.getElementById('kwagain').onclick = function () { KW = null; renderKwList(); };
+      return;
+    }
+    var rows = KW.sets.map(function (s) {
+      var rec = kRec(s.id);
+      var n = (s.words || []).filter(function (w) { return String(rec.v[w.w] || '').trim(); }).length;
+      return '<button class="e-card e-rec" data-kw="' + esc(s.id) + '">' +
+        '<div class="e-kicker">' + (s.words || []).length + ' 个词 · ' + (s.d || '') + '</div>' +
+        '<div class="e-en">' + esc(s.n) + '</div>' +
+        '<div class="e-zh cl-go">' + (n ? '写了 ' + n + '/' + (s.words || []).length : '还没开始') + ' ›</div>' +
+        '</button>';
+    }).join('');
+    appEl().innerHTML = top('关键词成句', KW.sets.length + ' 组') +
+      '<div class="e-intro">一次给 5 个词。每个词写一句和雅思写作有关的句子，写完点「看参考」，' +
+      '对一下搭配和介词。不判对错，只要句子说得通就算练到。</div>' +
+      rows +
+      '<button class="e-link" id="kwback">返回二次填空</button>';
+    bindBack(renderClozeList);
+    document.getElementById('kwback').onclick = renderClozeList;
+    $$('[data-kw]').forEach(function (b) {
+      b.onclick = function () { renderKwSet(b.getAttribute('data-kw')); };
+    });
+  }
+
+  function renderKwSet(id) {
+    clearTimer();
+    var set = kwSetById(id);
+    if (!set) return renderKwList();
+    var rec = kRec(id);
+    var words = set.words || [];
+
+    function cards() {
+      return words.map(function (w, i) {
+        var v = String(rec.v[w.w] || '');
+        var seen = !!rec.seen[w.w];
+        return '<div class="e-card kw-card" data-w="' + esc(w.w) + '">' +
+          '<div class="kw-head"><span class="kw-num">' + (i + 1) + '</span>' +
+          '<b class="kw-w">' + esc(w.w) + '</b><span class="kw-pos">' + esc(w.pos || '') + '</span>' +
+          '<span class="kw-zh">' + esc(w.zh || '') + '</span></div>' +
+          '<textarea class="kw-ta" rows="3" spellcheck="false" autocapitalize="sentences" placeholder="用 ' + esc(w.w) + ' 写一句…">' + esc(v) + '</textarea>' +
+          '<button class="e-link kw-see" data-see="' + esc(w.w) + '">' + (seen ? '收起参考' : '看参考') + '</button>' +
+          '<div class="kw-ref"' + (seen ? '' : ' hidden') + '>' +
+          '<div class="kw-sec">模型句</div>' +
+          (w.models || []).map(function (m) { return '<div class="kw-model">' + esc(m) + '</div>'; }).join('') +
+          '<div class="kw-sec">固定搭配</div>' +
+          '<div class="kw-cols">' + (w.coll || []).map(function (c) { return '<span class="kw-col">' + esc(c) + '</span>'; }).join('') + '</div>' +
+          '<div class="kw-sec">常见错法</div>' +
+          (w.pit || []).map(function (p) { return '<div class="kw-pit">· ' + esc(p) + '</div>'; }).join('') +
+          '</div></div>';
+      }).join('');
+    }
+
+    function count() {
+      return words.filter(function (w) { return String(rec.v[w.w] || '').trim(); }).length;
+    }
+
+    appEl().innerHTML = top(set.n + ' · 关键词', count() + '/' + words.length) +
+      '<div class="e-intro">先自己写，写完再看参考。参考句不是唯一答案，看的是搭配对不对。</div>' +
+      '<div class="kw-list" id="kwlist">' + cards() + '</div>' +
+      '<button class="e-link" id="kwclear">清空重写</button>' +
+      '<button class="e-link" id="kwback2">返回关键词列表</button>';
+    bindBack(renderKwList);
+
+    function sync() {
+      var c = document.getElementById('kwc');
+      var top2 = document.querySelector('.e-count');
+      if (top2) top2.textContent = count() + '/' + words.length;
+    }
+
+    $$('.kw-ta').forEach(function (ta) {
+      ta.addEventListener('input', function () {
+        var card = ta.closest('.kw-card');
+        rec.v[card.getAttribute('data-w')] = ta.value;
+        kSave();
+        sync();
+      });
+    });
+    $$('[data-see]').forEach(function (b) {
+      b.onclick = function () {
+        var k = b.getAttribute('data-see');
+        var card = b.closest('.kw-card');
+        var box = card.querySelector('.kw-ref');
+        var willShow = box.hasAttribute('hidden');
+        if (willShow) box.removeAttribute('hidden'); else box.setAttribute('hidden', '');
+        rec.seen[k] = willShow ? 1 : 0;
+        b.textContent = willShow ? '收起参考' : '看参考';
+        kSave();
+      };
+    });
+    document.getElementById('kwclear').onclick = function () {
+      rec.v = {}; rec.seen = {}; kSave(); renderKwSet(id);
+    };
+    document.getElementById('kwback2').onclick = renderKwList;
+  }
+
   /* ---------------- css ---------------- */
   function injectCSS() {
     if (document.getElementById('e-style')) return;
@@ -993,7 +1140,25 @@
       '.cl-chunk b{color:var(--cl-frame)}',
       '.cl-chunk span{color:var(--dim);font-size:12px}',
       '.cl-ex{color:var(--dim);font-size:11.5px;line-height:1.6;margin-top:2px}',
-      '.cl-go{margin-top:8px;color:var(--accent)}'
+      '.cl-go{margin-top:8px;color:var(--accent)}',
+      '.kw-card{margin-bottom:12px}',
+      '.kw-head{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}',
+      '.kw-num{font-size:11px;color:var(--dim);font-variant-numeric:tabular-nums;min-width:12px}',
+      '.kw-w{font-size:19px;letter-spacing:.01em}',
+      '.kw-pos{font-size:11px;color:var(--dim)}',
+      '.kw-zh{font-size:12.5px;color:var(--dim)}',
+      '.kw-ta{width:100%;margin-top:10px;border:1px solid var(--line);border-radius:12px;background:var(--card2);',
+      'color:var(--fg);padding:11px 12px;font-size:15px;line-height:1.6;font-family:inherit;resize:vertical;outline:none}',
+      '.kw-ta:focus{border-color:var(--accent)}',
+      '.kw-see{width:auto;margin:10px 0 0;padding:6px 0;border:0;text-align:left;color:var(--accent)}',
+      '.kw-ref{border-top:1px solid var(--line);margin-top:8px;padding-top:10px}',
+      '.kw-ref[hidden]{display:none}',
+      '.kw-sec{font-size:10px;letter-spacing:.06em;color:var(--dim);margin:10px 0 4px}',
+      '.kw-sec:first-child{margin-top:0}',
+      '.kw-model{font-size:14px;line-height:1.65;padding:6px 0 6px 10px;border-left:2px solid var(--good);margin-bottom:4px}',
+      '.kw-cols{display:flex;flex-wrap:wrap;gap:6px}',
+      '.kw-col{font-size:12px;background:var(--card2);border-radius:7px;padding:3px 8px;color:var(--fg)}',
+      '.kw-pit{font-size:12px;line-height:1.7;color:var(--dim)}'
     ].join('\n');
     var st = document.createElement('style');
     st.id = 'e-style';
@@ -1018,6 +1183,13 @@
     review: function () { open().then(function () { renderRecords(); }); },
     cloze: function (id, view) {
       open().then(function () {
+        if (id === 'kw') {
+          ensureKw().then(function (ok) {
+            if (ok && view && kwSetById(view)) renderKwSet(view);
+            else renderKwList();
+          });
+          return;
+        }
         ensureCloze().then(function (ok) {
           if (ok && id && itemById(id)) {
             if (view === 'ref') renderClozeCheck(id);

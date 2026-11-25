@@ -1,0 +1,130 @@
+{
+  "note": "关键词成句：给 5 个词，各写一句和雅思写作有关的句子，再对照模型句、固定搭配和常见错法。不判对错。",
+  "sets": [
+    {
+      "id": "kw-env", "n": "环境", "d": "环境和城市话题的高频动词与名词",
+      "words": [
+        { "w": "prohibit", "pos": "v.", "zh": "禁止",
+          "models": ["Many cities prohibit smoking in public places.", "The law prohibits shops from giving out free plastic bags."],
+          "coll": ["prohibit sth", "prohibit sb from doing sth"],
+          "pit": ["不能说 prohibit sb to do，必须是 from doing", "名词是 prohibition，不是 prohibitment"] },
+        { "w": "reduce", "pos": "v.", "zh": "减少",
+          "models": ["We should reduce the amount of plastic we use.", "The new tax is designed to reduce waste."],
+          "coll": ["reduce the amount of", "reduce costs", "reduce waste"],
+          "pit": ["reduce 后直接接名词，不加 down（reduce down 是错的）", "reduce by 10% 是降幅，reduce to 10% 是降到"] },
+        { "w": "waste", "pos": "n./v.", "zh": "垃圾；浪费",
+          "models": ["Food waste is a serious problem in rich countries.", "A lot of money is wasted on packaging."],
+          "coll": ["food waste", "household waste", "a waste of time"],
+          "pit": ["waste 作「垃圾」时不可数，不说 a waste", "a waste of + 名词 才是可数用法"] },
+        { "w": "reuse", "pos": "v.", "zh": "重复使用",
+          "models": ["Shops can reuse boxes instead of buying new ones.", "Reusing bottles saves both money and energy."],
+          "coll": ["reuse packaging", "reuse water"],
+          "pit": ["前缀 re- 直接加在动词前，不加连字符", "主语是动作时用动名词 Reusing…，谓语用单数"] },
+        { "w": "pollute", "pos": "v.", "zh": "污染",
+          "models": ["Factories pollute the river with chemicals.", "The air is polluted by traffic."],
+          "coll": ["pollute the air / water", "be polluted by"],
+          "pit": ["名词 pollution 不可数，不说 a pollution", "polluted 是形容词，the polluted river"] }
+      ]
+    },
+    {
+      "id": "kw-data", "n": "数据描述", "d": "Task 1 里反复用的四个词",
+      "words": [
+        { "w": "proportion", "pos": "n.", "zh": "比例",
+          "models": ["The proportion of young people rose sharply.", "A high proportion of workers now use the internet."],
+          "coll": ["the proportion of", "a high / low proportion of"],
+          "pit": ["proportion 可数，常用 the proportion of + 名词", "说「占 20%」用 account for 20%，不说 the proportion is 20%"] },
+        { "w": "increase", "pos": "n./v.", "zh": "增加",
+          "models": ["There was a slight increase in 2005.", "Sales increased by ten percent last year."],
+          "coll": ["an increase in", "increase by 10%", "increase to 50%"],
+          "pit": ["名词后面接 in，不是 of", "by 接幅度，to 接最终数值"] },
+        { "w": "peak", "pos": "n./v.", "zh": "最高点；达到最高点",
+          "models": ["Sales peaked at 200 units in June.", "Numbers reached a peak of 500 in 2010."],
+          "coll": ["peak at", "reach a peak of"],
+          "pit": ["peak at 后面接数值，不接 to", "peak 作名词可数，用 a peak"] },
+        { "w": "remain", "pos": "v.", "zh": "保持",
+          "models": ["The figure remained stable until 2010.", "Country A remained the highest throughout."],
+          "coll": ["remain stable", "remain the highest", "remain unchanged"],
+          "pit": ["remain 是系动词，后面接形容词，不接副词（remain stably 错）", "remain 没有进行时，不说 is remaining"] },
+        { "w": "decline", "pos": "n./v.", "zh": "下降",
+          "models": ["The number declined steadily after 1990.", "There was a sharp decline in sales."],
+          "coll": ["a decline in", "decline sharply"],
+          "pit": ["decline 作动词不及物，后面不直接接宾语", "decline 作名词可数，用 a decline"] }
+      ]
+    },
+    {
+      "id": "kw-work", "n": "工作方式", "d": "远程办公、效率、平衡",
+      "words": [
+        { "w": "flexible", "pos": "adj.", "zh": "灵活的",
+          "models": ["Flexible hours help parents with young children.", "Companies are offering more flexible working arrangements."],
+          "coll": ["flexible hours", "flexible working"],
+          "pit": ["副词是 flexibly，修饰动词时才用", "不说 flexible to do，用 free to do"] },
+        { "w": "commute", "pos": "v./n.", "zh": "通勤",
+          "models": ["She commutes to work by train.", "A long commute leaves little time for family."],
+          "coll": ["commute to work", "a long commute"],
+          "pit": ["commute 后面接 to + 地点", "commute 作名词可数，用 a commute"] },
+        { "w": "distraction", "pos": "n.", "zh": "让人分心的事",
+          "models": ["Social media is a major distraction at work.", "Working from home removes many distractions."],
+          "coll": ["a distraction from", "without distraction"],
+          "pit": ["动词是 distract，distract sb from sth", "distraction 可数，用 a distraction"] },
+        { "w": "productive", "pos": "adj.", "zh": "高效的",
+          "models": ["People are often more productive at home.", "The morning is my most productive time."],
+          "coll": ["highly productive", "productive time"],
+          "pit": ["名词是 productivity", "productive 后不接 of，不说 productive of work"] },
+        { "w": "balance", "pos": "n./v.", "zh": "平衡",
+          "models": ["It is hard to balance work and family.", "Employees want a better work-life balance."],
+          "coll": ["balance A and B", "strike a balance between A and B", "work-life balance"],
+          "pit": ["两者之间用 between，三者以上才用 among", "strike a balance 是固定搭配，不用 make"] }
+      ]
+    },
+    {
+      "id": "kw-edu", "n": "教育", "d": "学习、动机、机会",
+      "words": [
+        { "w": "practical", "pos": "adj.", "zh": "实用的",
+          "models": ["Schools should teach practical skills.", "Students need practical experience, not just theory."],
+          "coll": ["practical skills", "practical experience"],
+          "pit": ["practical 是「实用的」，practicable 是「可行的」，别混", "practical 后接名词，不接 to do"] },
+        { "w": "motivate", "pos": "v.", "zh": "激励",
+          "models": ["Good teachers motivate students to read more.", "Higher pay does not always motivate workers."],
+          "coll": ["motivate sb to do", "highly motivated"],
+          "pit": ["motivate sb to do，不接 for doing", "名词是 motivation，不可数"] },
+        { "w": "graduate", "pos": "v./n.", "zh": "毕业；毕业生",
+          "models": ["She graduated from university in 2020.", "Many graduates cannot find a job."],
+          "coll": ["graduate from", "a university graduate"],
+          "pit": ["考试里保守用 graduate from，不省略 from", "graduate 作名词指人，毕业这件事是 graduation"] },
+        { "w": "opportunity", "pos": "n.", "zh": "机会",
+          "models": ["Online courses give students more opportunities.", "Everyone should have an opportunity to study."],
+          "coll": ["an opportunity to do", "equal opportunities"],
+          "pit": ["可数，单数要加 an", "opportunity to do，不用 for doing（for 后接名词）"] },
+        { "w": "develop", "pos": "v.", "zh": "培养；发展",
+          "models": ["Reading helps children develop their imagination.", "Schools should help students develop social skills."],
+          "coll": ["develop skills", "develop an interest in"],
+          "pit": ["develop 后直接接名词，不接 to do", "兴趣用 develop an interest，不用 grow an interest"] }
+      ]
+    },
+    {
+      "id": "kw-biz", "n": "商业与政策", "d": "价格、执行、替代方案",
+      "words": [
+        { "w": "affordable", "pos": "adj.", "zh": "负担得起的",
+          "models": ["The city needs more affordable housing.", "Public transport should be affordable for everyone."],
+          "coll": ["affordable housing", "affordable for low-income families"],
+          "pit": ["afford 是动词，用 can afford to do", "affordable 前不加 more，比较级是 more affordable"] },
+        { "w": "charge", "pos": "n./v.", "zh": "收费",
+          "models": ["Shops now charge five pence per bag.", "There is a small charge for delivery."],
+          "coll": ["charge sb for sth", "a small charge"],
+          "pit": ["charge sb for sth，介词用 for", "charge 作名词可数，用 a charge"] },
+        { "w": "enforce", "pos": "v.", "zh": "执行（法律、规定）",
+          "models": ["It is difficult to enforce a ban on small shops.", "The rules are not strictly enforced."],
+          "coll": ["enforce a law / rule / ban"],
+          "pit": ["名词是 enforcement，不是 enforce", "不说 enforce sb to do"] },
+        { "w": "alternative", "pos": "n./adj.", "zh": "替代品；替代的",
+          "models": ["Paper bags are not a good alternative.", "We need to find alternative sources of energy."],
+          "coll": ["an alternative to", "alternative energy"],
+          "pit": ["alternative to，不接 for", "alternative 可数，用 an alternative"] },
+        { "w": "reputation", "pos": "n.", "zh": "名声",
+          "models": ["The company has a good reputation for service.", "One bad product can damage a brand's reputation."],
+          "coll": ["a reputation for", "damage a reputation"],
+          "pit": ["可数，用 a reputation", "介词用 for，表示「因什么出名」"] }
+      ]
+    }
+  ]
+}

@@ -1,10 +1,10 @@
 ﻿/* 雅思复习 · 离线缓存
    页面导航走「网络优先」：在线时永远拿最新 HTML，离线才用缓存；
    题库 json 也走网络优先；其余静态资源缓存优先。 */
-const CACHE = 'ielts-v25';
+const CACHE = 'ielts-v26';
 const SHELL = ['./', './index.html', './writing.js', './patterns.js', './ideas.js', './essay.js', './backup.js', './manifest.webmanifest',
                './icon-192.png', './icon-512.png'];
-const NETFIRST = ['deck.json', 'writing.json', 'patterns.json', 'ideas.json', 'essay.json', 'cloze.json'];
+const NETFIRST = ['deck.json', 'writing.json', 'patterns.json', 'ideas.json', 'essay.json', 'cloze.json', 'translate.json', 'keywords.json'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
