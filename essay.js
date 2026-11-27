@@ -145,8 +145,8 @@
         '</div>';
     }
     appEl().innerHTML = top('成篇套模板', '参考版') +
-      '<div class="e-intro">每段上面给写法参考：这一段写几句、每句干什么、可以套哪些短句式、一句例句。' +
-      '下面一个框，你用整段英文自己写。写不出就往上翻，不要求照抄。</div>' +
+      '<div class="e-intro">每段上面给三个整段句式（五类题型各一套），选一个、填四个空就是一段；' +
+      '下面还是一个框，你写自己的话。写不出就往上翻，或者展开「四层拆解」看这一句该写什么。</div>' +
       '<div class="e-stat"><b>' + ST.logs.length + '</b> 篇已走过</div>' +
       '<button class="e-link" id="erecords" style="margin:0 0 12px;border-color:var(--accent);color:var(--fg)">成篇记录 / 复盘 · ' + ST.logs.length + ' 篇 ›</button>' +
       '<button class="e-link" id="eclozelist" style="margin:0 0 12px;border-color:var(--cl-frame);color:var(--cl-frame)">二次填空 · 把成篇改成高分版 ›</button>' +
@@ -282,10 +282,162 @@
         '</div>';
     }).join('');
     return '<div class="e-refbox">' +
-      '<div class="e-refhead">' + esc(kind.hint || '') + '</div>' + rows +
+      '<div class="e-refhead">' + esc(kind.hint || '') + '</div>' +
+      '<div id="tp-' + segId + '"></div>' +
+      (rows ? '<details class="e-idea e-fold"><summary>这段拆成四层看（只有结论、没话讲时看）</summary>' +
+        rows + '</details>' : '') +
       (kind.model ? '<details class="e-model"><summary>看一段完整示范（另一道题，别照抄）</summary>' +
         '<p>' + esc(kind.model) + '</p></details>' : '') +
       '</div>';
+  }
+
+  /* 整段句式：3 选 1 → 填空 → 一键填到下面框 */
+  function tplOf(segId) {
+    var seg = segById(segId);
+    var kind = (seg && DATA.kinds[seg.kind]) || {};
+    return { kind: kind, t: kind.tpl || null };
+  }
+
+  function shortLabel(kind, s) {
+    return (kind.tpl && kind.tpl.short && kind.tpl.short[s]) || (kind.tpl && kind.tpl.labels && kind.tpl.labels[s]) || s;
+  }
+
+  function frameHTML(kind, f) {
+    return esc(f).replace(/\{(\w+)\}/g, function (m, s) {
+      return '<i class="e-slot">' + esc(shortLabel(kind, s)) + '</i>';
+    });
+  }
+
+  function fstate(id) {
+    R.f = R.f || {};
+    var st = R.f[id] || (R.f[id] = { fb: -1, sv: {} });
+    st.sv = st.sv || {};
+    if (typeof st.fb !== 'number') st.fb = -1;
+    return st;
+  }
+
+  function assemble(kind, frame, sv) {
+    return String(frame || '').replace(/\{(\w+)\}/g, function (m, s) {
+      var v = String((sv || {})[s] || '').trim();
+      return v || '______';
+    });
+  }
+
+  function emptyCount(t, sv) {
+    return (t.slots || []).filter(function (s) { return !String((sv || {})[s] || '').trim(); }).length;
+  }
+
+  function fillLabel(id, t, st, kind) {
+    var empty = emptyCount(t, st.sv);
+    var cur = String((R.w || {})[id] || '').trim();
+    var asm = st.fb >= 0 ? assemble(kind, t.frames[st.fb], st.sv).trim() : '';
+    var head = (cur && cur !== asm) ? '覆盖下面框' : '填到下面框';
+    return head + (empty ? '（还空 ' + empty + ' 个）' : '');
+  }
+
+  /* 同一篇里同类型的另一段已经用了哪个句式 */
+  function siblingFrame(id) {
+    var seg = segById(id);
+    var plan = (typeById(R.type) || {}).plan || [];
+    var hit = null;
+    plan.forEach(function (s) {
+      if (s === id) return;
+      var sg = segById(s);
+      if (!sg || sg.kind !== seg.kind) return;
+      var st = (R.f || {})[s];
+      if (st && st.fb >= 0) hit = { name: sg.name, fb: st.fb };
+    });
+    return hit;
+  }
+
+  function tplHTML(id) {
+    var o = tplOf(id), t = o.t, kind = o.kind;
+    if (!t || !t.frames || !t.frames.length) return '';
+    var st = fstate(id);
+    var opts = t.frames.map(function (f, i) {
+      return '<div class="e-tpl' + (st.fb === i ? ' on' : '') + '" data-fb="' + i + '">' +
+        '<span class="e-tpl-n">' + 'ABCDE'.charAt(i) + '</span>' +
+        '<span class="e-tpl-t">' + frameHTML(kind, f) + '</span></div>';
+    }).join('');
+    var extra = '';
+    if (st.fb >= 0) {
+      var slots = (t.slots || []).map(function (s) {
+        return '<label class="e-sl"><span>' + esc(shortLabel(kind, s)) + '</span>' +
+          '<textarea rows="2" data-s="' + s + '" placeholder="' + esc((t.labels || {})[s] || '') + '">' +
+          esc(st.sv[s] || '') + '</textarea></label>';
+      }).join('');
+      extra = '<div class="e-slots">' + slots + '</div>' +
+        '<div class="e-tplprev">' + esc(assemble(kind, t.frames[st.fb], st.sv)) + '</div>' +
+        '<button class="e-fillbtn" data-fill="' + id + '">' + esc(fillLabel(id, t, st, kind)) + '</button>';
+    }
+    var sib = siblingFrame(id);
+    var tip = '点一个，填完空就是整段';
+    var tipCls = '';
+    if (st.fb >= 0 && sib && sib.fb === st.fb) {
+      tip = sib.name + '已经用了 ' + 'ABCDE'.charAt(sib.fb) + '，这段换个结构，别两段一个样';
+      tipCls = ' warn';
+    }
+    return '<div class="e-tplbox"><div class="e-tplh">整段句式 · ' + t.frames.length + ' 选 1' +
+      '<span class="' + tipCls.trim() + '">' + esc(tip) + '</span></div>' + opts + extra + '</div>';
+  }
+
+  function refreshSibTips(id) {
+    var seg = segById(id);
+    var plan = (typeById(R.type) || {}).plan || [];
+    plan.forEach(function (s) {
+      if (s === id) return;
+      var sg = segById(s);
+      if (!sg || sg.kind !== seg.kind) return;
+      var box = document.getElementById('tp-' + s);
+      var sp = box && box.querySelector('.e-tplh span');
+      if (!sp) return;
+      var st = (R.f || {})[s], sb = siblingFrame(s);
+      if (st && st.fb >= 0 && sb && sb.fb === st.fb) {
+        sp.className = 'warn';
+        sp.textContent = sb.name + '已经用了 ' + 'ABCDE'.charAt(sb.fb) + '，这段换个结构，别两段一个样';
+      } else {
+        sp.className = '';
+        sp.textContent = '点一个，填完空就是整段';
+      }
+    });
+  }
+
+  function paintTpl(id) {
+    var box = document.getElementById('tp-' + id);
+    if (!box) return;
+    var o = tplOf(id), t = o.t, kind = o.kind;
+    if (!t) { box.innerHTML = ''; return; }
+    box.innerHTML = tplHTML(id);
+    $$('[data-fb]', box).forEach(function (b) {
+      b.onclick = function () {
+        var st = fstate(id), i = parseInt(b.getAttribute('data-fb'), 10);
+        st.fb = (st.fb === i ? -1 : i);
+        paintTpl(id); refreshSibTips(id); draftSave();
+      };
+    });
+    $$('[data-s]', box).forEach(function (ta) {
+      ta.addEventListener('input', function () {
+        var st = fstate(id);
+        st.sv[ta.getAttribute('data-s')] = ta.value;
+        var prev = $('.e-tplprev', box), btn = $('[data-fill]', box);
+        if (prev && st.fb >= 0) prev.textContent = assemble(kind, t.frames[st.fb], st.sv);
+        if (btn) btn.textContent = fillLabel(id, t, st, kind);
+        draftSave();
+      });
+    });
+    var fb = $('[data-fill]', box);
+    if (fb) fb.onclick = function () {
+      var st = fstate(id);
+      if (st.fb < 0) return;
+      var txt = assemble(kind, t.frames[st.fb], st.sv);
+      var ta = document.querySelector('[data-w="' + id + '"]');
+      R.w = R.w || {};
+      R.w[id] = txt;
+      if (ta) { ta.value = txt; }
+      paintCheck(id); paintDone(typeById(R.type).plan); draftSave();
+      fb.textContent = fillLabel(id, t, st, kind);
+      if (ta && ta.focus) { try { ta.focus(); } catch (e) {} }
+    };
   }
 
   /* 只做粗检：是不是只有一句结论、有没有因果、有没有画面 */
@@ -294,7 +446,8 @@
     var words = (t.match(/[A-Za-z'][A-Za-z'-]*/g) || []).length;
     var sents = (t.match(/[.!?]+/g) || []).length;
     var hasCause = /\b(because|since|so|which in turn|as a result|therefore|thus|that is why|once|leads? to|means that)\b/i.test(t);
-    var hasPic = /\d/.test(t) || /\b(a|an|one|two|three)\s+[a-z-]+\s+(boy|girl|student|man|woman|family|mother|father|teacher|worker|shop|school|city|couple|child|driver|nurse)\b/i.test(t);
+    var hasPic = /\d/.test(t) ||
+      /\b(a|an|one|two|three|four|five|this|that)\s+([a-z][a-z-]*\s+)?(boy|girl|student|teenager|man|woman|family|mother|father|parent|teacher|worker|shop|school|city|couple|child|driver|nurse|farmer|clerk|graduate|commuter)\b/i.test(t);
     var out = [];
     if (words >= 20 && sents <= 1) out.push('只有一句，还是结论');
     if (words >= 20 && !hasCause) out.push('没写「为什么」');
@@ -331,15 +484,15 @@
         '</div>' +
         '<div class="e-reffold" id="rf-' + id + '">' + refHTML(id) + '</div>' +
         '<div class="e-segb">' +
-        '<textarea class="e-ta" data-w="' + id + '" rows="7" placeholder="照着上面的四层，用你自己的内容写整段。写不出就往上翻例句。">' +
+        '<textarea class="e-ta" data-w="' + id + '" rows="7" placeholder="选一个句式填完空，或在这里自己写整段。写不出就展开上面的「四层拆解」。">' +
         esc(R.w[id] || '') + '</textarea>' +
         '<div class="e-chk" id="ck-' + id + '"></div>' +
         '</div></div>';
     }).join('');
     var doneN = plan.filter(function (id) { return String((R.w || {})[id] || '').trim(); }).length;
     appEl().innerHTML = top(typeById(R.type).name, doneN + '/' + plan.length + ' 段') +
-      '<div class="e-intro">上面是这一段的写法参考（四层 + 例句），点「参考」可以收起。' +
-      '下面那个框写整段，不用照着句子抄，写你自己的内容。</div>' +
+      '<div class="e-intro">每段上面有 3 个整段句式，点一个，把四个空填上，就是一整段；' +
+      '凑不满点「填到下面框」，再在下面改成自己的话。也可以不选句式，直接在下面写。</div>' +
       cards +
       '<button class="e-btn" id="enext">看整篇</button>' +
       '<button class="e-link" id="eprev">上一步：题型</button>';
@@ -366,6 +519,7 @@
       });
     });
     plan.forEach(paintCheck);
+    plan.forEach(paintTpl);
     document.getElementById('enext').onclick = function () { R.step = 4; draftSave(); renderSkeleton(); };
     document.getElementById('eprev').onclick = function () { draftSave(); renderType(); };
   }
@@ -1319,6 +1473,26 @@
       '.e-reftog.on{color:var(--fg);border-color:var(--accent)}',
       '.e-reffold{background:var(--card2);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:12px 16px}',
       '.e-refhead{font-size:11.5px;color:var(--accent);line-height:1.65;margin-bottom:10px}',
+      '.e-tplbox{margin:0 0 8px}',
+      '.e-tplh{font-size:11px;color:var(--dim);margin-bottom:7px;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;letter-spacing:.3px}',
+      '.e-tplh span{font-size:10px;opacity:.75}',
+      '.e-tplh span.warn{color:var(--bad);opacity:1;font-size:10.5px}',
+      '.e-tpl{display:flex;gap:9px;padding:9px 11px;border:1px solid var(--line);border-radius:12px;margin-bottom:7px;cursor:pointer;background:var(--card);transition:border-color .15s}',
+      '.e-tpl:active{opacity:.85}',
+      '.e-tpl.on{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}',
+      '.e-tpl-n{font-size:11px;font-weight:700;color:var(--dim);line-height:1.9;min-width:11px}',
+      '.e-tpl.on .e-tpl-n{color:var(--accent)}',
+      '.e-tpl-t{font-size:12.5px;line-height:1.85;color:var(--fg);flex:1}',
+      '.e-slot{font-style:normal;color:var(--accent);border-bottom:1.5px solid currentColor;padding:0 3px;font-size:11px;white-space:nowrap}',
+      '.e-slots{display:flex;flex-direction:column;gap:9px;margin:11px 0 0}',
+      '.e-sl{display:block}',
+      '.e-sl>span{display:block;font-size:11px;color:var(--dim);margin-bottom:4px}',
+      '.e-sl textarea{width:100%;box-sizing:border-box;background:var(--card);border:1px solid var(--line);border-radius:10px;color:var(--fg);font:inherit;font-size:13px;line-height:1.65;padding:8px 10px;resize:vertical}',
+      '.e-sl textarea:focus{outline:0;border-color:var(--accent)}',
+      '.e-tplprev{font-size:12px;line-height:1.85;color:var(--fg);background:var(--card);border:1px dashed var(--line);border-radius:10px;padding:9px 11px;margin-top:9px;word-break:break-word}',
+      '.e-fillbtn{width:100%;border:1px solid var(--accent);background:transparent;color:var(--accent);border-radius:12px;padding:10px 12px;font-size:13px;font-weight:600;font-family:inherit;margin-top:8px;cursor:pointer}',
+      '.e-fillbtn:active{background:var(--accent);color:#fff}',
+      '.e-fold{margin-top:10px}',
       '.e-rl{padding:9px 0;border-top:1px dashed var(--line)}',
       '.e-rl:first-of-type{border-top:0}',
       '.e-rl-h{display:flex;align-items:baseline;gap:7px;flex-wrap:wrap}',
