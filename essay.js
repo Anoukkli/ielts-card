@@ -64,7 +64,7 @@
       if (!a.ok || !b.ok) throw new Error('load');
       DATA = await a.json();
       IDEAS = await b.json();
-      await ensureCloze();    // 填空素材拿不到也不影响主流程（内部已捕获）
+      ensureCloze();   // 填空素材后台预取，不挡首页渲染（内部已捕获失败）
       return true;
     } catch (e) {
       appEl().innerHTML = '<div class="e-done"><div class="e-big">📭</div><h2>模板或题目没加载上</h2>' +
@@ -127,7 +127,11 @@
     clearTimer();
     var p = nextPrompt();
     var draft = draftRead();
-    if (draft && (!draft.R || draft.R.v !== 2)) { draftClear(); draft = null; }
+    if (draft && draft.R && draft.R.v !== 4) {
+      // 旧草稿：题目和题型留着，写作页换成「上面参考、下面自己写」，旧填的空没法迁移
+      draft.R = { v: 4, p: draft.R.p, step: 3, claims: draft.R.claims || '', type: draft.R.type || '', w: {} };
+    }
+    if (draft && (!draft.R || draft.R.v !== 4)) { draftClear(); draft = null; }
     var resume = '';
     if (draft && draft.R) {
       var ago = Math.round((Date.now() - (draft.t || 0)) / 60000);
@@ -140,8 +144,9 @@
         '<button class="e-link" id="edrop">扔掉这篇，重新开始</button>' +
         '</div>';
     }
-    appEl().innerHTML = top('成篇套模板', 'v21') +
-      '<div class="e-intro">先判题型，再按段落填：每段三个句式选一个，只填内容块，不会拼出重复的句子。</div>' +
+    appEl().innerHTML = top('成篇套模板', '参考版') +
+      '<div class="e-intro">每段上面给写法参考：这一段写几句、每句干什么、可以套哪些短句式、一句例句。' +
+      '下面一个框，你用整段英文自己写。写不出就往上翻，不要求照抄。</div>' +
       '<div class="e-stat"><b>' + ST.logs.length + '</b> 篇已走过</div>' +
       '<button class="e-link" id="erecords" style="margin:0 0 12px;border-color:var(--accent);color:var(--fg)">成篇记录 / 复盘 · ' + ST.logs.length + ' 篇 ›</button>' +
       '<button class="e-link" id="eclozelist" style="margin:0 0 12px;border-color:var(--cl-frame);color:var(--cl-frame)">二次填空 · 把成篇改成高分版 ›</button>' +
@@ -154,7 +159,7 @@
       '<button class="e-btn" id="estart">' + (resume ? '开始新的一篇' : '开始：观点 → 判题型 → 逐段填') + '</button>';
     bindBack(function () { draftSave(); if (window.WRITING) window.WRITING.start(); });
     document.getElementById('estart').onclick = function () {
-      R = { v: 2, p: p, step: 1, claims: '', type: '', sel: {}, vals: {} };
+      R = { v: 4, p: p, step: 1, claims: '', type: '', w: {} };
       draftSave();
       renderClaims();
     };
@@ -248,124 +253,179 @@
     document.getElementById('eprev').onclick = function () { draftSave(); renderClaims(); };
   }
 
-  /* ---------------- 3 逐段填 ---------------- */
-  function fill(tpl, segId) {
-    return String(tpl).replace(/\{(\w+)\}/g, function (m, k) {
-      var v = R.vals[segId + '.' + k];
-      return v && v.trim() ? v.trim() : '___';
-    });
+  /* ---------------- 3 逐段写：上面参考，下面自己写 ---------------- */
+  function libLayer(id) { return ((DATA && DATA.lib) || {})[id]; }
+
+  function layersOf(segId) {
+    var seg = segById(segId);
+    if (!seg) return [];
+    var k = DATA.kinds[seg.kind] || {};
+    return (k.layers || []).map(libLayer).filter(Boolean);
   }
 
-  /* 填进去的部分标红；vals 可传已保存的段落数据 */
-  function fillHTML(tpl, segId, vals) {
-    vals = vals || R.vals;
-    return String(tpl).replace(/\{(\w+)\}/g, function (m, k) {
-      var v = vals[segId + '.' + k];
-      return v && v.trim()
-        ? '<span class="e-fill">' + esc(v.trim()) + '</span>'
-        : '___';
-    });
+  function refHTML(segId) {
+    var seg = segById(segId);
+    var kind = DATA.kinds[seg.kind] || {};
+    var rows = layersOf(segId).map(function (L, i) {
+      var stks = (L.stacks || []).map(function (s) {
+        return '<code>' + esc(String(s.t).replace(/\{(\w+)\}/g, '___')) + '</code>';
+      }).join('');
+      return '<div class="e-rl">' +
+        '<div class="e-rl-h"><b>' + (i + 1) + '</b>' +
+        '<span class="e-rl-zh">' + esc(L.zh) + '</span>' +
+        '<span class="e-rl-q">' + esc(L.q) + '</span></div>' +
+        '<div class="e-rl-ask">' + esc(L.ask) + '</div>' +
+        '<div class="e-rl-stk">' + stks + '</div>' +
+        (L.eg ? '<div class="e-rl-eg">例　' + esc(L.eg) + '</div>' : '') +
+        (L.noidea ? '<details class="e-idea"><summary>没话讲？三条路</summary><ul>' +
+          L.noidea.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></details>' : '') +
+        '</div>';
+    }).join('');
+    return '<div class="e-refbox">' +
+      '<div class="e-refhead">' + esc(kind.hint || '') + '</div>' + rows +
+      (kind.model ? '<details class="e-model"><summary>看一段完整示范（另一道题，别照抄）</summary>' +
+        '<p>' + esc(kind.model) + '</p></details>' : '') +
+      '</div>';
+  }
+
+  /* 只做粗检：是不是只有一句结论、有没有因果、有没有画面 */
+  function checkText(t) {
+    t = String(t || '');
+    var words = (t.match(/[A-Za-z'][A-Za-z'-]*/g) || []).length;
+    var sents = (t.match(/[.!?]+/g) || []).length;
+    var hasCause = /\b(because|since|so|which in turn|as a result|therefore|thus|that is why|once|leads? to|means that)\b/i.test(t);
+    var hasPic = /\d/.test(t) || /\b(a|an|one|two|three)\s+[a-z-]+\s+(boy|girl|student|man|woman|family|mother|father|teacher|worker|shop|school|city|couple|child|driver|nurse)\b/i.test(t);
+    var out = [];
+    if (words >= 20 && sents <= 1) out.push('只有一句，还是结论');
+    if (words >= 20 && !hasCause) out.push('没写「为什么」');
+    if (words >= 20 && !hasPic) out.push('没给具体的人或数字');
+    return { words: words, out: out };
+  }
+
+  function paintCheck(segId) {
+    var box = document.getElementById('ck-' + segId);
+    var ta = document.querySelector('[data-w="' + segId + '"]');
+    if (!box || !ta) return;
+    var r = checkText(ta.value);
+    var st = document.getElementById('st-' + segId);
+    if (st) st.textContent = r.words ? r.words + ' 词' : '';
+    if (!r.words) { box.innerHTML = ''; return; }
+    if (r.words < 20) { box.innerHTML = '<i class="e-miss">太短，至少写完整两三句</i>'; return; }
+    box.innerHTML = r.out.length
+      ? r.out.map(function (x) { return '<i class="e-miss">' + esc(x) + '</i>'; }).join('')
+      : '<i class="e-ok">四层都在，读一遍，挑一处改得更具体</i>';
   }
 
   function renderSegments() {
     clearTimer();
-    R.step = 3; draftSave();
+    R.step = 3; R.w = R.w || {}; draftSave();
     var plan = typeById(R.type).plan;
     var cards = plan.map(function (id, idx) {
       var seg = segById(id);
-      if (!seg) return '';
-      var kind = kindOf(seg);
-      var sel = R.sel[id] || 0;
-      var frames = kind.frames.map(function (f, i) {
-        return '<button class="e-opt' + (i === sel ? ' on' : '') + '" data-frame="' + i + '" data-in="' + id + '">' +
-          esc(f) + '</button>';
-      }).join('');
-      var inputs = kind.slots.map(function (s) {
-        var key = id + '.' + s;
-        return '<div class="e-slot"><label>' + esc(kind.labels[s] || s) + '</label>' +
-          '<input class="e-in" data-slot="' + key + '" value="' + esc(R.vals[key] || '') + '"></div>';
-      }).join('');
-      return '<div class="e-card" data-seg="' + id + '">' +
-        '<div class="e-kicker">' + (idx + 1) + '/' + plan.length + ' · ' + esc(seg.name) + '</div>' +
-        '<div class="e-opts">' + frames + '</div>' +
-        inputs +
-        '<div class="e-preview" id="prev-' + id + '">' + fillHTML(kind.frames[sel], id) + '</div>' +
-        '</div>';
+      return '<div class="e-card e-seg" id="seg-' + id + '">' +
+        '<div class="e-segh">' +
+        '<b class="e-segn">' + (idx + 1) + '</b>' +
+        '<span class="e-segname">' + esc(seg.name) + '</span>' +
+        '<span class="e-segst" id="st-' + id + '"></span>' +
+        '<button class="e-reftog on" data-ref="' + id + '">参考</button>' +
+        '</div>' +
+        '<div class="e-reffold" id="rf-' + id + '">' + refHTML(id) + '</div>' +
+        '<div class="e-segb">' +
+        '<textarea class="e-ta" data-w="' + id + '" rows="7" placeholder="照着上面的四层，用你自己的内容写整段。写不出就往上翻例句。">' +
+        esc(R.w[id] || '') + '</textarea>' +
+        '<div class="e-chk" id="ck-' + id + '"></div>' +
+        '</div></div>';
     }).join('');
-    appEl().innerHTML = top(typeById(R.type).name, '3/4') +
-      '<div class="e-intro">每段先点一个句式，再填空。空格只填内容，不写整句，所以不会拼重。</div>' +
+    var doneN = plan.filter(function (id) { return String((R.w || {})[id] || '').trim(); }).length;
+    appEl().innerHTML = top(typeById(R.type).name, doneN + '/' + plan.length + ' 段') +
+      '<div class="e-intro">上面是这一段的写法参考（四层 + 例句），点「参考」可以收起。' +
+      '下面那个框写整段，不用照着句子抄，写你自己的内容。</div>' +
       cards +
-      '<button class="e-btn" id="enext">生成整篇骨架</button>' +
+      '<button class="e-btn" id="enext">看整篇</button>' +
       '<button class="e-link" id="eprev">上一步：题型</button>';
     bindBack(function () { draftSave(); renderHub(); });
 
-    $$('[data-frame]').forEach(function (b) {
+    $$('[data-ref]').forEach(function (b) {
       b.onclick = function () {
-        var segId = b.getAttribute('data-in');
-        R.sel[segId] = +b.getAttribute('data-frame');
-        $$('[data-in="' + segId + '"]').forEach(function (x) { x.classList.toggle('on', x === b); });
-        updatePreview(segId);
-        draftSave();
+        var id = b.getAttribute('data-ref');
+        var box = document.getElementById('rf-' + id);
+        if (!box) return;
+        var show = box.style.display === 'none';
+        box.style.display = show ? 'block' : 'none';
+        b.classList.toggle('on', show);
       };
     });
-    $$('[data-slot]').forEach(function (inp) {
-      inp.addEventListener('input', function () {
-        R.vals[inp.getAttribute('data-slot')] = inp.value;
-        updatePreview(inp.getAttribute('data-slot').split('.')[0]);
+    $$('[data-w]').forEach(function (ta) {
+      ta.addEventListener('input', function () {
+        var id = ta.getAttribute('data-w');
+        R.w = R.w || {};
+        R.w[id] = ta.value;
+        paintCheck(id);
+        paintDone(plan);
         draftSave();
       });
     });
-    document.getElementById('enext').onclick = function () {
-      R.step = 4; draftSave(); renderSkeleton();
-    };
+    plan.forEach(paintCheck);
+    document.getElementById('enext').onclick = function () { R.step = 4; draftSave(); renderSkeleton(); };
     document.getElementById('eprev').onclick = function () { draftSave(); renderType(); };
   }
 
-  function updatePreview(segId) {
-    var seg = segById(segId);
-    if (!seg) return;
-    var kind = kindOf(seg);
-    var idx = R.sel[segId] || 0;
-    var box = document.getElementById('prev-' + segId);
-    if (box) box.innerHTML = fillHTML(kind.frames[idx], segId);
+  function paintDone(plan) {
+    var n = plan.filter(function (id) { return String((R.w || {})[id] || '').trim(); }).length;
+    var el = document.querySelector('.e-count');
+    if (el) el.textContent = n + '/' + plan.length + ' 段';
   }
 
-  /* ---------------- 4 骨架 ---------------- */
+  /* ---------------- 4 整篇 ---------------- */
   function renderSkeleton() {
     clearTimer();
     R.step = 4; draftSave();
     var plan = typeById(R.type).plan;
     var paras = plan.map(function (id) {
       var seg = segById(id);
-      var kind = kindOf(seg);
-      var idx = R.sel[id] || 0;
-      var vals = {};
-      kind.slots.forEach(function (s) { vals[id + '.' + s] = R.vals[id + '.' + s] || ''; });
-      return { id: id, name: seg.name, frame: kind.frames[idx], vals: vals, text: fill(kind.frames[idx], id) };
+      var t = String((R.w || {})[id] || '').trim();
+      return { id: id, name: seg.name, text: t, chk: checkText(t) };
     });
-    var body = paras.map(function (p) {
-      return '<div class="e-card"><div class="e-kicker">' + esc(p.name) + '</div>' +
-        '<div class="e-ref">' + fillHTML(p.frame, p.id, p.vals) + '</div></div>';
+    var body = paras.map(function (p, i) {
+      return '<div class="e-card"><div class="e-kicker">' + (i + 1) + ' · ' + esc(p.name) +
+        (p.text ? ' · ' + p.chk.words + ' 词' : '') + '</div>' +
+        '<div class="e-ref">' + (p.text ? esc(p.text) : '<span class="e-dimtext">这段还是空的</span>') + '</div></div>';
     }).join('');
-    appEl().innerHTML = top('整篇骨架', '4/4') +
+    var warn = [];
+    paras.forEach(function (p) {
+      if (!p.text) { warn.push(p.name + '：还是空的'); return; }
+      if (p.chk.words < 35) warn.push(p.name + '：偏短（' + p.chk.words + ' 词），理由段一般 50–80 词');
+      if (p.chk.out.length) warn.push(p.name + '：' + p.chk.out.join('、'));
+    });
+    var warnBox = warn.length
+      ? '<div class="e-card" style="border-color:var(--bad)"><div class="e-kicker" style="color:var(--bad)">还差这些</div>' +
+        warn.map(function (w) { return '<div class="e-plan"><b>·</b>' + esc(w) + '</div>'; }).join('') +
+        '<button class="e-link" id="ebackedit">回去补</button></div>'
+      : '<div class="e-card" style="border-color:var(--good)"><div class="e-kicker" style="color:var(--good)">每段都有结论、因果和画面</div>' +
+        '<div class="e-zh">计时抄一遍，看看多少分钟。</div></div>';
+    var total = paras.reduce(function (a, p) { return a + p.chk.words; }, 0);
+    appEl().innerHTML = top('整篇 · ' + total + ' 词', '4/4') +
       stepper(2) +
-      '<div class="e-intro">' + esc(typeById(R.type).name) + ' · 共 ' + paras.length + ' 段。' +
-      '<span style="color:var(--bad)">红色</span>是你填进去的内容。先读一遍，再保存。</div>' +
-      body +
-      '<div class="e-card"><div class="e-kicker">自检</div>' +
-      '<label class="e-check"><input type="checkbox">每一段都回答了题目的要求</label>' +
-      '<label class="e-check"><input type="checkbox">开头和结论没有用同一句话</label>' +
-      '<label class="e-check"><input type="checkbox">每个理由段都有 because 和例子</label>' +
-      '</div>' +
+      '<div class="e-intro">' + esc(typeById(R.type).name) + ' · ' + paras.length + ' 段。先读一遍，再保存。</div>' +
+      warnBox + body +
       '<button class="e-btn" id="efinish">保存这篇</button>' +
+      '<button class="e-link" id="ecopyall">复制整篇</button>' +
       '<button class="e-link" id="eprev">上一步：改某一段</button>';
     bindBack(function () { draftSave(); renderHub(); });
     document.getElementById('eprev').onclick = function () { draftSave(); renderSegments(); };
+    var be = document.getElementById('ebackedit');
+    if (be) be.onclick = function () { draftSave(); renderSegments(); };
+    document.getElementById('ecopyall').onclick = function () {
+      var t = paras.map(function (p) { return p.text; }).filter(Boolean).join('\n\n');
+      if (!t) { toast('还没写内容'); return; }
+      copyText(t);
+    };
     document.getElementById('efinish').onclick = function () {
       ST.logs.push({
-        v: 2, d: today(), t: Date.now(), p: R.p.id, type: R.type,
-        topic: R.p.topic, prompt: R.p.prompt,
-        claims: R.claims, paras: paras, edits: {}
+        v: 4, d: today(), t: Date.now(), p: R.p.id, type: R.type,
+        topic: R.p.topic, prompt: R.p.prompt, claims: R.claims,
+        paras: paras.map(function (p) { return { id: p.id, name: p.name, text: p.text }; }),
+        edits: {}
       });
       save();
       draftClear();
@@ -373,6 +433,21 @@
       toast('存好了');
       renderHub();
     };
+  }
+
+  function copyText(t) {
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(t).then(function () { toast('复制好了'); }, function () { toast('复制失败，长按选中吧'); });
+        return;
+      }
+    } catch (e) {}
+    var ta = document.createElement('textarea');
+    ta.value = t;
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); toast('复制好了'); } catch (e) { toast('复制失败，长按选中吧'); }
+    document.body.removeChild(ta);
   }
 
   /* ---------------- 记录与复盘 ---------------- */
@@ -416,6 +491,7 @@
   /* 段落纯文本 + 红色（用户填的）区间 */
   function plainOf(p, edited) {
     if (edited) return { text: edited, reds: [] };
+    if (p.blocks && p.blocks.length) return plainBlocks(p);
     if (!p.frame || !p.vals) return { text: p.text || '', reds: [] };
     var out = '', reds = [], last = 0, m, v;
     var re = /\{(\w+)\}/g;
@@ -429,6 +505,34 @@
     }
     out += p.frame.slice(last);
     return { text: out, reds: reds };
+  }
+
+  /* v3 记录：按 blocks（层 + 句式 + 内容）重建成带标红的段落文本 */
+  function plainBlocks(p) {
+    var out = '', reds = [];
+    (p.blocks || []).forEach(function (b) {
+      var L = libLayer(b.lid);
+      if (!L) return;
+      var stack = (L.stacks || [])[b.s] || (L.stacks || [])[0];
+      if (!stack) return;
+      var tpl = String(stack.t), last = 0, m, re = /\{(\w+)\}/g;
+      if (out) out += ' ';
+      while ((m = re.exec(tpl))) {
+        out += tpl.slice(last, m.index);
+        var val = String((b.v || {})[m[1]] || '').trim() || '___';
+        if (val !== '___') reds.push([out.length, out.length + val.length]);
+        out += val;
+        last = re.lastIndex;
+      }
+      out += tpl.slice(last);
+    });
+    if (p.free) {
+      if (out) out += ' ';
+      var st = out.length;
+      out += p.free;
+      reds.push([st, out.length]);
+    }
+    return { text: out.replace(/^([^A-Za-z]*)([a-z])/, function (m, a, b) { return a + b.toUpperCase(); }), reds: reds };
   }
 
   function renderRich(text, reds, marks) {
@@ -1178,6 +1282,59 @@
       '.e-slot label{font-size:11px;color:var(--dim);display:block;margin-bottom:4px}',
       '.e-preview{margin-top:12px;padding:11px 13px;border-left:3px solid var(--accent);background:var(--card2);border-radius:0 10px 10px 0;font-size:13px;line-height:1.7;color:var(--fg)}',
       '.e-fill{color:var(--bad);font-weight:600}',
+      /* ---- 分层拼句 ---- */
+      '.e-nav{display:flex;gap:6px;overflow-x:auto;padding:0 0 10px;margin:0 0 4px;-webkit-overflow-scrolling:touch}',
+      '.e-navd{flex:0 0 auto;border:1px solid var(--line);background:var(--card2);color:var(--dim);border-radius:999px;padding:6px 10px;font-size:11px;font-family:inherit;white-space:nowrap}',
+      '.e-seg{padding:0;overflow:hidden}',
+      '.e-segh{display:flex;align-items:center;gap:8px;padding:14px 16px;cursor:pointer}',
+      '.e-segn{width:20px;height:20px;border-radius:50%;background:var(--card2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--dim);flex:0 0 auto;font-weight:500}',
+      '.e-segname{font-size:14px;font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
+      '.e-segst{font-size:10.5px;color:var(--dim);display:flex;align-items:center;gap:6px;flex:0 0 auto}',
+      '.e-segst.on{color:var(--bad)}',
+      '.e-segst i{font-style:normal;border:1px solid currentColor;border-radius:6px;padding:1px 5px;font-size:10px}',
+      '.e-caret{color:var(--dim);font-size:13px;transition:transform .18s;flex:0 0 auto}',
+      '.e-seg.folded .e-caret{transform:rotate(-90deg)}',
+      '.e-segb{padding:0 16px 16px}',
+      '.e-lay{padding:13px 0;border-top:1px solid var(--line)}',
+      '.e-lay:first-child{border-top:0;padding-top:2px}',
+      '.e-lay-h{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}',
+      '.e-lay-h b{font-size:13px;color:var(--accent)}',
+      '.e-lay-q{font-size:12px;color:var(--fg)}',
+      '.e-opt-tag{font-style:normal;font-size:10px;color:var(--dim);border:1px solid var(--line);border-radius:6px;padding:1px 5px}',
+      '.e-lay-ask{font-size:11.5px;color:var(--dim);line-height:1.65;margin-top:5px}',
+      '.e-stks{display:flex;flex-direction:column;gap:6px;margin-top:8px}',
+      '.e-stk{text-align:left;font-family:inherit;font-size:12px;line-height:1.5;color:var(--dim);background:var(--card2);border:1px solid transparent;border-radius:10px;padding:8px 10px}',
+      '.e-stk.on{color:var(--fg);border-color:var(--accent);background:var(--card)}',
+      '.e-stk i{display:block;font-style:normal;font-size:10px;color:var(--dim);margin-top:3px}',
+      '.e-lay-prev{display:none;margin-top:9px;padding:9px 11px;border-left:3px solid var(--accent);background:var(--card2);border-radius:0 8px 8px 0;font-size:12.5px;line-height:1.7}',
+      '.e-idea{margin-top:9px}',
+      '.e-idea summary{font-size:11px;color:var(--dim);cursor:pointer}',
+      '.e-idea ul{margin:7px 0 0;padding-left:18px;font-size:11.5px;color:var(--dim);line-height:1.75}',
+      '.e-freewrap{margin-top:14px}',
+      '.e-freewrap label{display:block;font-size:11px;color:var(--dim);margin-bottom:5px}',
+      '.e-paraprev{margin-top:12px;padding:11px 13px;border:1px dashed var(--line);border-radius:12px;font-size:13px;line-height:1.8;min-height:20px}',
+      '.e-dimtext{color:var(--dim);font-size:12px}',
+      /* ---- 参考 + 自己写 ---- */
+      '.e-reftog{flex:0 0 auto;border:1px solid var(--line);background:var(--card2);color:var(--dim);border-radius:999px;padding:5px 10px;font-size:11px;font-family:inherit}',
+      '.e-reftog.on{color:var(--fg);border-color:var(--accent)}',
+      '.e-reffold{background:var(--card2);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:12px 16px}',
+      '.e-refhead{font-size:11.5px;color:var(--accent);line-height:1.65;margin-bottom:10px}',
+      '.e-rl{padding:9px 0;border-top:1px dashed var(--line)}',
+      '.e-rl:first-of-type{border-top:0}',
+      '.e-rl-h{display:flex;align-items:baseline;gap:7px;flex-wrap:wrap}',
+      '.e-rl-h b{width:16px;height:16px;border-radius:50%;background:var(--card);border:1px solid var(--line);display:inline-flex;align-items:center;justify-content:center;font-size:10px;color:var(--dim);flex:0 0 auto}',
+      '.e-rl-zh{font-size:12.5px;font-weight:600}',
+      '.e-rl-q{font-size:11px;color:var(--dim)}',
+      '.e-rl-ask{font-size:11px;color:var(--dim);line-height:1.6;margin:4px 0 0 23px}',
+      '.e-rl-stk{display:flex;flex-wrap:wrap;gap:5px;margin:6px 0 0 23px}',
+      '.e-rl-stk code{font-family:inherit;font-size:11px;line-height:1.5;color:var(--fg);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:4px 7px}',
+      '.e-rl-eg{font-size:11px;color:var(--dim);line-height:1.6;margin:6px 0 0 23px;padding-left:7px;border-left:2px solid var(--line)}',
+      '.e-model{margin-top:10px}',
+      '.e-model summary{font-size:11px;color:var(--dim);cursor:pointer}',
+      '.e-model p{margin:7px 0 0;font-size:12px;line-height:1.8;color:var(--fg);background:var(--card);border-radius:10px;padding:10px 12px}',
+      '.e-chk{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;min-height:8px}',
+      '.e-miss{font-style:normal;font-size:10.5px;color:var(--bad);border:1px solid currentColor;border-radius:6px;padding:2px 6px}',
+      '.e-ok{font-style:normal;font-size:10.5px;color:var(--good);border:1px solid currentColor;border-radius:6px;padding:2px 6px}',
       '.e-para{display:grid;grid-template-columns:1fr;gap:12px}',
       '@media(min-width:720px){.e-para{grid-template-columns:1.15fr 1fr;align-items:start}}',
       '.e-edit label{display:block;font-size:11px;color:var(--dim);margin-bottom:4px}',

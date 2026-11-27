@@ -1,123 +1,747 @@
 {
-  "version": 1,
+  "version": 3,
+  "note": "v3：段型从「整段一个模板」改成「分层拼句」。每层 = 一个中文问题 + 内容槽 + 2–3 个短句式。用户自由填、自由选、可跳层，段内实时拼句。",
   "types": [
-    {"id": "opinion", "name": "观点类", "keys": ["agree", "disagree", "to what extent", "do you agree"],
-     "plan": ["intro", "reason1", "reason2", "conclusion"]},
-    {"id": "discuss", "name": "双边讨论", "keys": ["discuss both", "both views", "both sides"],
-     "plan": ["intro", "viewA", "viewB", "myview", "conclusion"]},
-    {"id": "advdis", "name": "利弊类", "keys": ["advantages", "disadvantages", "outweigh", "benefits outweigh"],
-     "plan": ["intro", "benefit", "drawback", "weigh", "conclusion"]},
-    {"id": "problem", "name": "问题解决", "keys": ["causes", "solutions", "what can be done", "measures", "solve"],
-     "plan": ["intro", "cause", "solution", "conclusion"]},
-    {"id": "two", "name": "两问式", "keys": ["why do", "why are", "why is", "positive or negative", "positive or a negative"],
-     "plan": ["intro", "answer1", "answer2", "conclusion"]}
+    {
+      "id": "opinion",
+      "name": "观点类",
+      "keys": [
+        "agree",
+        "disagree",
+        "to what extent",
+        "do you agree"
+      ],
+      "plan": [
+        "intro",
+        "reason1",
+        "reason2",
+        "conclusion"
+      ]
+    },
+    {
+      "id": "discuss",
+      "name": "双边讨论",
+      "keys": [
+        "discuss both",
+        "both views",
+        "both sides"
+      ],
+      "plan": [
+        "intro",
+        "viewA",
+        "viewB",
+        "myview",
+        "conclusion"
+      ]
+    },
+    {
+      "id": "advdis",
+      "name": "利弊类",
+      "keys": [
+        "advantages",
+        "disadvantages",
+        "outweigh",
+        "benefits outweigh"
+      ],
+      "plan": [
+        "intro",
+        "benefit",
+        "drawback",
+        "weigh",
+        "conclusion"
+      ]
+    },
+    {
+      "id": "problem",
+      "name": "问题解决",
+      "keys": [
+        "causes",
+        "solutions",
+        "what can be done",
+        "measures",
+        "solve"
+      ],
+      "plan": [
+        "intro",
+        "cause",
+        "solution",
+        "conclusion"
+      ]
+    },
+    {
+      "id": "two",
+      "name": "两问式",
+      "keys": [
+        "why do",
+        "why are",
+        "why is",
+        "positive or negative",
+        "positive or a negative"
+      ],
+      "plan": [
+        "intro",
+        "answer1",
+        "answer2",
+        "conclusion"
+      ]
+    }
   ],
+  "lib": {
+    "bg": {
+      "zh": "现象",
+      "q": "现在的情况是什么？",
+      "ask": "一句话说清现象就够，别背长模板。主语 + 动词 + 对象，写完就停。",
+      "slots": [
+        {
+          "k": "b",
+          "ph": "越来越多的中学要求学生去做社区服务"
+        }
+      ],
+      "stacks": [
+        {
+          "t": "{b}",
+          "d": "直接开头，最省时间"
+        },
+        {
+          "t": "In recent years, {b}.",
+          "d": "最常见的开头"
+        },
+        {
+          "t": "Nowadays, {b}.",
+          "d": "同义替换，避免每篇都一样"
+        }
+      ],
+      "eg": "More and more companies let their staff work from home."
+    },
+    "split": {
+      "zh": "分歧",
+      "q": "两边各怎么说？",
+      "ask": "先把对方的话写出来（哪怕你不认同），再写另一边。两句都要短。",
+      "slots": [
+        {
+          "k": "o",
+          "ph": "支持的人说这能培养责任感"
+        },
+        {
+          "k": "v",
+          "ph": "反对的人说这是浪费时间"
+        }
+      ],
+      "stacks": [
+        {
+          "t": "Some people think {o}, while others believe {v}.",
+          "d": "两边并列，最稳"
+        },
+        {
+          "t": "Opinions differ: some argue {o}, but others {v}.",
+          "d": "稍微正式"
+        },
+        {
+          "t": "{o}. Others, however, {v}.",
+          "d": "断开写，句子更短更好控"
+        }
+      ],
+      "eg": "Some people think it saves time, while others believe it slows teamwork down."
+    },
+    "stance": {
+      "zh": "我的立场",
+      "q": "你站哪边？",
+      "ask": "立场要能被后文证明，别写 I agree with this view 这种空话。把「同意到什么程度」说出来。",
+      "slots": [
+        {
+          "k": "s",
+          "ph": "应该做，但学校必须提供支持"
+        }
+      ],
+      "stacks": [
+        {
+          "t": "I believe {s}.",
+          "d": "最直接"
+        },
+        {
+          "t": "In my view, {s}.",
+          "d": "书面一点"
+        },
+        {
+          "t": "This essay will argue that {s}.",
+          "d": "全文总起"
+        }
+      ],
+      "eg": "I believe remote work should be a choice, not a rule for everyone."
+    },
+    "claim": {
+      "zh": "是什么",
+      "q": "这一段你要证明什么？",
+      "ask": "一句话说完，不解释、不举例。这句写不出来，说明这段还没想清，先回上一步定观点。",
+      "slots": [
+        {
+          "k": "c",
+          "ph": "社区服务让学生见到真实的社会"
+        }
+      ],
+      "stacks": [
+        {
+          "t": "{c}",
+          "d": "直接陈述，最省时间"
+        },
+        {
+          "t": "The main point is that {c}.",
+          "d": "加一句引导，句子更完整"
+        },
+        {
+          "t": "The strongest argument here is that {c}.",
+          "d": "语气更稳，适合第一理由段"
+        }
+      ],
+      "eg": "Working from home saves the hours people used to spend on the road."
+    },
+    "why": {
+      "zh": "为什么｜分两步",
+      "q": "这件事是怎么发生的？",
+      "ask": "不要写 because it is good。分两步：第一步谁做了什么，第二步因此发生了什么变化。只写一步就叫「只有结论」。",
+      "slots": [
+        {
+          "k": "a",
+          "ph": "第一步：学校每周安排两小时去养老院"
+        },
+        {
+          "k": "b",
+          "ph": "第二步：学生第一次真的和老人说话，误解就少了"
+        }
+      ],
+      "stacks": [
+        {
+          "t": "{a}, and this in turn {b}.",
+          "d": "两步因果，最实用"
+        },
+        {
+          "t": "Once {a}, {b}.",
+          "d": "一旦…就…，写变化很好用"
+        },
+        {
+          "t": "Because {a}, {b}.",
+          "d": "最朴素，考场最稳"
+        }
+      ],
+      "noidea": [
+        "路径一 · 机制：谁 → 做了什么 → 结果变了什么。两步就够，不要三四层。",
+        "路径二 · 反过来：不做会怎样？把代价写出来，就是理由。",
+        "路径三 · 比一比：和过去比、和没做的人比，差在哪一点。"
+      ],
+      "eg": "Staff no longer travel two hours a day, and this in turn gives them time to rest and focus."
+    },
+    "pic": {
+      "zh": "看一个画面",
+      "q": "能不能给一个人、一个场景？",
+      "ask": "把「人们」换成一个具体的人，加地点和动作。不用真数据，一个看起来真的小数字就够（three bags a day）。",
+      "slots": [
+        {
+          "k": "p",
+          "ph": "一个高二学生，每周三在社区食堂分饭，一开始手忙脚乱"
+        }
+      ],
+      "stacks": [
+        {
+          "t": "Take {p}.",
+          "d": "举一个例子，最常用"
+        },
+        {
+          "t": "A typical case is {p}.",
+          "d": "典型情况是…"
+        },
+        {
+          "t": "In practice, {p}.",
+          "d": "实际上…"
+        }
+      ],
+      "noidea": [
+        "换人：把 people 换成 a 17-year-old student / a shop owner / a mother of two。",
+        "加地点：在食堂、在小区门口、在地铁站，画面立刻具体。",
+        "加动作和结果：每天扔三个袋子，一周就是二十个，垃圾桶先满。"
+      ],
+      "eg": "a mother in Shanghai who starts work at eight without leaving her flat"
+    },
+    "so": {
+      "zh": "所以呢",
+      "q": "这句和你的立场怎么接上？",
+      "ask": "一句话拉回题目，不要重复开头那句话。写不出来就跳过，不要硬凑。",
+      "opt": true,
+      "slots": [
+        {
+          "k": "s",
+          "ph": "这类经验在课堂里学不到"
+        }
+      ],
+      "stacks": [
+        {
+          "t": "That is why {s}.",
+          "d": "所以…"
+        },
+        {
+          "t": "This matters because {s}.",
+          "d": "这一点重要，因为…"
+        },
+        {
+          "t": "So {s}.",
+          "d": "口语但清楚"
+        }
+      ],
+      "eg": "That is why remote work is not simply a perk."
+    },
+    "viewpt": {
+      "zh": "这一方的主张",
+      "q": "这一方到底在说什么？",
+      "ask": "用他们的话说一遍，别夹带你的评价。",
+      "slots": [
+        {
+          "k": "v",
+          "ph": "远程办公让员工省下通勤时间"
+        }
+      ],
+      "stacks": [
+        {
+          "t": "Supporters of this view argue that {v}.",
+          "d": "标准写法"
+        },
+        {
+          "t": "Those who hold this view believe {v}.",
+          "d": "同义替换"
+        },
+        {
+          "t": "{v}.",
+          "d": "直接陈述后马上接理由"
+        }
+      ],
+      "eg": "Supporters of this view argue that remote work gives employees more control over their day."
+    },
+    "admit": {
+      "zh": "先让一步",
+      "q": "对方最合理的一点是什么？",
+      "ask": "承认一个真实的好处或难处，一句就够。让完必须转回来，否则等于替对方说话。",
+      "slots": [
+        {
+          "k": "a",
+          "ph": "远程办公确实省了通勤"
+        }
+      ],
+      "stacks": [
+        {
+          "t": "Admittedly, {a}.",
+          "d": "让步，最常用"
+        },
+        {
+          "t": "It is true that {a}.",
+          "d": "同义替换"
+        },
+        {
+          "t": "While {a}, the benefits are limited.",
+          "d": "让一步同时收一句"
+        }
+      ],
+      "eg": "Admittedly, working from home saves both time and money."
+    },
+    "however": {
+      "zh": "但是",
+      "q": "为什么这还不够？",
+      "ask": "指出让步那一点的边界：对谁不成立、在什么情况下不成立。",
+      "slots": [
+        {
+          "k": "b",
+          "ph": "但对需要面对面协作的岗位，它反而拖慢进度"
+        }
+      ],
+      "stacks": [
+        {
+          "t": "However, {b}.",
+          "d": "最稳的转折"
+        },
+        {
+          "t": "This does not change the fact that {b}.",
+          "d": "语气更硬"
+        },
+        {
+          "t": "But {b}.",
+          "d": "短句，考场好用"
+        }
+      ],
+      "eg": "However, it is much harder for new staff to learn from their colleagues."
+    },
+    "balance": {
+      "zh": "我的判断",
+      "q": "权衡下来你怎么判？",
+      "ask": "一句给出结论，不要又摆一遍两边。",
+      "slots": [
+        {
+          "k": "j",
+          "ph": "总体是利大于弊，但需要明确规则"
+        }
+      ],
+      "stacks": [
+        {
+          "t": "On balance, {j}.",
+          "d": "权衡段的固定说法"
+        },
+        {
+          "t": "Overall, I would say {j}.",
+          "d": "稍微口语"
+        },
+        {
+          "t": "In the end, {j}.",
+          "d": "收束"
+        }
+      ],
+      "eg": "On balance, the benefits are real, but only for jobs that do not need face-to-face contact."
+    },
+    "cause": {
+      "zh": "原因",
+      "q": "根子在哪？",
+      "ask": "写一个能追到底的原因，不要写「因为社会发展」这种谁都套得上的话。",
+      "slots": [
+        {
+          "k": "c",
+          "ph": "城市里双职工家庭变多，没人做饭"
+        }
+      ],
+      "stacks": [
+        {
+          "t": "The root cause is {c}.",
+          "d": "直接点根子"
+        },
+        {
+          "t": "This happens because {c}.",
+          "d": "最朴素"
+        },
+        {
+          "t": "{c}.",
+          "d": "陈述句，后面接后果"
+        }
+      ],
+      "eg": "The root cause is that most families now have two working parents."
+    },
+    "chain": {
+      "zh": "后果｜分两步",
+      "q": "它接着导致了什么？",
+      "ask": "写两步：先出现什么，再由此出现什么。一步只算现象，两步才是链条。",
+      "slots": [
+        {
+          "k": "a",
+          "ph": "第一步：外卖订单越来越多"
+        },
+        {
+          "k": "b",
+          "ph": "第二步：塑料盒堆在小区垃圾站，清运跟不上"
+        }
+      ],
+      "stacks": [
+        {
+          "t": "{a}, which in turn {b}.",
+          "d": "两步链条"
+        },
+        {
+          "t": "As a result, {a}, and then {b}.",
+          "d": "拆开写，更好控"
+        },
+        {
+          "t": "{a}. As a result, {b}.",
+          "d": "两句，最不容易出错"
+        }
+      ],
+      "eg": "Orders keep rising, which in turn leaves more plastic boxes at the rubbish station."
+    },
+    "measure": {
+      "zh": "谁来做什么",
+      "q": "具体措施是什么？",
+      "ask": "写到「谁 + 动词 + 对象」。别写 the government should pay attention，那等于没说。",
+      "slots": [
+        {
+          "k": "m",
+          "ph": "市政府在小区设押金回收机"
+        }
+      ],
+      "stacks": [
+        {
+          "t": "{m}.",
+          "d": "直接陈述"
+        },
+        {
+          "t": "One practical fix is that {m}.",
+          "d": "加一句引导"
+        },
+        {
+          "t": "The first step would be for {m}.",
+          "d": "更正式"
+        }
+      ],
+      "eg": "The city council puts deposit machines in every housing estate."
+    },
+    "apply": {
+      "zh": "怎么落地",
+      "q": "这措施具体怎么执行？",
+      "ask": "一句话说清执行方式：谁负责、多久一次、怎么算达标。",
+      "opt": true,
+      "slots": [
+        {
+          "k": "a",
+          "ph": "每个瓶子退两毛，机器直接扫码返钱"
+        }
+      ],
+      "stacks": [
+        {
+          "t": "In practice, this means {a}.",
+          "d": "实际上就是…"
+        },
+        {
+          "t": "For example, {a}.",
+          "d": "举个例子"
+        },
+        {
+          "t": "Specifically, {a}.",
+          "d": "具体来说"
+        }
+      ],
+      "eg": "Each bottle is worth 0.2 yuan, and the money goes back to the phone in seconds."
+    },
+    "effect": {
+      "zh": "会带来什么改变",
+      "q": "做完之后哪里不一样？",
+      "ask": "写一个能看见的变化，不要写 it will be better。",
+      "slots": [
+        {
+          "k": "e",
+          "ph": "大部分瓶子会被送回，而不是扔进垃圾桶"
+        }
+      ],
+      "stacks": [
+        {
+          "t": "As a result, {e}.",
+          "d": "最常见"
+        },
+        {
+          "t": "In the long run, {e}.",
+          "d": "拉长时间看"
+        },
+        {
+          "t": "This would mean {e}.",
+          "d": "意思是…"
+        }
+      ],
+      "eg": "As a result, most bottles come back instead of going into the bin."
+    },
+    "restate": {
+      "zh": "重申立场",
+      "q": "最后再说一遍你站哪边",
+      "ask": "换个说法，不要照抄开头。开头说 should，这里说 the case for。",
+      "slots": [
+        {
+          "k": "r",
+          "ph": "这类服务值得成为必修，但要配支持"
+        }
+      ],
+      "stacks": [
+        {
+          "t": "In conclusion, {r}.",
+          "d": "标准结尾"
+        },
+        {
+          "t": "To sum up, {r}.",
+          "d": "同义替换"
+        },
+        {
+          "t": "Overall, {r}.",
+          "d": "最短"
+        }
+      ],
+      "eg": "In conclusion, remote work is worth keeping, but it needs clear rules."
+    },
+    "point": {
+      "zh": "最后一句",
+      "q": "留一句能被记住的话",
+      "ask": "一句就够，可以是判断、建议或提醒。不要引入新理由。",
+      "opt": true,
+      "slots": [
+        {
+          "k": "p",
+          "ph": "关键不在时长，而在学校有没有认真设计"
+        }
+      ],
+      "stacks": [
+        {
+          "t": "{p}.",
+          "d": "直接收尾"
+        },
+        {
+          "t": "What matters most is {p}.",
+          "d": "把重点推到句尾"
+        },
+        {
+          "t": "The real question is {p}.",
+          "d": "留一个问题"
+        }
+      ],
+      "eg": "What matters most is whether the job can be done well away from the office."
+    }
+  },
   "kinds": {
     "intro": {
       "name": "引入段",
-      "slots": ["topic", "other", "stance"],
-      "labels": {"topic": "题目关键词（英文短语）", "other": "对方最合理的理由（一句）", "stance": "你的立场（一句）"},
-      "frames": [
-        "In recent years, the question of whether {topic} has generated considerable debate. While some maintain that {other}, I would argue that {stance}.",
-        "Few issues are as divisive as {topic}. Although {other} is a widely held view, this essay contends that {stance}.",
-        "{topic} has long been a matter of public concern. In my view, {stance}, even though {other}."
-      ]
+      "layers": [
+        "bg",
+        "split",
+        "stance"
+      ],
+      "hint": "三句：现象一句 + 分歧一句 + 立场一句。三句都要短，别在开头展开论证。",
+      "model": "More and more companies let their staff work from home. Some people think it saves time, while others believe it slows teamwork down. I believe remote work should be a choice, not a rule for everyone."
     },
     "reason": {
       "name": "理由段",
-      "slots": ["claim", "reason", "example", "link"],
-      "labels": {"claim": "论点句（这段要证明什么）", "reason": "原因（because 后面那半句）", "example": "具体例子（一个人/一件事/一个国家）", "link": "回扣（所以它支持你的立场）"},
-      "frames": [
-        "The primary justification for this position is that {claim}. This is largely because {reason}. A case in point is {example}, which demonstrates that {link}.",
-        "A further consideration is {claim}. Since {reason}, it follows that {link}. This is illustrated by {example}.",
-        "Central to this argument is the idea that {claim}. The reason is that {reason}; {example} offers a clear illustration, and it ultimately shows that {link}."
-      ]
+      "layers": [
+        "claim",
+        "why",
+        "pic",
+        "so"
+      ],
+      "hint": "四句：结论 1 句 + 为什么 1 句（里面分两步）+ 画面 1 句 + 回扣 1 句（可省）。只有结论 = 没写完。",
+      "model": "Working from home saves the hours people used to spend on the road. Staff no longer travel two hours a day, and this in turn gives them time to rest and focus. Take a mother in Shanghai who starts work at eight without leaving her flat; she saves three hours and uses one of them to exercise. That is why remote work is not simply a perk."
     },
     "view": {
       "name": "观点段",
-      "slots": ["view", "reason", "example"],
-      "labels": {"view": "这一方的核心主张", "reason": "他们为什么这样想", "example": "能支撑它的例子"},
-      "frames": [
-        "Supporters of this position contend that {view}. Their core argument is that {reason}. By way of illustration, {example}.",
-        "Those who favour this view point to {view}. In their account, {reason}. Evidence for this can be seen in {example}.",
-        "The case for this view rests on {view}. Advocates reason that {reason}, citing {example} as proof."
-      ]
+      "layers": [
+        "viewpt",
+        "why",
+        "pic"
+      ],
+      "hint": "三句：这方主张 1 句 + 为什么 1 句（两步）+ 画面 1 句。不评价，只转述。",
+      "model": "Supporters of this view argue that remote work gives employees more control over their day. Once people can plan their own hours, they in turn finish urgent tasks at the time they think best. A typical case is a designer who starts at seven and stops at three to pick up her child."
     },
     "benefit": {
       "name": "利处段",
-      "slots": ["claim", "reason", "example"],
-      "labels": {"claim": "主要好处", "reason": "为什么它是好处", "example": "具体例子"},
-      "frames": [
-        "The most obvious benefit is that {claim}. This is because {reason}. {example} illustrates the point.",
-        "One clear advantage lies in {claim}. Since {reason}, {example} shows how this works in practice.",
-        "Advocates point to {claim} as the chief merit. The logic is simple: {reason}. {example} bears this out."
-      ]
+      "layers": [
+        "claim",
+        "why",
+        "pic"
+      ],
+      "hint": "四句：好处 1 句 + 为什么是好处（两步）+ 画面 1 句。",
+      "model": "The clearest benefit is that remote work saves both time and money. Staff no longer pay for a daily commute, and this in turn leaves more in their pocket at the end of the month. Take a young teacher in Chengdu who saves 400 yuan a month on transport alone."
     },
     "drawback": {
       "name": "弊处段",
-      "slots": ["claim", "reason", "example"],
-      "labels": {"claim": "主要坏处", "reason": "为什么它是坏处", "example": "具体例子"},
-      "frames": [
-        "The principal drawback is that {claim}. This is largely because {reason}. {example} illustrates the cost.",
-        "A serious limitation is {claim}. Since {reason}, {example} shows the consequences.",
-        "Critics highlight {claim} as the main weakness. The reason is that {reason}, as {example} demonstrates."
-      ]
+      "layers": [
+        "claim",
+        "why",
+        "pic"
+      ],
+      "hint": "四句：坏处 1 句 + 为什么会这样（两步）+ 画面 1 句。",
+      "model": "The main drawback is that new staff learn much more slowly. Without a desk next to experienced colleagues, they in turn miss the small questions they would normally ask. A typical case is a graduate who spends a week on a task that a five-minute chat would have solved."
     },
     "weigh": {
       "name": "权衡段",
-      "slots": ["benefit", "drawback", "judgment"],
-      "labels": {"benefit": "利的一端", "drawback": "弊的一端", "judgment": "你的判断（一句）"},
-      "frames": [
-        "While the benefits — chiefly {benefit} — are considerable, they must be set against {drawback}. On balance, {judgment}.",
-        "The advantages of {benefit} are real, yet they do not cancel out {drawback}. On balance, {judgment}.",
-        "Weighing {benefit} against {drawback}, the former carries more weight, because {judgment}."
-      ]
+      "layers": [
+        "admit",
+        "however",
+        "balance"
+      ],
+      "hint": "三句：让一步 1 句 + 但是 1 句 + 判断 1 句。让完必须转回来。",
+      "model": "Admittedly, working from home saves both time and money. However, it is much harder for new staff to learn from their colleagues, and some jobs simply need a shared room. On balance, the benefits are real, but only for work that does not depend on face-to-face contact."
     },
     "cause": {
       "name": "原因段",
-      "slots": ["cause", "effect"],
-      "labels": {"cause": "根本原因", "effect": "它造成的直接后果"},
-      "frames": [
-        "The root of the problem lies in {cause}. As a result, {effect}.",
-        "This situation stems largely from {cause}, which in turn {effect}.",
-        "A major cause is {cause}; consequently, {effect}."
-      ]
+      "layers": [
+        "cause",
+        "chain"
+      ],
+      "hint": "三句：根子 1 句 + 第一步后果 1 句 + 第二步后果 1 句。一步只算现象。",
+      "model": "The root cause is that most families now have two working parents. Ready-made meals replace home cooking, which in turn produces far more packaging. As a result, plastic boxes pile up at the rubbish station faster than they can be cleared."
     },
     "solution": {
       "name": "方案段",
-      "slots": ["measure", "effect"],
-      "labels": {"measure": "具体措施（动词开头）", "effect": "它会带来什么改变"},
-      "frames": [
-        "The most practical remedy would be to {measure}, which would in turn {effect}.",
-        "A workable solution is to {measure}. This would {effect}.",
-        "Governments could {measure}, thereby {effect}."
-      ]
+      "layers": [
+        "measure",
+        "apply",
+        "effect"
+      ],
+      "hint": "三句：谁做什么 1 句 + 怎么执行 1 句（可省）+ 会有什么改变 1 句。",
+      "model": "The city council puts deposit machines in every housing estate. Each bottle is worth 0.2 yuan, and the money goes back to the phone in seconds. As a result, most bottles come back instead of going into the bin."
     },
     "conclusion": {
       "name": "结论段",
-      "slots": ["other", "stance"],
-      "labels": {"other": "对方的理由（换个说法，别照抄开头）", "stance": "重申你的立场"},
-      "frames": [
-        "To conclude, although {other}, the case for {stance} remains stronger, since the alternative offers no lasting solution.",
-        "In summary, while {other} deserves consideration, I remain convinced that {stance}.",
-        "Ultimately, {other} does not outweigh the argument that {stance}."
-      ]
+      "layers": [
+        "restate",
+        "point"
+      ],
+      "hint": "两句：重申立场 1 句 + 落点 1 句。不要引入新理由。",
+      "model": "In conclusion, remote work is worth keeping, but it needs clear rules. What matters most is whether the job can be done well away from the office."
     }
   },
   "segments": [
-    {"id": "intro", "kind": "intro", "name": "引入"},
-    {"id": "reason1", "kind": "reason", "name": "理由段 1"},
-    {"id": "reason2", "kind": "reason", "name": "理由段 2"},
-    {"id": "viewA", "kind": "view", "name": "A 方观点"},
-    {"id": "viewB", "kind": "view", "name": "B 方观点"},
-    {"id": "myview", "kind": "reason", "name": "我的立场"},
-    {"id": "benefit", "kind": "benefit", "name": "利处"},
-    {"id": "drawback", "kind": "drawback", "name": "弊处"},
-    {"id": "weigh", "kind": "weigh", "name": "权衡"},
-    {"id": "cause", "kind": "cause", "name": "原因"},
-    {"id": "solution", "kind": "solution", "name": "方案"},
-    {"id": "answer1", "kind": "reason", "name": "回答第一问"},
-    {"id": "answer2", "kind": "reason", "name": "回答第二问"},
-    {"id": "conclusion", "kind": "conclusion", "name": "结论"}
+    {
+      "id": "intro",
+      "kind": "intro",
+      "name": "引入"
+    },
+    {
+      "id": "reason1",
+      "kind": "reason",
+      "name": "理由段 1"
+    },
+    {
+      "id": "reason2",
+      "kind": "reason",
+      "name": "理由段 2"
+    },
+    {
+      "id": "viewA",
+      "kind": "view",
+      "name": "A 方观点"
+    },
+    {
+      "id": "viewB",
+      "kind": "view",
+      "name": "B 方观点"
+    },
+    {
+      "id": "myview",
+      "kind": "reason",
+      "name": "我的立场"
+    },
+    {
+      "id": "benefit",
+      "kind": "benefit",
+      "name": "利处"
+    },
+    {
+      "id": "drawback",
+      "kind": "drawback",
+      "name": "弊处"
+    },
+    {
+      "id": "weigh",
+      "kind": "weigh",
+      "name": "权衡"
+    },
+    {
+      "id": "cause",
+      "kind": "cause",
+      "name": "原因"
+    },
+    {
+      "id": "solution",
+      "kind": "solution",
+      "name": "方案"
+    },
+    {
+      "id": "answer1",
+      "kind": "reason",
+      "name": "回答第一问"
+    },
+    {
+      "id": "answer2",
+      "kind": "reason",
+      "name": "回答第二问"
+    },
+    {
+      "id": "conclusion",
+      "kind": "conclusion",
+      "name": "结论"
+    }
   ]
 }
