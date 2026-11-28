@@ -133,7 +133,7 @@
   }
   function epochDay() { return Math.floor(Date.now() / 864e5); }
 
-  function pickItems(k) {
+  function pickItems(k, exclude) {
     var t = today();
     var seed = hashDate(t + k);
     if (k === 'g') {
@@ -163,15 +163,18 @@
     if (k === 'tr') {
       var pool2 = (TR && TR.sentences) || [];
       if (!pool2.length) return [];
+      var ex = exclude || {};
       var due2 = [], new2 = [], later2 = [];
       pool2.forEach(function (x) {
+        if (ex[x.id]) return;                       // 换一批时整批避开
         var st = ST.srs[x.id];
         if (!st) new2.push(x);
         else if (st.d <= t) due2.push(x);
         else later2.push(x);
       });
       later2.sort(function (a, b) { return (ST.srs[a.id].s || 0) - (ST.srs[b.id].s || 0); });
-      var picked = seeded(due2, seed).concat(seeded(new2, seed + 11)).concat(later2);
+      // 新句优先：昨天做过的今天到期，若排在前面会占满 8 个名额
+      var picked = seeded(new2, seed + 11).concat(seeded(due2, seed)).concat(later2);
       // 先每类主题各取一句，再回头补满，避免一轮全是同一个话题
       var out = [], seen = {};
       picked.forEach(function (x) {
@@ -383,6 +386,24 @@
     };
   }
 
+  /* 主题翻译：换一批。保留今天已写过的，只换还没做的 */
+  function rerollTR() {
+    var d = day();
+    var ids = (d.items.tr || []).slice();
+    var doneN = Math.min(d.done.tr || 0, ids.length);
+    var kept = ids.slice(0, doneN);
+    var ex = {};
+    ids.forEach(function (id) { ex[id] = 1; });   // 整批避开，防止换回同一批
+    var more = pickItems('tr', ex).filter(function (id) { return kept.indexOf(id) < 0; });
+    if (!more.length) { toast('题库里没有别的句子了'); return; }
+    var next = kept.concat(more.slice(0, PLAN.tr - kept.length));
+    d.items.tr = next;
+    save();
+    ROUND = { k: 'tr', ids: next, i: doneN, step: 0, ans: {} };
+    renderItem();
+    toast('换了一批新句子');
+  }
+
   /* ---------------- block entry ---------------- */
   function startBlock(k) {
     var d = day();
@@ -430,9 +451,23 @@
           : '明天换新题') + '</p></div>' +
       (rows ? '<div class="w-k">今天写的</div>' + rows : '') +
       '<button class="btn primary" id="wbackhome" style="margin-top:22px;justify-content:center">回到今日</button>' +
-      '<button class="btn" id="wreviewblock" style="margin-top:10px;width:100%;justify-content:center">复盘这块</button>';
+      '<button class="btn" id="wreviewblock" style="margin-top:10px;width:100%;justify-content:center">复盘这块</button>' +
+      (k === 'tr' ? '<button class="btn" id="wmoretr" style="margin-top:10px;width:100%;justify-content:center">再练一批新句子</button>' : '');
     document.getElementById('wbackhome').onclick = renderHub;
     document.getElementById('wreviewblock').onclick = function () { renderBlockReview(k); };
+    var mt = document.getElementById('wmoretr');
+    if (mt) mt.onclick = function () {
+      var d = day();
+      var ex = {};
+      ST.logs.forEach(function (l) { if (l.block === 'tr') ex[l.id] = 1; });
+      (d.items.tr || []).forEach(function (id) { ex[id] = 1; });
+      var more = pickItems('tr', ex);
+      if (!more.length) { toast('题库里的句子都练过了'); return; }
+      d.items.tr = more;
+      d.done.tr = 0;
+      save();
+      startBlock('tr');
+    };
     bindBack(renderHub);
     startClock();
   }
@@ -519,9 +554,12 @@
       '<div class="w-hint">关键词（顺序不用一致）' + chips + '</div>' +
       '<textarea class="w-ta" id="wans" rows="3" autocapitalize="sentences" autocorrect="off" spellcheck="false" placeholder="用英文写一遍…"></textarea>' +
       '<button class="btn primary" id="wcheck">对照参考</button>' +
+      '<button class="w-reroll" id="wreroll">这批做过了？换一批新句子</button>' +
       '</div><div id="wpanel"></div>';
     bindBack(renderHub);
     wireCheck(item, 'tr');
+    var rb = document.getElementById('wreroll');
+    if (rb) rb.onclick = rerollTR;
     startClock();
   }
 
@@ -957,6 +995,8 @@
       '.w-miss{background:transparent;color:var(--bad);text-decoration:underline;text-decoration-thickness:2px;font-weight:700}',
       '.w-scorerow{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:2px}',
       '.w-score{font-size:13px;color:var(--good);font-weight:700}',
+      '.w-reroll{background:none;border:0;color:var(--dim);font-size:12px;font-family:inherit;',
+      'padding:14px 4px 2px;text-decoration:underline;text-underline-offset:3px;align-self:center}',
       '.w-tiny{font-size:11px;color:var(--dim)}',
       '.w-extra{font-size:12px;color:var(--dim);margin-top:8px}',
       '.w-why{font-size:13px;line-height:1.75;color:var(--fg)}',
